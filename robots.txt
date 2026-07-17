@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://lmshandling.com/sitemap.xml
+
+# Block unnecessary files
+Disallow: /reviews-img/
+Disallow: /finals-img/
