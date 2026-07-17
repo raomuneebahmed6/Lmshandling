@@ -100,6 +100,7 @@ h3{font-size:1.12rem;font-weight:700}
 /* ---------- header ---------- */
 .site-header{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:.9rem clamp(1rem,4vw,3rem);transition:.35s cubic-bezier(.2,.7,.2,1)}
 .site-header.scrolled{top:10px;left:10px;right:10px;border-radius:999px;background:rgba(255,255,255,.92);backdrop-filter:blur(14px);border:1px solid var(--line);box-shadow:0 12px 32px -14px rgba(0,68,139,.35);padding:.5rem 1.4rem}
+.site-header.nav-open{backdrop-filter:none}
 .brand{display:flex;align-items:center;gap:.6rem;color:var(--ink)}
 .brand span{display:flex;flex-direction:column;line-height:1.15}
 .brand strong{font-family:var(--display);font-weight:800;font-size:1.02rem}
@@ -710,12 +711,13 @@ safe("code-library", () => {
 
 /* ---------- mobile menu ---------- */
 safe("mobile-menu", () => {
-  const menuToggle = $id("menuToggle"), mainNav = $id("mainNav");
+  const menuToggle = $id("menuToggle"), mainNav = $id("mainNav"), siteHeader = $id("siteHeader");
   if (!menuToggle || !mainNav) return;
   menuToggle.addEventListener("click", () => {
     const open = mainNav.classList.toggle("open");
     menuToggle.classList.toggle("open", open);
     menuToggle.setAttribute("aria-expanded", open);
+    if (siteHeader) siteHeader.classList.toggle("nav-open", open);
     document.body.style.overflow = open ? "hidden" : "";
   });
   mainNav.querySelectorAll("a").forEach(a => a.addEventListener("click", e => {
