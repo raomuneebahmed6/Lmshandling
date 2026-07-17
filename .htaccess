@@ -48,4 +48,4 @@ AddType application/javascript .js
 </IfModule>
 
 # Custom error pages (optional)
-ErrorDocument 404 /index.html
+ErrorDocument 404 /
