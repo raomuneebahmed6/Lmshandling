@@ -869,65 +869,23 @@ safe("code-library", () => {
 
 /* ---------- mobile menu v2 ---------- */
 safe("mobile-menu", () => {
-  const toggle = $id("menuToggle");
-  const nav    = $id("mainNav");
-  const siteHeader = $id("siteHeader");
-  if (!toggle || !nav) return;
-
-  function openNav()  {
-    nav.classList.add("open");
-    toggle.classList.add("open");
-    toggle.setAttribute("aria-expanded","true");
-    if (siteHeader) siteHeader.classList.add("nav-open");
-    document.body.style.overflow = "hidden";
-  }
-  function closeNav() {
-    nav.classList.remove("open");
-    toggle.classList.remove("open");
-    toggle.setAttribute("aria-expanded","false");
-    if (siteHeader) siteHeader.classList.remove("nav-open");
-    document.body.style.overflow = "";
-    nav.querySelectorAll(".nav-item.").forEach(i => i.classList.remove(""));
-  }
-
-  toggle.addEventListener("click", () =>
-    nav.classList.contains("open") ? closeNav() : openNav()
-  );
-
-  /* close on backdrop tap */
-  document.addEventListener("click", e => {
+  const menuToggle = $id("menuToggle"), mainNav = $id("mainNav"), siteHeader = $id("siteHeader");
+  if (!menuToggle || !mainNav) return;
+  menuToggle.addEventListener("click", () => {
+    const open = mainNav.classList.toggle("open");
+    menuToggle.classList.toggle("open", open);
+    menuToggle.setAttribute("aria-expanded", open);
+    if (siteHeader) siteHeader.classList.toggle("nav-open", open);
+    document.body.style.overflow = open ? "hidden" : "";
+  });
+  mainNav.querySelectorAll("a").forEach(a => a.addEventListener("click", e => {
     if (window.innerWidth > 860) return;
-    if (nav.classList.contains("open") &&
-        !nav.contains(e.target) && !toggle.contains(e.target)) closeNav();
-  });
-
-  /* dropdown toggles on mobile */
-  nav.querySelectorAll(".nav-item > a").forEach(a => {
-    /* inject chevron once */
-    if (!a.querySelector(".mob-chevron")) {
-      const ch = document.createElement("span");
-      ch.className = "mob-chevron";
-      ch.setAttribute("aria-hidden","true");
-      ch.textContent = "\u25be";
-      a.appendChild(ch);
-    }
-    a.addEventListener("click", e => {
-      if (window.innerWidth > 860) return;
-      e.preventDefault();
-      const item = a.closest(".nav-item");
-      const wasOpen = item.classList.contains("");
-      nav.querySelectorAll(".nav-item.").forEach(i => i.classList.remove(""));
-      if (!wasOpen) item.classList.add("");
-    });
-  });
-
-  /* plain nav links close menu on mobile */
-  nav.querySelectorAll("a:not(.nav-item > a)").forEach(a => {
-    a.addEventListener("click", () => { if (window.innerWidth <= 860) closeNav(); });
-  });
-
-  /* ESC closes */
-  document.addEventListener("keydown", e => { if (e.key === "Escape") closeNav(); });
+    const parent = a.closest(".nav-item");
+    if (parent && a.parentElement === parent){ e.preventDefault(); parent.classList.toggle("open"); return; }
+    mainNav.classList.remove("open");
+    menuToggle.classList.remove("open");
+    document.body.style.overflow = "";
+  }));
 });
 
 /* ---------- query form -> WhatsApp ---------- */
