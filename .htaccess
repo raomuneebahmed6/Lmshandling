@@ -26,13 +26,22 @@ AddType text/css .css
 AddType application/javascript .js
 
 # Caching for speed
+# HTML is intentionally NOT cached long — this site's CSS/JS live inline
+# inside the HTML, so caching the page also freezes styling/scripts. A
+# long HTML cache here previously made updates invisible to returning
+# visitors for up to a week.
 <IfModule mod_expires.c>
   ExpiresActive On
   ExpiresByType image/jpeg "access plus 3 months"
   ExpiresByType image/png "access plus 3 months"
-  ExpiresByType text/html "access plus 1 week"
+  ExpiresByType text/html "access plus 0 seconds"
   ExpiresByType text/css "access plus 1 month"
   ExpiresByType application/javascript "access plus 1 month"
+</IfModule>
+<IfModule mod_headers.c>
+  <FilesMatch "\.html$">
+    Header set Cache-Control "no-cache, must-revalidate"
+  </FilesMatch>
 </IfModule>
 
 # Gzip compression

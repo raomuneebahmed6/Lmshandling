@@ -134,7 +134,7 @@ h3{font-size:1.12rem;font-weight:700}
 .nav-social a:hover{background:var(--gold);color:var(--ink)}
 .nav-social svg{width:15px;height:15px}
 @media (max-width:1180px){.nav-social{display:none}}
-@media (max-width:860px){.nav-social{display:flex;justify-content:center;gap:.7rem;margin-top:1.3rem}.nav-social a{width:38px;height:38px}.nav-social svg{width:18px;height:18px}}
+@media (max-width:860px){.nav-social{display:flex;justify-content:center;gap:.7rem;margin-top:.8rem}.nav-social a{width:34px;height:34px}.nav-social svg{width:16px;height:16px}}
 .menu-toggle{display:none;flex-direction:column;gap:5px;padding:.5rem;z-index:120}
 .menu-toggle span{width:24px;height:2.5px;background:var(--ink);border-radius:2px;transition:.3s}
 .menu-toggle.open span:nth-child(1){transform:translateY(7.5px) rotate(45deg)}
@@ -361,14 +361,14 @@ h3{font-size:1.12rem;font-weight:700}
 }
 @media (max-width:860px){
   .menu-toggle{display:flex}
-  .main-nav{position:fixed;inset:0;background:var(--paper);flex-direction:column;justify-content:center;align-items:stretch;gap:0;padding:5rem 2rem 2rem;transform:translateX(100%);transition:transform .35s cubic-bezier(.2,.7,.2,1);overflow-y:auto;z-index:110}
+  .main-nav{position:fixed;inset:0;background:var(--paper);flex-direction:column;justify-content:flex-start;align-items:stretch;gap:0;padding:4.5rem 2rem calc(1rem + env(safe-area-inset-bottom,0px));transform:translateX(100%);transition:transform .35s cubic-bezier(.2,.7,.2,1);overflow-y:auto;-webkit-overflow-scrolling:touch;z-index:110}
   .main-nav.open{transform:none}
-  .main-nav>a,.nav-item>a{font-size:1.15rem;font-family:var(--display);font-weight:700;padding:.8rem 0;border-bottom:1px solid var(--line);display:block}
+  .main-nav>a,.nav-item>a{font-size:1.05rem;font-family:var(--display);font-weight:700;padding:.55rem 0;border-bottom:1px solid var(--line);display:block}
   .nav-item{width:100%}
   .dropdown{position:static;transform:none;opacity:1;visibility:visible;box-shadow:none;border:0;background:none;display:none;padding:.2rem 0 .6rem 1rem;max-height:none}
   .nav-item.open .dropdown{display:grid}
   .nav-item:hover .dropdown,.nav-item:focus-within .dropdown,.nav-item.open .dropdown{transform:none;opacity:1;visibility:visible}
-  .nav-cta{margin-top:1.2rem;text-align:center}
+  .nav-cta{margin-top:.8rem;text-align:center;padding:.7rem 1.25rem}
   .contact-card{grid-template-columns:1fr}
 }
 @media (max-width:600px){
