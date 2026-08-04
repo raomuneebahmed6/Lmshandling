@@ -8,6 +8,10 @@ RewriteEngine On
 RewriteCond %{HTTPS} off
 RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
+# Redirect www to non-www (canonical domain is lmshandling.com)
+RewriteCond %{HTTP_HOST} ^www\.lmshandling\.com$ [NC]
+RewriteRule ^(.*)$ https://lmshandling.com/$1 [L,R=301]
+
 # Redirect renamed PDF Store page to its new VU Notes URL
 RewriteRule ^store/?$ /vu-notes [R=301,L,NC]
 
