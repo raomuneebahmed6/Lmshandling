@@ -578,6 +578,18 @@ img { max-width:100%; height:auto; }
 .author-box span{color:var(--muted);font-size:.85rem}
 @media (max-width:600px){.prose h2{font-size:1.25rem}}
 
+/* ---------- CS101 file cover mockup ---------- */
+.cs101-hero-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:2.5rem;align-items:center}
+.cs101-cover{max-width:300px;margin:0 auto;width:100%}
+.cs101-cover-header{color:#8B1A1A;font-weight:800;font-size:.8rem;margin-bottom:.6rem;letter-spacing:.01em}
+.cs101-cover-card{background:#2b3440;border-radius:8px;padding:2rem 1.1rem 2.4rem;display:flex;flex-direction:column;align-items:center;gap:.5rem;box-shadow:0 24px 44px -18px rgba(0,0,0,.45)}
+.cs101-cover-line{background:#7a1418;color:#fff;font-weight:800;font-size:1.02rem;padding:.32rem .85rem;text-align:center;line-height:1.15;border-radius:1px}
+.cs101-cover-line.small{font-size:.92rem}
+.cs101-cover-line.dark{background:#111417}
+.cs101-cover-spacer{height:.7rem}
+.cs101-cover-ribbon{width:44px;height:28px;background:#7a1418;color:#fff;font-weight:800;font-size:.78rem;display:flex;align-items:center;justify-content:center;margin:1rem auto 0;clip-path:polygon(0 0,100% 0,100% 62%,50% 100%,0 62%)}
+@media (max-width:900px){.cs101-hero-grid{grid-template-columns:1fr;gap:1.6rem}.cs101-cover{max-width:260px}}
+
 </style>
 
 <script type="application/ld+json">
@@ -674,16 +686,33 @@ img { max-width:100%; height:auto; }
 <article>
 <section class="page-hero section">
   <div class="hero-bg"><div class="blob b1" data-parallax="0.2"></div><div class="blob b2" data-parallax="-0.14"></div></div>
-  <div class="reveal">
-    <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><a href="/blog/">Blog</a><span>/</span><span>CS101 MCQs (Objective)</span></nav>
-    <p class="section-label">Course Code Guide</p>
-    <h1>CS101 MCQs (Objective) Guide 2026: VU Introduction to Computing Notes</h1>
-    <p class="lead">A focused guide to CS101 (Introduction to Computing) — what the Objective/MCQ portion covers, how to prepare it properly for midterm and finalterm, and how to get the code-wise CS101 MCQ file.</p>
-    <div class="post-meta-row reveal" data-delay="1">
-      <span class="chip">✍️ Nibaha Haq</span>
-      <span class="chip">📅 2026</span>
-      <span class="chip">⏱ 5 min read</span>
-      <span class="chip">💻 CS101</span>
+  <div class="cs101-hero-grid">
+    <div class="reveal">
+      <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><a href="/blog/">Blog</a><span>/</span><span>CS101 MCQs (Objective)</span></nav>
+      <p class="section-label">Course Code Guide</p>
+      <h1>CS101 MCQs (Objective) Guide 2026: VU Introduction to Computing Notes</h1>
+      <p class="lead">A focused guide to CS101 (Introduction to Computing) — what the Objective/MCQ portion covers, how to prepare it properly for midterm and finalterm, and how to get the code-wise CS101 MCQ file.</p>
+      <div class="post-meta-row reveal" data-delay="1">
+        <span class="chip">✍️ Nibaha Haq</span>
+        <span class="chip">📅 2026</span>
+        <span class="chip">⏱ 5 min read</span>
+        <span class="chip">💻 CS101</span>
+      </div>
+    </div>
+    <div class="cs101-cover reveal" data-delay="1" role="img" aria-label="CS101 2026 Finals Prep Objective File cover, module 82 to 234, by Nibaha Haq">
+      <div class="cs101-cover-header">NIBAHA HAQ 0329 5209868</div>
+      <div class="cs101-cover-card">
+        <div class="cs101-cover-line">CS 101 2026</div>
+        <div class="cs101-cover-line">FINALS PREP</div>
+        <div class="cs101-cover-line">BY NIBAHA HAQ</div>
+        <div class="cs101-cover-line small">MODULE</div>
+        <div class="cs101-cover-line small">82 TO 234</div>
+        <div class="cs101-cover-line small">OBJECTIVE FILE</div>
+        <div class="cs101-cover-spacer"></div>
+        <div class="cs101-cover-line dark">FOR LMS HANDLING</div>
+        <div class="cs101-cover-line dark">CONTACT 03295209868</div>
+        <div class="cs101-cover-ribbon">1</div>
+      </div>
     </div>
   </div>
 </section>
