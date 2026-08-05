@@ -583,6 +583,18 @@ img { max-width:100%; height:auto; }
 .video-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 @media (max-width:600px){.prose h2{font-size:1.25rem}}
 
+/* ---------- Summer Semester at-a-glance card ---------- */
+.ss-hero-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:2.5rem;align-items:center}
+.ss-card{max-width:340px;margin:0 auto;width:100%}
+.ss-card h2{color:#fff;font-size:1.15rem;margin-bottom:1.1rem;display:flex;align-items:center;gap:.5rem}
+.ss-row{display:flex;align-items:flex-start;gap:.7rem;padding:.75rem 0;border-top:1px solid rgba(255,255,255,.12)}
+.ss-row:first-of-type{border-top:none}
+.ss-row-icon{font-size:1.2rem;flex:0 0 auto;line-height:1.3}
+.ss-row-label{color:#AEBBD1;font-size:.75rem;text-transform:uppercase;letter-spacing:.04em;font-family:var(--mono);margin-bottom:.15rem}
+.ss-row-value{color:#fff;font-weight:600;font-size:.95rem;line-height:1.35}
+.ss-card-btn{display:flex;width:100%;margin-top:1.3rem;text-align:center}
+@media (max-width:900px){.ss-hero-grid{grid-template-columns:1fr;gap:1.6rem}.ss-card{max-width:340px}}
+
 </style>
 
 <script type="application/ld+json">
@@ -679,16 +691,38 @@ img { max-width:100%; height:auto; }
 <article>
 <section class="page-hero section">
   <div class="hero-bg"><div class="blob b1" data-parallax="0.2"></div><div class="blob b2" data-parallax="-0.14"></div></div>
-  <div class="reveal">
-    <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><a href="/blog/">Blog</a><span>/</span><span>VU Summer Semester Guide</span></nav>
-    <p class="section-label">Registration</p>
-    <h1>VU Summer Semester 2026: Registration Guide on VULMS &amp; Should You Take It?</h1>
-    <p class="lead">How and when Virtual University announces Summer Semester, the exact step-by-step registration process on VULMS, the approximate fee, and whether it's actually worth taking based on your CGPA and academic situation.</p>
-    <div class="post-meta-row reveal" data-delay="1">
-      <span class="chip">✍️ Nibaha Haq</span>
-      <span class="chip">📅 2026</span>
-      <span class="chip">⏱ 6 min read</span>
-      <span class="chip">☀️ Summer Semester</span>
+  <div class="ss-hero-grid">
+    <div class="reveal">
+      <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><a href="/blog/">Blog</a><span>/</span><span>VU Summer Semester Guide</span></nav>
+      <p class="section-label">Registration</p>
+      <h1>VU Summer Semester 2026: Registration Guide on VULMS &amp; Should You Take It?</h1>
+      <p class="lead">How and when Virtual University announces Summer Semester, the exact step-by-step registration process on VULMS, the approximate fee, and whether it's actually worth taking based on your CGPA and academic situation.</p>
+      <div class="post-meta-row reveal" data-delay="1">
+        <span class="chip">✍️ Nibaha Haq</span>
+        <span class="chip">📅 2026</span>
+        <span class="chip">⏱ 6 min read</span>
+        <span class="chip">☀️ Summer Semester</span>
+      </div>
+    </div>
+    <div class="hero-banner-card ss-card reveal" data-delay="1">
+      <h2>☀️ Summer Semester at a Glance</h2>
+      <div class="ss-row">
+        <span class="ss-row-icon">📝</span>
+        <div><div class="ss-row-label">Registration</div><div class="ss-row-value">Opens in VULMS after official announcement</div></div>
+      </div>
+      <div class="ss-row">
+        <span class="ss-row-icon">⏱</span>
+        <div><div class="ss-row-label">Duration</div><div class="ss-row-value">Shorter than a normal semester — fast-paced</div></div>
+      </div>
+      <div class="ss-row">
+        <span class="ss-row-icon">💰</span>
+        <div><div class="ss-row-label">Approx. Fee</div><div class="ss-row-value">~Rs. 8,100 for 2 subjects</div></div>
+      </div>
+      <div class="ss-row">
+        <span class="ss-row-icon">🎯</span>
+        <div><div class="ss-row-label">Best For</div><div class="ss-row-value">F/D grade improvement &amp; clearing backlog</div></div>
+      </div>
+      <a class="btn gold ss-card-btn" data-whatsapp="Hello Nibaha Haq, I have a question about VU Summer Semester registration: " target="_blank" rel="noopener">Ask About Summer Semester</a>
     </div>
   </div>
 </section>
