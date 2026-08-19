@@ -236,7 +236,7 @@
   </url>
   <url>
     <loc>https://lmshandling.com/blog/</loc>
-    <lastmod>2026-08-14</lastmod>
+    <lastmod>2026-08-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -279,6 +279,12 @@
   <url>
     <loc>https://lmshandling.com/blog/vu-gdb-graded-discussion-board-guide</loc>
     <lastmod>2026-08-14</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://lmshandling.com/blog/vu-assignment-guide</loc>
+    <lastmod>2026-08-19</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
