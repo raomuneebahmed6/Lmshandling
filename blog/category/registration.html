@@ -563,8 +563,10 @@ img { max-width:100%; height:auto; }
 .blog-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.3rem}
 .blog-card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;transition:.3s;position:relative}
 .blog-card:hover{transform:translateY(-6px);box-shadow:var(--shadow)}
-.blog-card-link{display:flex;flex-direction:column;padding:1.6rem 1.5rem;gap:.5rem}
-.blog-card-tag{display:inline-flex;align-self:flex-start;background:var(--gold-soft);color:#946200;font-size:.75rem;font-weight:700;padding:.3rem .8rem;border-radius:999px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.04em}
+.blog-card-link{display:flex;flex-direction:column;padding:.5rem 1.5rem 1.6rem;gap:.5rem}
+.blog-card-tag-link{display:inline-flex;margin:1.6rem 1.5rem 0}
+.blog-card-tag{display:inline-flex;align-self:flex-start;background:var(--gold-soft);color:#946200;font-size:.75rem;font-weight:700;padding:.3rem .8rem;border-radius:999px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.04em;transition:.2s}
+.blog-card-tag-link:hover .blog-card-tag{background:var(--gold);color:var(--ink)}
 .blog-card h3{margin-top:.3rem;font-size:1.25rem}
 .blog-card p{color:var(--muted);font-size:.92rem;flex:1}
 .blog-card-meta{font-family:var(--mono);font-size:.78rem;color:var(--muted)}
@@ -645,8 +647,8 @@ img { max-width:100%; height:auto; }
   <div class="section-head reveal"><p class="section-label">All Guides</p><h2 id="posts-heading">All Registration guides.</h2></div>
   <div class="blog-grid">
     <article class="blog-card reveal" data-delay="1">
+      <a href="/blog/category/registration" class="blog-card-tag-link"><span class="blog-card-tag">Registration</span></a>
       <a href="/blog/vu-summer-semester-registration-guide" class="blog-card-link">
-        <span class="blog-card-tag">Registration</span>
         <h3>VU Summer Semester 2026: Registration Guide on VULMS &amp; Should You Take It?</h3>
         <p>How and when VU announces Summer Semester, the exact VULMS registration steps, offered subjects, approximate fee, and whether it's worth taking based on your CGPA.</p>
         <span class="blog-card-meta">2026 &nbsp;·&nbsp; 6 min read</span>

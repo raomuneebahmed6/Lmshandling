@@ -391,6 +391,10 @@ img { max-width:100%; height:auto; }
 .breadcrumbs a:hover{text-decoration:underline}
 .lead{margin:.6rem 0 1.3rem;color:var(--muted);max-width:62ch;font-size:1.05rem}
 .hero-chips{display:flex;flex-wrap:wrap;gap:.6rem;margin-bottom:.5rem}
+.category-links{display:flex;flex-wrap:wrap;align-items:center;gap:.6rem;margin-top:1.1rem}
+.category-links-label{font-family:var(--mono);font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.category-chip{display:inline-flex;align-items:center;background:var(--white);border:1px solid var(--line);border-radius:999px;padding:.4rem .9rem;font-size:.82rem;font-weight:600;color:var(--ink);transition:.2s}
+.category-chip:hover{background:var(--gold);border-color:var(--gold);color:var(--ink)}
 .chip{display:inline-flex;align-items:center;gap:.35rem;background:var(--white);border:1px solid var(--line);border-radius:999px;padding:.5rem 1rem;font-size:.85rem;font-weight:600;color:var(--ink)}
 .chip b{color:var(--teal);font-family:var(--mono)}
 .org-strip{display:flex;align-items:center;justify-content:center;gap:1.4rem;flex-wrap:wrap;margin-top:2rem;padding-top:1.6rem;border-top:1px solid var(--line)}
@@ -557,8 +561,10 @@ img { max-width:100%; height:auto; }
 .blog-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.3rem}
 .blog-card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;transition:.3s;position:relative}
 .blog-card:hover{transform:translateY(-6px);box-shadow:var(--shadow)}
-.blog-card-link{display:flex;flex-direction:column;padding:1.6rem 1.5rem;gap:.5rem}
-.blog-card-tag{display:inline-flex;align-self:flex-start;background:var(--gold-soft);color:#946200;font-size:.75rem;font-weight:700;padding:.3rem .8rem;border-radius:999px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.04em}
+.blog-card-link{display:flex;flex-direction:column;padding:.5rem 1.5rem 1.6rem;gap:.5rem}
+.blog-card-tag-link{display:inline-flex;margin:1.6rem 1.5rem 0}
+.blog-card-tag{display:inline-flex;align-self:flex-start;background:var(--gold-soft);color:#946200;font-size:.75rem;font-weight:700;padding:.3rem .8rem;border-radius:999px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.04em;transition:.2s}
+.blog-card-tag-link:hover .blog-card-tag{background:var(--gold);color:var(--ink)}
 .blog-card h3{margin-top:.3rem;font-size:1.25rem}
 .blog-card p{color:var(--muted);font-size:.92rem;flex:1}
 .blog-card-meta{font-family:var(--mono);font-size:.78rem;color:var(--muted)}
@@ -646,6 +652,15 @@ img { max-width:100%; height:auto; }
     <h1>VU Academic Tips, Exam Guides &amp; FYP Help</h1>
     <p class="lead">Practical, no-fluff guides for Virtual University students, covering midterm and finalterm exam preparation, VULMS handling, and Final Year Project advice, written from real experience supporting 200+ VU students.</p>
     <div class="hero-chips reveal" data-delay="1"><span class="chip">📘 Exam Preparation</span><span class="chip">🧭 LMS Handling</span><span class="chip">🎓 FYP Guides</span></div>
+    <nav class="category-links reveal" data-delay="1" aria-label="Browse by category">
+      <span class="category-links-label">Browse by category</span>
+      <a class="category-chip" href="/blog/category/lms-handling">LMS Handling</a>
+      <a class="category-chip" href="/blog/category/exam-preparation">Exam Preparation</a>
+      <a class="category-chip" href="/blog/category/course-code-guides">Course Code Guides</a>
+      <a class="category-chip" href="/blog/category/admissions">Admissions</a>
+      <a class="category-chip" href="/blog/category/final-year-project">Final Year Project</a>
+      <a class="category-chip" href="/blog/category/registration">Registration</a>
+    </nav>
   </div>
 </section>
 
@@ -653,8 +668,8 @@ img { max-width:100%; height:auto; }
   <div class="section-head reveal"><p class="section-label">Latest Guide</p><h2 id="posts-heading">Start here.</h2></div>
   <div class="blog-grid">
     <article class="blog-card reveal">
+      <a href="/blog/category/admissions" class="blog-card-tag-link"><span class="blog-card-tag">Admissions</span></a>
       <a href="/blog/vu-admission-eligibility-criteria-2026" class="blog-card-link">
-        <span class="blog-card-tag">Admissions</span>
         <h3>VU Admission Eligibility Criteria 2026: BS, MS &amp; MPhil Requirements Explained</h3>
         <p>Minimum percentage, CGPA, entry test rules, the BS lateral entry option, and how to confirm the exact eligibility requirement for your specific VU program.</p>
         <span class="blog-card-meta">2026 &nbsp;·&nbsp; 6 min read</span>
@@ -662,8 +677,8 @@ img { max-width:100%; height:auto; }
       </a>
     </article>
     <article class="blog-card reveal" data-delay="1">
+      <a href="/blog/category/lms-handling" class="blog-card-tag-link"><span class="blog-card-tag">LMS Handling</span></a>
       <a href="/blog/vu-quiz-guide" class="blog-card-link">
-        <span class="blog-card-tag">LMS Handling</span>
         <h3>VU Quiz Guide: How VULMS Quizzes Work &amp; How to Prepare</h3>
         <p>Where to find your quiz on VULMS, the activation window, how to prepare for the timed MCQ format efficiently, and the mistakes that cost students marks.</p>
         <span class="blog-card-meta">2026 &nbsp;·&nbsp; 6 min read</span>
@@ -671,8 +686,8 @@ img { max-width:100%; height:auto; }
       </a>
     </article>
     <article class="blog-card reveal" data-delay="1">
+      <a href="/blog/category/lms-handling" class="blog-card-tag-link"><span class="blog-card-tag">LMS Handling</span></a>
       <a href="/blog/vu-attendance-guide" class="blog-card-link">
-        <span class="blog-card-tag">LMS Handling</span>
         <h3>VU Attendance Guide: How VULMS Tracks Lecture Attendance</h3>
         <p>What VU counts as attendance on VULMS, why staying current on lecture tracking matters, where to check your status, and how to stay consistent all semester.</p>
         <span class="blog-card-meta">2026 &nbsp;·&nbsp; 6 min read</span>
@@ -680,8 +695,8 @@ img { max-width:100%; height:auto; }
       </a>
     </article>
     <article class="blog-card reveal" data-delay="1">
+      <a href="/blog/category/course-code-guides" class="blog-card-tag-link"><span class="blog-card-tag">Course Code Guides</span></a>
       <a href="/blog/cs201-midterm-finalterm-notes" class="blog-card-link">
-        <span class="blog-card-tag">Course Code Guide</span>
         <h3>CS201 Notes: Midterm &amp; Finalterm Guide 2026</h3>
         <p>What CS201 (Introduction to Programming) covers, how midterm and finalterm prep differ, and how the code-wise Objective &amp; Subjective file approach helps.</p>
         <span class="blog-card-meta">2026 &nbsp;·&nbsp; 6 min read</span>
@@ -689,8 +704,8 @@ img { max-width:100%; height:auto; }
       </a>
     </article>
     <article class="blog-card reveal">
+      <a href="/blog/category/lms-handling" class="blog-card-tag-link"><span class="blog-card-tag">LMS Handling</span></a>
       <a href="/blog/vu-assignment-guide" class="blog-card-link">
-        <span class="blog-card-tag">LMS Handling</span>
         <h3>VU Assignment Guide: Format, Plagiarism &amp; Deadline Rules on VULMS</h3>
         <p>Where to find and submit your assignment on VULMS, the formatting rules to follow, the similarity/plagiarism check, and how to write one that scores well.</p>
         <span class="blog-card-meta">2026 &nbsp;·&nbsp; 7 min read</span>
@@ -698,8 +713,8 @@ img { max-width:100%; height:auto; }
       </a>
     </article>
     <article class="blog-card reveal" data-delay="1">
+      <a href="/blog/category/lms-handling" class="blog-card-tag-link"><span class="blog-card-tag">LMS Handling</span></a>
       <a href="/blog/vu-gdb-graded-discussion-board-guide" class="blog-card-link">
-        <span class="blog-card-tag">LMS Handling</span>
         <h3>VU GDB (Graded Discussion Board): How It Works &amp; How to Score Well on VULMS</h3>
         <p>What a GDB is, where to find it on VULMS, how to write a post that scores well, and the plagiarism and deadline rules that catch most students off guard.</p>
         <span class="blog-card-meta">2026 &nbsp;·&nbsp; 7 min read</span>
@@ -707,8 +722,8 @@ img { max-width:100%; height:auto; }
       </a>
     </article>
     <article class="blog-card reveal" data-delay="1">
+      <a href="/blog/category/registration" class="blog-card-tag-link"><span class="blog-card-tag">Registration</span></a>
       <a href="/blog/vu-summer-semester-registration-guide" class="blog-card-link">
-        <span class="blog-card-tag">Registration</span>
         <h3>VU Summer Semester 2026: Registration Guide on VULMS &amp; Should You Take It?</h3>
         <p>How and when VU announces Summer Semester, the exact VULMS registration steps, offered subjects, approximate fee, and whether it's worth taking based on your CGPA.</p>
         <span class="blog-card-meta">2026 &nbsp;·&nbsp; 6 min read</span>
@@ -716,8 +731,8 @@ img { max-width:100%; height:auto; }
       </a>
     </article>
     <article class="blog-card reveal" data-delay="1">
+      <a href="/blog/category/course-code-guides" class="blog-card-tag-link"><span class="blog-card-tag">Course Code Guides</span></a>
       <a href="/blog/cs101-mcqs-objective-notes" class="blog-card-link">
-        <span class="blog-card-tag">Course Code Guide</span>
         <h3>CS101 MCQs (Objective) Guide 2026: VU Introduction to Computing Notes</h3>
         <p>What CS101's Objective/MCQ portion covers, how to prepare it for midterm and finalterm, and a real 80% result from these files.</p>
         <span class="blog-card-meta">2026 &nbsp;·&nbsp; 5 min read</span>
@@ -725,8 +740,8 @@ img { max-width:100%; height:auto; }
       </a>
     </article>
     <article class="blog-card reveal" data-delay="2">
+      <a href="/blog/category/exam-preparation" class="blog-card-tag-link"><span class="blog-card-tag">Exam Preparation</span></a>
       <a href="/blog/vu-finalterm-notes-pdf-2026" class="blog-card-link">
-        <span class="blog-card-tag">Finalterm Preparation</span>
         <h3>VU Finalterm Notes PDF 2026: All Subject MCQs, Short &amp; Long Questions</h3>
         <p>Code-wise Objective (MCQs) and Subjective (short + long question) finalterm notes for all subjects, matched to VU's own lecture content.</p>
         <span class="blog-card-meta">2026 &nbsp;·&nbsp; 6 min read</span>
@@ -734,8 +749,8 @@ img { max-width:100%; height:auto; }
       </a>
     </article>
     <article class="blog-card reveal" data-delay="3">
+      <a href="/blog/category/admissions" class="blog-card-tag-link"><span class="blog-card-tag">Admissions</span></a>
       <a href="/blog/virtual-university-admission-guide" class="blog-card-link">
-        <span class="blog-card-tag">Admissions</span>
         <h3>Virtual University Admission Guide 2026: How to Apply Step by Step</h3>
         <p>Eligibility, admission fee, the online application form, required documents, and final submission for BS, ADP, MCS, MBA and more: everything before your first semester starts.</p>
         <span class="blog-card-meta">2026 &nbsp;·&nbsp; 7 min read</span>
@@ -743,8 +758,8 @@ img { max-width:100%; height:auto; }
       </a>
     </article>
     <article class="blog-card reveal">
+      <a href="/blog/category/final-year-project" class="blog-card-tag-link"><span class="blog-card-tag">Final Year Project</span></a>
       <a href="/blog/vu-final-year-project-fyp-guide" class="blog-card-link">
-        <span class="blog-card-tag">Final Year Project</span>
         <h3>VU Final Year Project (FYP) Guide: Proposal, OAR Report, PPT &amp; Viva</h3>
         <p>Every stage of a VU Final Year Project, from choosing an organization to writing an OAR/Internship Report that doesn't get rejected, PPT preparation, and the viva itself, with real approved case studies.</p>
         <span class="blog-card-meta">2026 &nbsp;·&nbsp; 9 min read</span>
@@ -752,8 +767,8 @@ img { max-width:100%; height:auto; }
       </a>
     </article>
     <article class="blog-card reveal" data-delay="1">
+      <a href="/blog/category/exam-preparation" class="blog-card-tag-link"><span class="blog-card-tag">Exam Preparation</span></a>
       <a href="/blog/vu-midterm-finalterm-exam-preparation-guide" class="blog-card-link">
-        <span class="blog-card-tag">Exam Preparation</span>
         <h3>VU Midterm &amp; Finalterm Exam Preparation Guide: How to Score Better</h3>
         <p>How VU exams actually work, a step-by-step preparation strategy, and how code-wise Objective + Subjective files help raise your CGPA: the same approach behind the results on this site.</p>
         <span class="blog-card-meta">2026 &nbsp;·&nbsp; 8 min read</span>

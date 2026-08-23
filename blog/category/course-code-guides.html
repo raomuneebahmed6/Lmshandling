@@ -563,8 +563,10 @@ img { max-width:100%; height:auto; }
 .blog-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.3rem}
 .blog-card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;transition:.3s;position:relative}
 .blog-card:hover{transform:translateY(-6px);box-shadow:var(--shadow)}
-.blog-card-link{display:flex;flex-direction:column;padding:1.6rem 1.5rem;gap:.5rem}
-.blog-card-tag{display:inline-flex;align-self:flex-start;background:var(--gold-soft);color:#946200;font-size:.75rem;font-weight:700;padding:.3rem .8rem;border-radius:999px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.04em}
+.blog-card-link{display:flex;flex-direction:column;padding:.5rem 1.5rem 1.6rem;gap:.5rem}
+.blog-card-tag-link{display:inline-flex;margin:1.6rem 1.5rem 0}
+.blog-card-tag{display:inline-flex;align-self:flex-start;background:var(--gold-soft);color:#946200;font-size:.75rem;font-weight:700;padding:.3rem .8rem;border-radius:999px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.04em;transition:.2s}
+.blog-card-tag-link:hover .blog-card-tag{background:var(--gold);color:var(--ink)}
 .blog-card h3{margin-top:.3rem;font-size:1.25rem}
 .blog-card p{color:var(--muted);font-size:.92rem;flex:1}
 .blog-card-meta{font-family:var(--mono);font-size:.78rem;color:var(--muted)}
@@ -645,8 +647,8 @@ img { max-width:100%; height:auto; }
   <div class="section-head reveal"><p class="section-label">All Guides</p><h2 id="posts-heading">All Course Code Guides guides.</h2></div>
   <div class="blog-grid">
     <article class="blog-card reveal" data-delay="1">
+      <a href="/blog/category/course-code-guides" class="blog-card-tag-link"><span class="blog-card-tag">Course Code Guides</span></a>
       <a href="/blog/cs101-mcqs-objective-notes" class="blog-card-link">
-        <span class="blog-card-tag">Course Code Guide</span>
         <h3>CS101 MCQs (Objective) Guide 2026: VU Introduction to Computing Notes</h3>
         <p>What CS101's Objective/MCQ portion covers, how to prepare it for midterm and finalterm, and a real 80% result from these files.</p>
         <span class="blog-card-meta">2026 &nbsp;·&nbsp; 5 min read</span>
@@ -654,8 +656,8 @@ img { max-width:100%; height:auto; }
       </a>
     </article>
     <article class="blog-card reveal" data-delay="1">
+      <a href="/blog/category/course-code-guides" class="blog-card-tag-link"><span class="blog-card-tag">Course Code Guides</span></a>
       <a href="/blog/cs201-midterm-finalterm-notes" class="blog-card-link">
-        <span class="blog-card-tag">Course Code Guide</span>
         <h3>CS201 Notes: Midterm &amp; Finalterm Guide 2026</h3>
         <p>What CS201 (Introduction to Programming) covers, how midterm and finalterm prep differ, and how the code-wise Objective &amp; Subjective file approach helps.</p>
         <span class="blog-card-meta">2026 &nbsp;·&nbsp; 6 min read</span>

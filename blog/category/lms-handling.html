@@ -563,8 +563,10 @@ img { max-width:100%; height:auto; }
 .blog-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.3rem}
 .blog-card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;transition:.3s;position:relative}
 .blog-card:hover{transform:translateY(-6px);box-shadow:var(--shadow)}
-.blog-card-link{display:flex;flex-direction:column;padding:1.6rem 1.5rem;gap:.5rem}
-.blog-card-tag{display:inline-flex;align-self:flex-start;background:var(--gold-soft);color:#946200;font-size:.75rem;font-weight:700;padding:.3rem .8rem;border-radius:999px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.04em}
+.blog-card-link{display:flex;flex-direction:column;padding:.5rem 1.5rem 1.6rem;gap:.5rem}
+.blog-card-tag-link{display:inline-flex;margin:1.6rem 1.5rem 0}
+.blog-card-tag{display:inline-flex;align-self:flex-start;background:var(--gold-soft);color:#946200;font-size:.75rem;font-weight:700;padding:.3rem .8rem;border-radius:999px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.04em;transition:.2s}
+.blog-card-tag-link:hover .blog-card-tag{background:var(--gold);color:var(--ink)}
 .blog-card h3{margin-top:.3rem;font-size:1.25rem}
 .blog-card p{color:var(--muted);font-size:.92rem;flex:1}
 .blog-card-meta{font-family:var(--mono);font-size:.78rem;color:var(--muted)}
@@ -645,8 +647,8 @@ img { max-width:100%; height:auto; }
   <div class="section-head reveal"><p class="section-label">All Guides</p><h2 id="posts-heading">All LMS Handling guides.</h2></div>
   <div class="blog-grid">
     <article class="blog-card reveal" data-delay="1">
+      <a href="/blog/category/lms-handling" class="blog-card-tag-link"><span class="blog-card-tag">LMS Handling</span></a>
       <a href="/blog/vu-gdb-graded-discussion-board-guide" class="blog-card-link">
-        <span class="blog-card-tag">LMS Handling</span>
         <h3>VU GDB (Graded Discussion Board): How It Works &amp; How to Score Well on VULMS</h3>
         <p>What a GDB is, where to find it on VULMS, how to write a post that scores well, and the plagiarism and deadline rules that catch most students off guard.</p>
         <span class="blog-card-meta">2026 &nbsp;·&nbsp; 7 min read</span>
@@ -654,8 +656,8 @@ img { max-width:100%; height:auto; }
       </a>
     </article>
     <article class="blog-card reveal">
+      <a href="/blog/category/lms-handling" class="blog-card-tag-link"><span class="blog-card-tag">LMS Handling</span></a>
       <a href="/blog/vu-assignment-guide" class="blog-card-link">
-        <span class="blog-card-tag">LMS Handling</span>
         <h3>VU Assignment Guide: Format, Plagiarism &amp; Deadline Rules on VULMS</h3>
         <p>Where to find and submit your assignment on VULMS, the formatting rules to follow, the similarity/plagiarism check, and how to write one that scores well.</p>
         <span class="blog-card-meta">2026 &nbsp;·&nbsp; 7 min read</span>
@@ -663,8 +665,8 @@ img { max-width:100%; height:auto; }
       </a>
     </article>
     <article class="blog-card reveal" data-delay="1">
+      <a href="/blog/category/lms-handling" class="blog-card-tag-link"><span class="blog-card-tag">LMS Handling</span></a>
       <a href="/blog/vu-quiz-guide" class="blog-card-link">
-        <span class="blog-card-tag">LMS Handling</span>
         <h3>VU Quiz Guide: How VULMS Quizzes Work &amp; How to Prepare</h3>
         <p>Where to find your quiz on VULMS, the activation window, how to prepare for the timed MCQ format efficiently, and the mistakes that cost students marks.</p>
         <span class="blog-card-meta">2026 &nbsp;·&nbsp; 6 min read</span>
@@ -672,8 +674,8 @@ img { max-width:100%; height:auto; }
       </a>
     </article>
     <article class="blog-card reveal" data-delay="1">
+      <a href="/blog/category/lms-handling" class="blog-card-tag-link"><span class="blog-card-tag">LMS Handling</span></a>
       <a href="/blog/vu-attendance-guide" class="blog-card-link">
-        <span class="blog-card-tag">LMS Handling</span>
         <h3>VU Attendance Guide: How VULMS Tracks Lecture Attendance</h3>
         <p>What VU counts as attendance on VULMS, why staying current on lecture tracking matters, where to check your status, and how to stay consistent all semester.</p>
         <span class="blog-card-meta">2026 &nbsp;·&nbsp; 6 min read</span>
