@@ -174,6 +174,9 @@ h3{font-size:1.12rem;font-weight:700}
 .section-label{display:inline-flex;align-items:center;gap:.5rem;font-family:var(--mono);font-size:.75rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--teal);margin-bottom:.9rem}
 .section-label::before{content:"";width:26px;height:3px;border-radius:3px;background:var(--ring)}
 .section-head{max-width:640px;margin-bottom:2.4rem}
+.cat-links{display:flex;flex-wrap:wrap;gap:.7rem}
+.cat-links a{background:var(--white);border:1px solid var(--line);color:var(--ink);font-weight:600;font-size:.9rem;padding:.6rem 1.1rem;border-radius:999px;transition:.2s}
+.cat-links a:hover{background:var(--gold-soft);border-color:var(--gold)}
 .section-head p{margin-top:.8rem;color:var(--muted)}
 .section-head h2::after{content:"";display:block;width:72px;height:4px;border-radius:4px;background:var(--ring);margin-top:.7rem;transform:scaleX(0);transform-origin:left;transition:transform .9s .35s cubic-bezier(.2,.7,.2,1)}
 .section-head.in h2::after{transform:scaleX(1)}
@@ -656,6 +659,11 @@ img { max-width:100%; height:auto; }
       </a>
     </article>
   </div>
+</section>
+
+<section class="section" aria-label="More categories">
+  <div class="section-head reveal"><p class="section-label">Explore More</p><h2>Other VU guide categories</h2></div>
+  <div class="cat-links"><a href="/blog/category/lms-handling">LMS Handling</a><a href="/blog/category/exam-preparation">Exam Preparation</a><a href="/blog/category/course-code-guides">Course Code Guides</a><a href="/blog/category/admissions">Admissions</a><a href="/blog/category/registration">Registration</a></div>
 </section>
 
 <section class="section" aria-label="Get started">
