@@ -8,6 +8,9 @@
 - [Finalterm Files](https://lmshandling.com/services/finalterm-files): code-wise objective and subjective finalterm exam preparation files
 - [Final Year Project Support](https://lmshandling.com/services/final-year-project): proposal, OAR/internship report, PPT, and viva guidance
 
+## Tools
+- [VU CGPA Calculator](https://lmshandling.com/cgpa-calculator): free tool to estimate semester GPA and cumulative CGPA on the standard 4.0 GPA scale, for VU students to plan their academics. Not VU's official grading formula.
+
 ## Guides
 - [VU Summer Semester Registration Guide](https://lmshandling.com/blog/vu-summer-semester-registration-guide): How VU Summer Semester registration works on VULMS - step-by-step process, offered subjects, approximate fee, and whether you should take it based on your CGPA.
 - [VU Midterm and Finalterm Exam Preparation Guide](https://lmshandling.com/blog/vu-midterm-finalterm-exam-preparation-guide): A practical guide to VU midterm and finalterm exam preparation - how VU exams work, a smart study strategy, and how code-wise exam files help raise your CGPA.
