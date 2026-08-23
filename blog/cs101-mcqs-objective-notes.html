@@ -136,6 +136,11 @@ h3{font-size:1.12rem;font-weight:700}
 .top-bar-link .tb-short{display:none}
 @media (max-width:1024px){.top-bar{height:34px}.top-bar-msg{font-size:.72rem}.top-bar-social a{width:22px;height:22px}.top-bar-social svg{width:11px;height:11px}.top-bar-link{height:22px;font-size:.68rem;padding:0 .45rem}.site-header{top:34px}}
 @media (max-width:480px){.top-bar-msg .tb-full{display:none}.top-bar-msg .tb-short{display:inline}.top-bar-link .tb-full{display:none}.top-bar-link .tb-short{display:inline}}
+@media (max-width:640px){.top-bar-social a:not(.top-bar-link){display:none}}
+.whatsapp-float{position:fixed;bottom:1.3rem;right:1.3rem;z-index:90;width:56px;height:56px;border-radius:50%;background:#22C55E;color:#fff;display:grid;place-items:center;box-shadow:0 12px 30px -8px rgba(34,197,94,.6);transition:.25s;animation:floaty 3s ease-in-out infinite}
+.whatsapp-float:hover{transform:scale(1.08)}
+.whatsapp-float svg{width:30px;height:30px}
+
 .brand{display:flex;align-items:center;gap:.6rem;color:var(--ink)}
 .brand span{display:flex;flex-direction:column;line-height:1.15}
 .brand strong{font-family:var(--display);font-weight:800;font-size:1.02rem}
@@ -150,12 +155,6 @@ h3{font-size:1.12rem;font-weight:700}
 .nav-item:hover .dropdown,.nav-item:focus-within .dropdown{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0)}
 .dropdown a{padding:.5rem .7rem;border-radius:8px;font-size:.9rem}
 .dropdown a:hover{background:var(--gold-soft);color:var(--ink)}
-.nav-cta{display:inline-flex;align-items:center;gap:.45rem;white-space:nowrap;flex-shrink:0;background:linear-gradient(135deg,#F5B301,#F7971E);color:var(--ink) !important;padding:.6rem 1.1rem;border-radius:999px;font-weight:700;box-shadow:0 8px 20px -8px rgba(245,179,1,.75);position:relative;overflow:hidden;transition:.25s}
-.nav-cta svg{width:17px;height:17px}
-.nav-cta::after{display:none}
-.nav-cta::before{content:"";position:absolute;top:0;left:-80%;width:50%;height:100%;background:linear-gradient(115deg,transparent,rgba(255,255,255,.6),transparent);transform:skewX(-20deg)}
-.nav-cta:hover{transform:translateY(-2px);box-shadow:0 14px 28px -8px rgba(245,179,1,.9)}
-.nav-cta:hover::before{animation:shine .8s forwards}
 @keyframes shine{to{left:130%}}
 .nav-social{display:flex;align-items:center;gap:.4rem}
 .nav-social a{width:30px;height:30px;border-radius:8px;background:rgba(0,68,139,.08);color:var(--ink-2);display:grid;place-items:center;transition:.2s;flex:0 0 auto}
@@ -522,7 +521,6 @@ img { max-width:100%; height:auto; }
   .dropdown{position:static;transform:none;opacity:1;visibility:visible;box-shadow:none;border:0;background:none;display:none;padding:.2rem 0 .6rem 1rem;max-height:none}
   .nav-item.open .dropdown{display:grid}
   .nav-item:hover .dropdown,.nav-item:focus-within .dropdown,.nav-item.open .dropdown{transform:none;opacity:1;visibility:visible}
-  .nav-cta{margin-top:.8rem;text-align:center;padding:.7rem 1.25rem}
 }
 @media (max-width:860px){
   .menu-toggle{display:flex}
@@ -533,13 +531,13 @@ img { max-width:100%; height:auto; }
   .dropdown{position:static;transform:none;opacity:1;visibility:visible;box-shadow:none;border:0;background:none;display:none;padding:.2rem 0 .6rem 1rem;max-height:none}
   .nav-item.open .dropdown{display:grid}
   .nav-item:hover .dropdown,.nav-item:focus-within .dropdown,.nav-item.open .dropdown{transform:none;opacity:1;visibility:visible}
-  .nav-cta{margin-top:.8rem;text-align:center;padding:.7rem 1.25rem}
   .contact-card{grid-template-columns:1fr}
   .fyp-layout,.cgpa-panel{grid-template-columns:1fr}
   .lb-prev{left:.4rem}
   .lb-next{right:.4rem}
 }
 @media (max-width:600px){
+  .whatsapp-float{width:50px;height:50px;bottom:1rem;right:1rem}
   .grid-4,.grid-2,.grid-3,.stats-grid{grid-template-columns:1fr}
   .form-row{grid-template-columns:1fr}
   .hero-quick-services{grid-template-columns:1fr}
@@ -662,6 +660,10 @@ img { max-width:100%; height:auto; }
 <div class="loader" aria-hidden="true"><img src="/assets/logo.png" alt=""></div>
 <div class="scroll-progress" aria-hidden="true"></div>
 
+<a class="whatsapp-float" data-whatsapp="Hello Nibaha Haq, I need Virtual University academic support." target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
+  <svg viewBox="0 0 32 32" aria-hidden="true"><path fill="currentColor" d="M16.02 3C8.85 3 3.02 8.78 3.02 15.9c0 2.36.64 4.58 1.77 6.48L3 29l6.78-1.76a13.1 13.1 0 0 0 6.24 1.58C23.19 28.82 29 23.03 29 15.9C29 8.78 23.19 3 16.02 3Zm0 23.52c-1.95 0-3.77-.52-5.35-1.43l-.38-.22l-4.02 1.04l1.07-3.89l-.25-.4a10.51 10.51 0 0 1-1.75-5.72c0-5.84 4.79-10.6 10.68-10.6c5.88 0 10.66 4.76 10.66 10.6c0 5.86-4.78 10.62-10.66 10.62Zm5.84-7.95c-.32-.16-1.9-.93-2.2-1.04c-.29-.11-.51-.16-.72.16c-.21.32-.82 1.04-1 1.25c-.18.21-.37.24-.69.08c-.32-.16-1.35-.49-2.58-1.56c-.95-.84-1.59-1.88-1.78-2.2c-.18-.32-.02-.49.14-.65c.14-.14.32-.37.48-.56c.16-.19.21-.32.32-.54c.11-.21.05-.4-.03-.56c-.08-.16-.72-1.73-.99-2.37c-.26-.62-.52-.54-.72-.55h-.61c-.21 0-.56.08-.85.4c-.29.32-1.12 1.09-1.12 2.66c0 1.57 1.15 3.09 1.31 3.3c.16.21 2.26 3.43 5.48 4.81c.77.33 1.37.53 1.84.68c.77.24 1.47.21 2.03.13c.62-.09 1.9-.77 2.17-1.52c.27-.75.27-1.39.19-1.52c-.08-.13-.29-.21-.61-.37Z"/></svg>
+</a>
+
 <div class="top-bar" id="topBar">
   <a class="top-bar-msg" href="/services/"><span class="tb-full">📄 Midterm &amp; Finalterm Files Available</span><span class="tb-short">📄 Files Available</span></a>
   <div class="top-bar-social">
@@ -707,7 +709,7 @@ img { max-width:100%; height:auto; }
     <a href="/scheme">Study Scheme</a>
     <a href="/cgpa-calculator">CGPA Calculator</a>
     <a href="/contact">Contact</a>
-    <a class="nav-cta" data-whatsapp="Hello Nibaha Haq, I need VU academic support." target="_blank" rel="noopener"><svg viewBox="0 0 32 32" aria-hidden="true"><path fill="currentColor" d="M16.02 3C8.85 3 3.02 8.78 3.02 15.9c0 2.36.64 4.58 1.77 6.48L3 29l6.78-1.76a13.1 13.1 0 0 0 6.24 1.58C23.19 28.82 29 23.03 29 15.9C29 8.78 23.19 3 16.02 3Zm0 23.52c-1.95 0-3.77-.52-5.35-1.43l-.38-.22l-4.02 1.04l1.07-3.89l-.25-.4a10.51 10.51 0 0 1-1.75-5.72c0-5.84 4.79-10.6 10.68-10.6c5.88 0 10.66 4.76 10.66 10.6c0 5.86-4.78 10.62-10.66 10.62Z"/></svg>WhatsApp Us</a>
+    
   </nav>
 </header>
 
