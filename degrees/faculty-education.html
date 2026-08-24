@@ -700,8 +700,10 @@ safe("whatsapp-links", () => {
 safe("loader", () => {
   const loader = document.querySelector(".loader");
   if (!loader) return;
-  window.addEventListener("load", () => loader.classList.add("done"));
-  setTimeout(() => loader.classList.add("done"), 2500);
+  const hideLoader = () => loader.classList.add("done");
+  if (document.readyState !== "loading") hideLoader();
+  else document.addEventListener("DOMContentLoaded", hideLoader);
+  setTimeout(hideLoader, 400);
 });
 
 /* ---------- scroll: progress bar, header pill, parallax, timeline, to-top ---------- */
