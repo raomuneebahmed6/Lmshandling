@@ -45,7 +45,9 @@
 <!-- ===================== FONTS ===================== -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet"></noscript>
 
 <!-- ===================== STRUCTURED DATA ===================== -->
 <script type="application/ld+json">
@@ -593,7 +595,7 @@ img { max-width:100%; height:auto; }
 </head>
 <body>
 
-<div class="loader" aria-hidden="true"><img src="/assets/logo.png" alt=""></div>
+<div class="loader" aria-hidden="true"><img src="/assets/logo.webp" alt=""></div>
 <div class="scroll-progress" aria-hidden="true"></div>
 
 <a class="whatsapp-float" data-whatsapp="Hello Nibaha Haq, I need Virtual University academic support." target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
@@ -612,7 +614,7 @@ img { max-width:100%; height:auto; }
   </div>
 </div>
 <header class="site-header" id="siteHeader">
-  <a href="/" class="brand"><img src="/assets/logo.png" alt="Nibaha Haq logo" width="40" height="40"><span><strong>Nibaha Haq</strong><small>VU Academic Support</small></span></a>
+  <a href="/" class="brand"><img src="/assets/logo.webp" alt="Nibaha Haq logo" width="40" height="40"><span><strong>Nibaha Haq</strong><small>VU Academic Support</small></span></a>
   <button class="menu-toggle" id="menuToggle" aria-label="Open menu" aria-expanded="false" aria-controls="mainNav"><span></span><span></span><span></span></button>
   <nav class="main-nav" id="mainNav" aria-label="Main navigation">
     <a href="/">Home</a>
@@ -709,7 +711,7 @@ img { max-width:100%; height:auto; }
 <footer class="footer">
   <div class="footer-top">
     <div class="footer-brand">
-      <img src="/assets/logo.png" alt="Nibaha Haq logo" loading="lazy">
+      <img src="/assets/logo.webp" alt="Nibaha Haq logo" loading="lazy">
       <div><strong>Nibaha Haq | Academic Support Services</strong><p>Structured VULMS support, Midterm files, Finalterm files, degree-wise pages and Final Year Project guidance for Virtual University students.</p></div>
     </div>
     <nav class="footer-col" aria-label="Quick links"><h3>Quick Links</h3><a href="/">Home</a><a href="/about">About</a><a href="/services/">Services</a><a href="/degrees/">Degrees</a></nav>
