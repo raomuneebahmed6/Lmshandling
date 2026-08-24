@@ -24,11 +24,14 @@
 - [VU Quiz Guide](https://lmshandling.com/blog/vu-quiz-guide): How VU quizzes work on VULMS: where to find them, the activation window, MCQ format, how to prepare efficiently, and mistakes that cost marks.
 - [VU Attendance Guide](https://lmshandling.com/blog/vu-attendance-guide): How VU lecture attendance works on VULMS: what counts as attendance, why staying current matters, where to check it, and common mistakes to avoid.
 - [CS201 Midterm and Finalterm Notes](https://lmshandling.com/blog/cs201-midterm-finalterm-notes): CS201 (Introduction to Programming) midterm and finalterm notes: code-wise Objective and Subjective files matched to VU's own lecture content.
+- [MGT101 Midterm and Finalterm Notes](https://lmshandling.com/blog/mgt101-financial-accounting-notes): MGT101 (Financial Accounting) midterm and finalterm notes: code-wise Objective and Subjective files matched to VU's own lecture content and format.
+- [ECO401 Midterm and Finalterm Notes](https://lmshandling.com/blog/eco401-economics-notes): ECO401 (Economics) midterm and finalterm notes: code-wise Objective and Subjective files matched to VU's own lecture content and exam format.
+- [STA301 Midterm and Finalterm Notes](https://lmshandling.com/blog/sta301-statistics-notes): STA301 (Statistics and Probability) midterm and finalterm notes: code-wise Objective and Subjective files matched to VU's own lecture content.
 
 ## Blog Categories
 - [LMS Handling](https://lmshandling.com/blog/category/lms-handling): Guides for VULMS quizzes, assignments, GDBs, and lecture attendance, the recurring weekly tasks each semester.
 - [Exam Preparation](https://lmshandling.com/blog/category/exam-preparation): Midterm and finalterm exam preparation strategy, plus code-wise finalterm notes for all subjects.
-- [Course Code Guides](https://lmshandling.com/blog/category/course-code-guides): Subject-specific VU course code guides, starting with CS101 and CS201, covering what each course's midterm and finalterm portions include.
+- [Course Code Guides](https://lmshandling.com/blog/category/course-code-guides): Subject-specific VU course code guides covering CS101, CS201, MGT101, ECO401, and STA301, what each course's midterm and finalterm portions include.
 - [Admissions](https://lmshandling.com/blog/category/admissions): Virtual University admission guides covering eligibility criteria, the application form, required documents, and fees.
 - [Final Year Project](https://lmshandling.com/blog/category/final-year-project): Every stage of a VU Final Year Project, from proposal to OAR report, PPT preparation, and viva.
 - [Registration](https://lmshandling.com/blog/category/registration): VU semester registration guides on VULMS, covering the registration process, subjects offered, and fees.
