@@ -4,14 +4,18 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-RL2VZFJM2L"></script>
+<!-- Google tag (gtag.js), deferred until after load to keep it off the critical rendering path -->
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
   gtag('config', 'G-RL2VZFJM2L');
+  window.addEventListener('load', function(){
+    var s = document.createElement('script');
+    s.async = true;
+    s.src = 'https://www.googletagmanager.com/gtag/js?id=G-RL2VZFJM2L';
+    document.head.appendChild(s);
+  });
 </script>
 
 <!-- ===================== PRIMARY SEO ===================== -->
@@ -449,7 +453,7 @@ img { max-width:100%; height:auto; }
 .shot-rail-wrap:hover .shot-rail{animation-play-state:paused}
 .shot-card{flex:0 0 215px;border-radius:16px;overflow:hidden;border:2px solid var(--line);cursor:zoom-in;transition:.3s;background:#000}
 .shot-card:hover{transform:translateY(-6px) scale(1.02);border-color:var(--gold);box-shadow:var(--shadow)}
-.shot-card img{width:100%;display:block}
+.shot-card img{width:100%;display:block;aspect-ratio:2/4.5;object-fit:cover}
 
 /* ---------- image lightbox ---------- */
 .img-lightbox{position:fixed;inset:0;background:rgba(3,17,38,.88);backdrop-filter:blur(6px);display:grid;place-items:center;padding:1.2rem;opacity:0;visibility:hidden;transition:.3s;z-index:170;cursor:zoom-out}
@@ -650,7 +654,7 @@ img { max-width:100%; height:auto; }
 </head>
 <body>
 
-<div class="loader" aria-hidden="true"><img src="/assets/logo.webp" alt=""></div>
+<div class="loader" aria-hidden="true"><img src="/assets/logo.webp" alt="" width="84" height="84"></div>
 <div class="scroll-progress" aria-hidden="true"></div>
 
 <a class="whatsapp-float" data-whatsapp="Hello Nibaha Haq, I need Virtual University academic support." target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
