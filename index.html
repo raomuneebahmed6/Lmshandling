@@ -257,6 +257,17 @@ h3{font-size:1.12rem;font-weight:700}
 .service-card .icon svg{width:28px;height:28px}
 .service-card p{font-size:.9rem;color:var(--muted);flex:1}
 .read-more{font-weight:600;font-size:.88rem;color:var(--teal)}
+.blog-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.3rem}
+.blog-card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;transition:.3s;position:relative}
+.blog-card:hover{transform:translateY(-6px);box-shadow:var(--shadow)}
+.blog-card-link{display:flex;flex-direction:column;padding:.5rem 1.5rem 1.6rem;gap:.5rem}
+.blog-card-tag-link{display:inline-flex;margin:1.6rem 1.5rem 0}
+.blog-card-tag{display:inline-flex;align-self:flex-start;background:var(--gold-soft);color:#946200;font-size:.75rem;font-weight:700;padding:.3rem .8rem;border-radius:999px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.04em;transition:.2s}
+.blog-card-tag-link:hover .blog-card-tag{background:var(--gold);color:var(--ink)}
+.blog-card h3{margin-top:.3rem;font-size:1.25rem}
+.blog-card p{color:var(--muted);font-size:.92rem;flex:1}
+.blog-card-meta{font-family:var(--mono);font-size:.78rem;color:var(--muted)}
+@media (max-width:700px){.blog-grid{grid-template-columns:1fr}}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 .read-more::after{content:" →";transition:.2s}
 .read-more:hover::after{margin-left:4px}
@@ -873,6 +884,52 @@ h3{font-size:1.12rem;font-weight:700}
 </div></div>
   <div class="sp-view-all reveal">
     <a class="btn primary" href="/vu-notes">VU Notes</a>
+  </div>
+</section>
+
+<!-- ================= BLOG ================= -->
+<section class="section" id="blog-preview" aria-labelledby="blog-preview-heading">
+  <div class="section-head reveal"><p class="section-label">From the Blog</p><h2 id="blog-preview-heading">Latest VU guides.</h2></div>
+  <div class="blog-grid">
+    <article class="blog-card reveal">
+      <a href="/blog/category/admissions" class="blog-card-tag-link"><span class="blog-card-tag">Admissions</span></a>
+      <a href="/blog/vu-fall-2026-admissions-open" class="blog-card-link">
+        <h3>VU Fall 2026 Admissions Open: Key Dates &amp; Full Program List</h3>
+        <p>Last date to apply, the separate MS/MPhil deadline, and the complete MS, ADP, Diploma and BS-lateral program list by faculty for VU Fall 2026.</p>
+        <span class="blog-card-meta">2026 &nbsp;·&nbsp; 7 min read</span>
+        <span class="read-more">Read the guide</span>
+      </a>
+    </article>
+    <article class="blog-card reveal" data-delay="1">
+      <a href="/blog/category/registration" class="blog-card-tag-link"><span class="blog-card-tag">Registration</span></a>
+      <a href="/blog/vu-important-dates-2026" class="blog-card-link">
+        <h3>VU Important Dates 2026: LMS Blocking, Mids, Finals &amp; Results</h3>
+        <p>VU's LMS blocking dates for fee, Summer Semester Mids and Finals schedule, and the Results date for this cycle, plus what each deadline means.</p>
+        <span class="blog-card-meta">2026 &nbsp;·&nbsp; 5 min read</span>
+        <span class="read-more">Read the guide</span>
+      </a>
+    </article>
+    <article class="blog-card reveal" data-delay="2">
+      <a href="/blog/category/admissions" class="blog-card-tag-link"><span class="blog-card-tag">Admissions</span></a>
+      <a href="/blog/vu-admission-eligibility-criteria-2026" class="blog-card-link">
+        <h3>VU Admission Eligibility Criteria 2026: BS, MS &amp; MPhil Requirements Explained</h3>
+        <p>Minimum percentage, CGPA, entry test rules, the BS lateral entry option, and how to confirm the exact eligibility requirement for your specific VU program.</p>
+        <span class="blog-card-meta">2026 &nbsp;·&nbsp; 6 min read</span>
+        <span class="read-more">Read the guide</span>
+      </a>
+    </article>
+    <article class="blog-card reveal" data-delay="3">
+      <a href="/blog/category/admissions" class="blog-card-tag-link"><span class="blog-card-tag">Admissions</span></a>
+      <a href="/blog/virtual-university-admission-guide" class="blog-card-link">
+        <h3>Virtual University Admission Guide 2026: How to Apply Step by Step</h3>
+        <p>Eligibility, admission fee, the online application form, required documents, and final submission for BS, ADP, MCS, MBA and more: everything before your first semester starts.</p>
+        <span class="blog-card-meta">2026 &nbsp;·&nbsp; 7 min read</span>
+        <span class="read-more">Read the guide</span>
+      </a>
+    </article>
+  </div>
+  <div class="sp-view-all reveal">
+    <a class="btn primary" href="/blog/">View All Blogs</a>
   </div>
 </section>
 
