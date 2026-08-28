@@ -1,0 +1,45 @@
+# Nibaha Haq | Academic Support Services
+
+> Academic support for Virtual University (VU) Pakistan students: VULMS handling (quizzes, assignments, GDBs, lecture attendance), code-wise Midterm and Finalterm exam files for 606+ course codes, and Final Year Project (FYP) guidance. Based in Pakistan, run by Nibaha Haq, 3+ years experience, 200+ student accounts handled.
+
+## Services
+- [VULMS Handling](https://lmshandling.com/services/lms-services): quiz, assignment, GDB, and lecture attendance management
+- [Midterm Files](https://lmshandling.com/services/midterm-files): code-wise objective and subjective midterm exam preparation files
+- [Finalterm Files](https://lmshandling.com/services/finalterm-files): code-wise objective and subjective finalterm exam preparation files
+- [Final Year Project Support](https://lmshandling.com/services/final-year-project): proposal, OAR/internship report, PPT, and viva guidance
+
+## Tools
+- [VU CGPA Calculator](https://lmshandling.com/cgpa-calculator): free tool to estimate semester GPA and cumulative CGPA on the standard 4.0 GPA scale, for VU students to plan their academics. Not VU's official grading formula.
+
+## Guides
+- [VU Fall 2026 Admissions Open](https://lmshandling.com/blog/vu-fall-2026-admissions-open): VU Fall 2026 admissions key dates - last date to apply, the separate MS/MPhil deadline, and the complete MS, ADP, Diploma and BS-lateral program list by faculty.
+- [VU Important Dates 2026](https://lmshandling.com/blog/vu-important-dates-2026): VU's LMS blocking dates for fee, Summer Semester Mids and Finals schedule, new session start, and Results date for this cycle, plus what each deadline means.
+- [VU Summer Semester Registration Guide](https://lmshandling.com/blog/vu-summer-semester-registration-guide): How VU Summer Semester registration works on VULMS - step-by-step process, offered subjects, approximate fee, and whether you should take it based on your CGPA.
+- [VU Midterm and Finalterm Exam Preparation Guide](https://lmshandling.com/blog/vu-midterm-finalterm-exam-preparation-guide): A practical guide to VU midterm and finalterm exam preparation - how VU exams work, a smart study strategy, and how code-wise exam files help raise your CGPA.
+- [VU Final Year Project (FYP) Guide](https://lmshandling.com/blog/vu-final-year-project-fyp-guide): A complete VU FYP roadmap - choosing an organization, writing an OAR/Internship Report that doesn't get rejected, PPT prep, and viva - with real case studies.
+- [Virtual University Admission Guide](https://lmshandling.com/blog/virtual-university-admission-guide): Virtual University (VU) admission guide - eligibility, admission fee, online form, required documents, and final submission for BS, ADP, MCS, MBA and more.
+- [VU Admission Eligibility Criteria 2026](https://lmshandling.com/blog/vu-admission-eligibility-criteria-2026): VU admission eligibility criteria for BS, ADP, MS and MPhil programs - minimum percentage, CGPA, entry test rules, the BS lateral entry option, and how to confirm the exact requirement for your program.
+- [VU Finalterm Notes PDF 2026](https://lmshandling.com/blog/vu-finalterm-notes-pdf-2026): Download VU finalterm notes PDF 2026 for all subjects - solved Objective MCQs and Subjective short and long questions, code-wise, matched to VU's own lectures.
+- [CS101 MCQs Objective Notes](https://lmshandling.com/blog/cs101-mcqs-objective-notes): CS101 (Introduction to Computing) Objective MCQs for VU midterm and finalterm - code-wise notes matched to VU's own lectures, plus a real 80% result.
+- [VU GDB (Graded Discussion Board) Guide](https://lmshandling.com/blog/vu-gdb-graded-discussion-board-guide): How VU GDB (Graded Discussion Board) works on VULMS, the word limit, deadline, marking criteria, plagiarism rules, and how to write a high-scoring GDB post.
+- [VU Assignment Guide](https://lmshandling.com/blog/vu-assignment-guide): How VU assignments work on VULMS: formatting rules, submission steps, the similarity/plagiarism check, deadlines, and how to write a high-scoring assignment.
+- [VU Quiz Guide](https://lmshandling.com/blog/vu-quiz-guide): How VU quizzes work on VULMS: where to find them, the activation window, MCQ format, how to prepare efficiently, and mistakes that cost marks.
+- [VU Attendance Guide](https://lmshandling.com/blog/vu-attendance-guide): How VU lecture attendance works on VULMS: what counts as attendance, why staying current matters, where to check it, and common mistakes to avoid.
+- [CS201 Midterm and Finalterm Notes](https://lmshandling.com/blog/cs201-midterm-finalterm-notes): CS201 (Introduction to Programming) midterm and finalterm notes: code-wise Objective and Subjective files matched to VU's own lecture content.
+- [MGT101 Midterm and Finalterm Notes](https://lmshandling.com/blog/mgt101-financial-accounting-notes): MGT101 (Financial Accounting) midterm and finalterm notes: code-wise Objective and Subjective files matched to VU's own lecture content and format.
+- [ECO401 Midterm and Finalterm Notes](https://lmshandling.com/blog/eco401-economics-notes): ECO401 (Economics) midterm and finalterm notes: code-wise Objective and Subjective files matched to VU's own lecture content and exam format.
+- [STA301 Midterm and Finalterm Notes](https://lmshandling.com/blog/sta301-statistics-notes): STA301 (Statistics and Probability) midterm and finalterm notes: code-wise Objective and Subjective files matched to VU's own lecture content.
+
+## Blog Categories
+- [LMS Handling](https://lmshandling.com/blog/category/lms-handling): Guides for VULMS quizzes, assignments, GDBs, and lecture attendance, the recurring weekly tasks each semester.
+- [Exam Preparation](https://lmshandling.com/blog/category/exam-preparation): Midterm and finalterm exam preparation strategy, plus code-wise finalterm notes for all subjects.
+- [Course Code Guides](https://lmshandling.com/blog/category/course-code-guides): Subject-specific VU course code guides covering CS101, CS201, MGT101, ECO401, and STA301, what each course's midterm and finalterm portions include.
+- [Admissions](https://lmshandling.com/blog/category/admissions): Virtual University admission guides covering eligibility criteria, the application form, required documents, and fees.
+- [Final Year Project](https://lmshandling.com/blog/category/final-year-project): Every stage of a VU Final Year Project, from proposal to OAR report, PPT preparation, and viva.
+- [Registration](https://lmshandling.com/blog/category/registration): VU semester registration guides on VULMS, covering the registration process, subjects offered, and fees.
+
+## About
+- [About Nibaha Haq](https://lmshandling.com/about)
+- [Contact](https://lmshandling.com/contact)
+- [Student Reviews](https://lmshandling.com/reviews)
+- [Student Results](https://lmshandling.com/results)
