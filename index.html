@@ -76,7 +76,11 @@
     {"@type": "Question","name": "Which Virtual University services do you provide?","acceptedAnswer": {"@type": "Answer","text": "Four core services: VULMS handling (quizzes, assignments, GDB, attendance and deadlines), Midterm exam files, Finalterm exam files, and complete Final Year Project support from proposal to viva."}},
     {"@type": "Question","name": "How many VU course codes are covered?","acceptedAnswer": {"@type": "Answer","text": "606+ course codes across Computer Science, Business, Psychology, English, Education, Mathematics, Biology and more, each with code-wise Midterm and Finalterm files."}},
     {"@type": "Question","name": "How do I place an order or ask a question?","acceptedAnswer": {"@type": "Answer","text": "Message on WhatsApp at 0329-5209868 with your program, semester, subject code and required service, or use the query form on the website."}},
-    {"@type": "Question","name": "Is this suitable for working students?","acceptedAnswer": {"@type": "Answer","text": "Yes. The support is designed for busy VU students managing jobs, businesses, home responsibilities or motherhood alongside their degree."}}
+    {"@type": "Question","name": "Is this suitable for working students?","acceptedAnswer": {"@type": "Answer","text": "Yes. The support is designed for busy VU students managing jobs, businesses, home responsibilities or motherhood alongside their degree."}},
+    {"@type": "Question","name": "Do you help with VU Fall 2026 admissions?","acceptedAnswer": {"@type": "Answer","text": "Yes. Message your intended program and qualification for guidance on eligibility and the application process, alongside the full exam file and LMS handling support once you're enrolled."}},
+    {"@type": "Question","name": "Is the CGPA calculator the same as VU's official CGPA?","acceptedAnswer": {"@type": "Answer","text": "No. It uses the standard 4.0 GPA scale for planning purposes only. VU calculates official CGPA through its own grading policy shown on your VULMS transcript, so use the calculator as an estimate, not a final record."}},
+    {"@type": "Question","name": "How fast will I receive my file after ordering?","acceptedAnswer": {"@type": "Answer","text": "Files are sent directly on WhatsApp once payment is confirmed, usually within minutes during working hours."}},
+    {"@type": "Question","name": "Do you support all VU degree programs?","acceptedAnswer": {"@type": "Answer","text": "Yes, including BS, ADP, MCS, MBA and more across Computer Science, Business, Education, Arts and Science faculties. Message your specific program to confirm coverage."}}
   ]
 }
 </script>
@@ -319,7 +323,9 @@ h3{font-size:1.12rem;font-weight:700}
 .no-codes{font-family:var(--mono);color:var(--muted);padding:1rem 0;display:none}
 
 /* ---------- FAQ ---------- */
-.faq-list{display:grid;gap:.8rem;max-width:760px}
+.faq-list{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;max-width:1100px;align-items:start}
+.faq-col{display:grid;gap:.8rem}
+@media (max-width:760px){.faq-list{grid-template-columns:1fr}}
 .faq-list details{background:var(--white);border:1px solid var(--line);border-radius:14px;padding:1rem 1.3rem;transition:.25s}
 .faq-list details:hover{border-color:var(--gold);transform:translateX(4px)}
 .faq-list details[open]{border-color:var(--gold);box-shadow:var(--shadow);transform:none}
@@ -940,10 +946,18 @@ h3{font-size:1.12rem;font-weight:700}
     <h2 id="faq-heading">Common questions, quick answers.</h2>
   </div>
   <div class="faq-list reveal">
-    <details><summary>Which Virtual University services do you provide?</summary><p>Four core services: VULMS handling (quizzes, assignments, GDB, attendance and deadlines), Midterm exam files, Finalterm exam files, and complete Final Year Project support from proposal to viva.</p></details>
-    <details><summary>How many VU course codes are covered?</summary><p>606+ course codes across Computer Science, Business, Psychology, English, Education, Mathematics, Biology and more, each with code-wise Midterm and Finalterm files.</p></details>
-    <details><summary>How do I place an order or ask a question?</summary><p>Message on WhatsApp at 0329-5209868 with your program, semester, subject code and required service, or use the query form below.</p></details>
-    <details><summary>Is this suitable for working students?</summary><p>Yes. The support is designed for busy VU students managing jobs, businesses, home responsibilities or motherhood alongside their degree.</p></details>
+    <div class="faq-col">
+      <details><summary>Which Virtual University services do you provide?</summary><p>Four core services: VULMS handling (quizzes, assignments, GDB, attendance and deadlines), Midterm exam files, Finalterm exam files, and complete Final Year Project support from proposal to viva.</p></details>
+      <details><summary>How many VU course codes are covered?</summary><p>606+ course codes across Computer Science, Business, Psychology, English, Education, Mathematics, Biology and more, each with code-wise Midterm and Finalterm files.</p></details>
+      <details><summary>How do I place an order or ask a question?</summary><p>Message on WhatsApp at 0329-5209868 with your program, semester, subject code and required service, or use the query form below.</p></details>
+      <details><summary>Is this suitable for working students?</summary><p>Yes. The support is designed for busy VU students managing jobs, businesses, home responsibilities or motherhood alongside their degree.</p></details>
+    </div>
+    <div class="faq-col">
+      <details><summary>Do you help with VU Fall 2026 admissions?</summary><p>Yes. Message your intended program and qualification for guidance on eligibility and the application process, alongside the full exam file and LMS handling support once you're enrolled.</p></details>
+      <details><summary>Is the CGPA calculator the same as VU's official CGPA?</summary><p>No. It uses the standard 4.0 GPA scale for planning purposes only. VU calculates official CGPA through its own grading policy shown on your VULMS transcript, so use the calculator as an estimate, not a final record.</p></details>
+      <details><summary>How fast will I receive my file after ordering?</summary><p>Files are sent directly on WhatsApp once payment is confirmed, usually within minutes during working hours.</p></details>
+      <details><summary>Do you support all VU degree programs?</summary><p>Yes, including BS, ADP, MCS, MBA and more across Computer Science, Business, Education, Arts and Science faculties. Message your specific program to confirm coverage.</p></details>
+    </div>
   </div>
 </section>
 
