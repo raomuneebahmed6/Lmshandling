@@ -1,0 +1,150 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum StaffRole {
+  OWNER
+  PHARMACIST
+  MANAGER
+  STAFF
+}
+
+enum ShiftStatus {
+  ON_DUTY
+  UPCOMING
+  ON_LEAVE
+}
+
+enum StockStatus {
+  IN_STOCK
+  LOW_STOCK
+  CRITICAL
+}
+
+enum OrderSource {
+  IN_STORE
+  WEBSITE
+}
+
+enum OrderStatus {
+  PENDING
+  PACKING
+  COMPLETED
+  DELIVERED
+  CANCELLED
+}
+
+enum CalendarEventType {
+  SHIFT
+  RESTOCK
+  EXPIRY
+  OTHER
+}
+
+model Staff {
+  id           String      @id @default(cuid())
+  name         String
+  email        String      @unique
+  passwordHash String
+  role         StaffRole   @default(STAFF)
+  phone        String?
+  shiftStart   String? // e.g. "09:00"
+  shiftEnd     String? // e.g. "18:00"
+  shiftStatus  ShiftStatus @default(UPCOMING)
+  active       Boolean     @default(true)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  calendarEvents CalendarEvent[]
+
+  @@index([role])
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  name        String
+  category    String
+  unitPrice   Decimal  @db.Decimal(10, 2)
+  reorderAt   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  batches    StockBatch[]
+  orderItems OrderItem[]
+
+  @@index([category])
+}
+
+model StockBatch {
+  id        String      @id @default(cuid())
+  product   Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId String
+  batchCode String
+  quantity  Int
+  expiresOn DateTime?
+  status    StockStatus @default(IN_STOCK)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  @@index([productId])
+  @@index([expiresOn])
+}
+
+model Customer {
+  id        String   @id @default(cuid())
+  name      String
+  phone     String
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  orders Order[]
+
+  @@index([phone])
+}
+
+model Order {
+  id         String      @id @default(cuid())
+  customer   Customer?   @relation(fields: [customerId], references: [id])
+  customerId String?
+  source     OrderSource @default(IN_STORE)
+  status     OrderStatus @default(PENDING)
+  total      Decimal     @db.Decimal(10, 2)
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
+  items OrderItem[]
+
+  @@index([status])
+  @@index([createdAt])
+}
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderId   String
+  product   Product @relation(fields: [productId], references: [id])
+  productId String
+  quantity  Int
+  unitPrice Decimal @db.Decimal(10, 2)
+
+  @@index([orderId])
+}
+
+model CalendarEvent {
+  id        String            @id @default(cuid())
+  title     String
+  type      CalendarEventType @default(OTHER)
+  date      DateTime
+  staff     Staff?            @relation(fields: [staffId], references: [id])
+  staffId   String?
+  notes     String?
+  createdAt DateTime          @default(now())
+
+  @@index([date])
+}
