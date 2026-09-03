@@ -725,7 +725,13 @@ const reduceMotion = !!(window.matchMedia && window.matchMedia("(prefers-reduced
 
 /* ---------- WhatsApp links ---------- */
 safe("whatsapp-links", () => {
-  document.querySelectorAll("[data-whatsapp]").forEach(el => { el.href = waLink(el.dataset.whatsapp); });
+  const pagePath = location.pathname === "/" ? "home" : location.pathname.replace(/^\/|\/$/g, "");
+  document.querySelectorAll("[data-whatsapp]").forEach(el => {
+    el.href = waLink(el.dataset.whatsapp + "\n(Page: " + pagePath + ")");
+    el.addEventListener("click", () => {
+      if (typeof gtag === "function") gtag("event", "whatsapp_click", { page_path: location.pathname, cta_text: el.dataset.whatsapp.slice(0, 80) });
+    });
+  });
 });
 
 /* ---------- loader ---------- */

@@ -30,6 +30,9 @@
 - [MGT101 Midterm and Finalterm Notes](https://lmshandling.com/blog/mgt101-financial-accounting-notes): MGT101 (Financial Accounting) midterm and finalterm notes: code-wise Objective and Subjective files matched to VU's own lecture content and format.
 - [ECO401 Midterm and Finalterm Notes](https://lmshandling.com/blog/eco401-economics-notes): ECO401 (Economics) midterm and finalterm notes: code-wise Objective and Subjective files matched to VU's own lecture content and exam format.
 - [STA301 Midterm and Finalterm Notes](https://lmshandling.com/blog/sta301-statistics-notes): STA301 (Statistics and Probability) midterm and finalterm notes: code-wise Objective and Subjective files matched to VU's own lecture content.
+- [MGT201 Midterm and Finalterm Notes](https://lmshandling.com/blog/mgt201-principles-of-management-notes): MGT201 (Principles of Management) midterm and finalterm notes: code-wise Objective and Subjective files matched to VU's own lecture content and format.
+- [PSY101 Midterm and Finalterm Notes](https://lmshandling.com/blog/psy101-introduction-to-psychology-notes): PSY101 (Introduction to Psychology) midterm and finalterm notes: code-wise Objective and Subjective files matched to VU's own lecture content and format.
+- [CS301 Midterm and Finalterm Notes](https://lmshandling.com/blog/cs301-data-structures-notes): CS301 (Data Structures) midterm and finalterm notes: code-wise Objective and Subjective files matched to VU's own lecture content and format.
 
 ## Blog Categories
 - [LMS Handling](https://lmshandling.com/blog/category/lms-handling): Guides for VULMS quizzes, assignments, GDBs, and lecture attendance, the recurring weekly tasks each semester.
