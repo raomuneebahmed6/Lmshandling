@@ -11,6 +11,9 @@
 ## Tools
 - [VU CGPA Calculator](https://lmshandling.com/cgpa-calculator): free tool to estimate semester GPA and cumulative CGPA on the standard 4.0 GPA scale, for VU students to plan their academics. Not VU's official grading formula.
 
+## Degree Programs
+- [VU Degree Programs](https://lmshandling.com/degrees/): Browse VU degree programs by faculty - course codes with Midterm and Finalterm exam files, LMS handling and FYP support for each degree (Computer Science, Software Engineering, IT, Business Administration, Psychology, and 20+ more).
+
 ## Guides
 - [VU Fall 2026 Admissions Open](https://lmshandling.com/blog/vu-fall-2026-admissions-open): VU Fall 2026 admissions key dates - last date to apply, the separate MS/MPhil deadline, and the complete MS, ADP, Diploma and BS-lateral program list by faculty.
 - [VU Important Dates 2026](https://lmshandling.com/blog/vu-important-dates-2026): VU's LMS blocking dates for fee, Summer Semester Mids and Finals schedule, new session start, and Results date for this cycle, plus what each deadline means.
