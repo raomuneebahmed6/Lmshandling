@@ -15,6 +15,8 @@
 - [VU Degree Programs](https://lmshandling.com/degrees/): Browse VU degree programs by faculty - course codes with Midterm and Finalterm exam files, LMS handling and FYP support for each degree (Computer Science, Software Engineering, IT, Business Administration, Psychology, and 20+ more).
 
 ## Guides
+- [VU Fee Structure Guide](https://lmshandling.com/blog/vu-fee-structure-guide): VU's official fee structure by program - admission, registration, security and tuition fee per credit hour for Associate Degree, Bachelors, BS, Masters, MS and PhD, plus lab, thesis and convocation fees.
+- [VU Scholarship Guide](https://lmshandling.com/blog/vu-scholarship-guide): How VU's Merit-Based and Need-Based scholarships work - exact CGPA/marks eligibility for new and continuing students, what they cover, and how to apply.
 - [VU Datesheet Guide](https://lmshandling.com/blog/vu-datesheet-guide): How to check your VU exam datesheet on the official portal, datesheet.vu.edu.pk - selecting your exam city, center, date and time, and what to do if it isn't showing.
 - [VULMS Login Guide](https://lmshandling.com/blog/vulms-login-guide): The correct VULMS login process at vulms.vu.edu.pk, plus fixes for wrong credentials, forgotten passwords, inactive new accounts, and browser or site-down errors.
 - [VU Fall 2026 Admissions Open](https://lmshandling.com/blog/vu-fall-2026-admissions-open): VU Fall 2026 admissions key dates - last date to apply, the separate MS/MPhil deadline, and the complete MS, ADP, Diploma and BS-lateral program list by faculty.
