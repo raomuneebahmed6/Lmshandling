@@ -90,7 +90,22 @@
   "url": "https://lmshandling.com/blog/category/registration"
 }
 </script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {"@type": "Question", "name": "How do I know when VU registration has actually opened?", "acceptedAnswer": {"@type": "Answer", "text": "There's no separate form or fixed calendar date outside VULMS itself, the registration option only appears inside VULMS (usually under Student Services or Course Selection) once VU officially activates it for that cycle. If you log in and don't see it, registration simply hasn't opened yet, not that something's wrong with your account."}},
+    {"@type": "Question", "name": "Is VU registration complete once I select my subjects?", "acceptedAnswer": {"@type": "Answer", "text": "No. Selecting your offered subjects is only the first part, registration is only finalized once the fee challan generated for those subjects is actually paid. Skipping or delaying payment after selecting subjects can leave your registration incomplete for that cycle."}},
+    {"@type": "Question", "name": "What happens to my registered subjects if my LMS account gets blocked for unpaid fee?", "acceptedAnswer": {"@type": "Answer", "text": "A blocked account loses access to quizzes, assignments, GDBs and lecture content until the outstanding fee is cleared, but those activities keep running on their own schedule in the background regardless of whether you can log in. Clearing the fee before VU's published blocking date is the only way to avoid losing access during an active week of coursework."}}
+  ]
+}
+</script>
 <style>
+.prose{max-width:760px;margin:0 auto}
+.prose h2{margin:2.4rem 0 .9rem;font-size:1.45rem;scroll-margin-top:6rem}
+.prose p{margin-bottom:1.1rem;color:var(--text);line-height:1.8;font-size:1.02rem}
+.prose a.inline-link{color:var(--teal);font-weight:600;text-decoration:underline;text-underline-offset:2px}
 /* ============================================================
    NIBAHA HAQ - design tokens
    ============================================================ */
@@ -659,6 +674,20 @@ img { max-width:100%; height:auto; }
     <p class="section-label">Registration</p>
     <h1>VU Registration Guides</h1>
     <p class="lead">How and when VU opens semester registration on VULMS, the exact steps to follow, offered subjects, and fees.</p>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="overview-heading">
+  <div class="section-head reveal"><p class="section-label">Overview</p><h2 id="overview-heading">How VU semester registration works</h2></div>
+  <div class="prose">
+    <p>VU semester registration, including Summer Semester, isn't announced on a fixed calendar date; the registration option only appears inside VULMS once VU officially opens it for that cycle, so checking VULMS around the expected window matters more than watching for an outside announcement. Once it's open, registration follows the same basic sequence: log in to VULMS, open Student Services (or Course Selection), choose from the list of subjects VU has actually made available for that cycle (not every course is offered every semester), generate a fee challan for the subjects selected, and pay it, since registration is only complete once payment goes through.</p>
+    <p>VU also runs fee-related deadlines tied to registration and continued VULMS access: accounts can be blocked once a set fee-payment date passes, which cuts off quizzes, assignments, GDBs and lecture content until the outstanding fee is cleared, and any activities that fall inside that blocked window keep running on their own schedule regardless of whether you can log in. Because VU's academic calendar, including admission-closing, exam and blocking dates, shifts from one semester to the next rather than repeating exactly, treating any specific date as fixed year over year is the most common registration mistake; always confirm the current cycle's dates directly on VULMS or through VU's official announcements before planning around them.</p>
+  </div>
+  <h3 style="margin-top:2rem">Registration FAQs</h3>
+  <div class="faq-list reveal" style="margin-top:1rem">
+    <details><summary>How do I know when VU registration has actually opened?</summary><p>There's no separate form or fixed calendar date outside VULMS itself, the registration option only appears inside VULMS (usually under Student Services or Course Selection) once VU officially activates it for that cycle. If you log in and don't see it, registration simply hasn't opened yet, not that something's wrong with your account.</p></details>
+    <details><summary>Is VU registration complete once I select my subjects?</summary><p>No. Selecting your offered subjects is only the first part, registration is only finalized once the fee challan generated for those subjects is actually paid. Skipping or delaying payment after selecting subjects can leave your registration incomplete for that cycle.</p></details>
+    <details><summary>What happens to my registered subjects if my LMS account gets blocked for unpaid fee?</summary><p>A blocked account loses access to quizzes, assignments, GDBs and lecture content until the outstanding fee is cleared, but those activities keep running on their own schedule in the background regardless of whether you can log in. Clearing the fee before VU's published blocking date is the only way to avoid losing access during an active week of coursework.</p></details>
   </div>
 </section>
 
