@@ -46,6 +46,9 @@
 - [MGT201 Midterm and Finalterm Notes](https://lmshandling.com/blog/mgt201-principles-of-management-notes): MGT201 (Principles of Management) midterm and finalterm notes: code-wise Objective and Subjective files matched to VU's own lecture content and format.
 - [PSY101 Midterm and Finalterm Notes](https://lmshandling.com/blog/psy101-introduction-to-psychology-notes): PSY101 (Introduction to Psychology) midterm and finalterm notes: code-wise Objective and Subjective files matched to VU's own lecture content and format.
 - [CS301 Midterm and Finalterm Notes](https://lmshandling.com/blog/cs301-data-structures-notes): CS301 (Data Structures) midterm and finalterm notes: code-wise Objective and Subjective files matched to VU's own lecture content and format.
+- [CS401 Midterm and Finalterm Notes](https://lmshandling.com/blog/cs401-computer-architecture-assembly-notes): CS401 (Computer Architecture & Assembly Language) midterm and finalterm notes: code-wise Objective and Subjective files matched to VU's own lecture content.
+- [CS402 Midterm and Finalterm Notes](https://lmshandling.com/blog/cs402-theory-of-automata-notes): CS402 (Theory of Automata) midterm and finalterm notes: code-wise Objective and Subjective files matched to VU's own lecture content.
+- [CS411 Midterm and Finalterm Notes](https://lmshandling.com/blog/cs411-visual-programming-notes): CS411 (Visual Programming) midterm and finalterm notes: code-wise Objective and Subjective files matched to VU's own lecture content.
 
 ## Blog Categories
 - [LMS Handling](https://lmshandling.com/blog/category/lms-handling): Guides for VULMS quizzes, assignments, GDBs, and lecture attendance, the recurring weekly tasks each semester.
