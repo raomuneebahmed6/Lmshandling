@@ -49,6 +49,8 @@
 - [CS401 Midterm and Finalterm Notes](https://lmshandling.com/blog/cs401-computer-architecture-assembly-notes): CS401 (Computer Architecture & Assembly Language) midterm and finalterm notes: code-wise Objective and Subjective files matched to VU's own lecture content.
 - [CS402 Midterm and Finalterm Notes](https://lmshandling.com/blog/cs402-theory-of-automata-notes): CS402 (Theory of Automata) midterm and finalterm notes: code-wise Objective and Subjective files matched to VU's own lecture content.
 - [CS411 Midterm and Finalterm Notes](https://lmshandling.com/blog/cs411-visual-programming-notes): CS411 (Visual Programming) midterm and finalterm notes: code-wise Objective and Subjective files matched to VU's own lecture content.
+- [MGT211 Midterm and Finalterm Notes](https://lmshandling.com/blog/mgt211-introduction-to-business-notes): MGT211 (Introduction to Business) midterm and finalterm notes: code-wise Objective and Subjective files matched to VU's own lecture content and format.
+- [MCM301 Midterm and Finalterm Notes](https://lmshandling.com/blog/mcm301-communication-skills-notes): MCM301 (Communication Skills) midterm and finalterm notes: code-wise Objective and Subjective files matched to VU's own lecture content and format.
 
 ## Blog Categories
 - [LMS Handling](https://lmshandling.com/blog/category/lms-handling): Guides for VULMS quizzes, assignments, GDBs, and lecture attendance, the recurring weekly tasks each semester.
