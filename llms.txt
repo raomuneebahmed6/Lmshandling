@@ -51,6 +51,8 @@
 - [CS411 Midterm and Finalterm Notes](https://lmshandling.com/blog/cs411-visual-programming-notes): CS411 (Visual Programming) midterm and finalterm notes: code-wise Objective and Subjective files matched to VU's own lecture content.
 - [MGT211 Midterm and Finalterm Notes](https://lmshandling.com/blog/mgt211-introduction-to-business-notes): MGT211 (Introduction to Business) midterm and finalterm notes: code-wise Objective and Subjective files matched to VU's own lecture content and format.
 - [MCM301 Midterm and Finalterm Notes](https://lmshandling.com/blog/mcm301-communication-skills-notes): MCM301 (Communication Skills) midterm and finalterm notes: code-wise Objective and Subjective files matched to VU's own lecture content and format.
+- [VU Compulsory Courses Guide: PAK301, ISL201 & ENG101](https://lmshandling.com/blog/vu-compulsory-courses-guide): What PAK301 (Pakistan Studies), ISL201 (Islamic Studies) and ENG101 (English Comprehension) cover, why they're compulsory across nearly every VU program, and how to prepare each for midterm and finalterm.
+- [VU Past Papers vs Code-Wise Exam Files](https://lmshandling.com/blog/vu-past-papers-vs-code-wise-files): What free VU past papers are genuinely good for, where they fall short, and when a code-wise, lecture-matched Objective and Subjective file helps more.
 
 ## Blog Categories
 - [LMS Handling](https://lmshandling.com/blog/category/lms-handling): Guides for VULMS quizzes, assignments, GDBs, and lecture attendance, the recurring weekly tasks each semester.
