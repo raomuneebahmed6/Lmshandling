@@ -35,6 +35,25 @@ Every page's `<head>` follows this pattern — replicate it exactly for new page
 
 When you touch `<title>` or `og:title`/`twitter:title`, always update all three together — they must match. Same for description across `meta description`, `og:description`, `twitter:description` (og/twitter descriptions can differ slightly in wording but must still be reasonable length).
 
+## Blog post content structure (SEO + AEO + GEO writing standard)
+
+Every new blog post (and any major content rewrite) follows this structure and process — not just the head-block conventions above:
+
+**Before writing:** identify the primary keyword/entity, search intent, 3-5 related/semantic keywords, the questions a searcher actually has, and where this post should internally link to/from. Don't start drafting without this.
+
+**Body structure, in order:**
+1. `<h1>` — contains the primary keyword naturally, not stuffed.
+2. **Quick Answer** — the core question answered directly in the first ~100 words / first 1-2 paragraphs, before any throat-clearing intro. This is what AI answer engines and featured snippets lift.
+3. **Introduction** — the reader's actual problem/search intent, 2-4 sentences.
+4. **Main sections** (`<h2>`, with `<h3>` for sub-points — never skip a level) — definitions, steps, examples, comparisons, pros/cons, mistakes, costs, as relevant to the topic. Prefer bullet points, numbered steps, and short scannable paragraphs over dense blocks. Use question-phrased headings (e.g. "How do I check my VU datesheet?") where a real question maps to that section — this is what AEO/answer-box extraction keys off.
+5. **Key Takeaways** — a short bullet summary of the post's main points, placed near the end before FAQ (skip only if the post is already short/simple enough that this would be redundant, e.g. a very short guide).
+6. **FAQ** — 3-10 genuinely relevant questions (match this site's existing per-post pattern; don't force 10 if the topic doesn't support that many), each with a concise answer (aim ~40-60 words where the question suits a snippet-style answer, more where it genuinely needs detail). Every visible FAQ question must have a matching `FAQPage` JSON-LD entry — counts must match exactly.
+7. **Conclusion/CTA** — brief summary + a natural, non-pushy pointer toward the relevant service/tool page. Never a hard sell.
+
+**Writing style:** natural, conversational-but-credible English matching this site's existing posts (this audience is VU students, mixing Roman Urdu in chat with me is fine but posts themselves are in English per existing convention) — write for the human reader first. Avoid obvious AI-generated patterns: repetitive sentence openers, every paragraph the same length, generic filler ("In today's fast-paced world..."), keyword stuffing. Use specific, concrete examples over vague claims.
+
+**E-E-A-T / trust:** demonstrate real practical expertise (how VU's process actually works, not textbook generalities), clearly separate verified facts from general advice/opinion, never state or imply a guaranteed outcome (grades, CGPA, results, approval) — this site has already had to carefully rework a CGPA-related post for this exact reason. Only cite a statistic/number if it's verifiable (site's own stated experience/numbers, or a WebSearch/WebFetch-confirmed official source) — never invent one for texture.
+
 ## Audit checklist
 
 1. **Indexability** — `robots.txt` not blocking anything important, no accidental noindex, canonical tags present and self-consistent, sitemap lists only live/indexable URLs
