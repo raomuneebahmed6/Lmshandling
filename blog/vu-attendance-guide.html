@@ -135,7 +135,7 @@ h3{font-size:1.12rem;font-weight:700}
 /* ---------- header ---------- */
 .site-header{position:fixed;top:44px;left:10px;right:10px;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:.65rem 1.4rem;border-radius:999px;border:1px solid transparent;transition:transform .35s cubic-bezier(.2,.7,.2,1),background .35s,box-shadow .35s,backdrop-filter .35s,border-color .35s}
 .site-header.scrolled{transform:translateY(-34px);background:rgba(255,255,255,.92);backdrop-filter:blur(14px);border-color:var(--line);box-shadow:0 12px 32px -14px rgba(0,68,139,.35)}
-.site-header.nav-open{backdrop-filter:none}
+.site-header.nav-open{backdrop-filter:none;transform:none !important}
 .top-bar{position:fixed;top:0;left:0;right:0;z-index:101;height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(1rem,4vw,3rem);background:var(--ink);transition:transform .3s ease,opacity .3s ease}
 .top-bar.hide{transform:translateY(-100%);opacity:0;pointer-events:none}
 .top-bar-msg{color:#fff;font-weight:600;font-size:.82rem;display:flex;align-items:center}
