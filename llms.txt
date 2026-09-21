@@ -57,6 +57,7 @@
 - [VU Course Selection Dates 2026](https://lmshandling.com/blog/vu-course-selection-dates-2026): VU course selection opened 18 September 2026 for most students (after shifting from an originally announced 15 September), and 8 October 2026 for Summer Semester students - what course selection means and what to check first.
 - [CS601 Midterm and Finalterm Notes](https://lmshandling.com/blog/cs601-data-communication-notes): CS601 (Data Communication) midterm and finalterm notes: code-wise Objective and Subjective files matched to VU's own lecture content and format.
 - [VU Course Selection Is Open - Book LMS Handling Next](https://lmshandling.com/blog/vu-course-selection-book-lms-handling-2026): VU Course Selection 2026 is open - what to do right after selecting your courses, what LMS Handling covers, and why booking it early beats waiting.
+- [VU Semester Freeze Guide: Rules & Process](https://lmshandling.com/blog/vu-semester-freeze-guide): Who's eligible to freeze a VU semester, how many semesters you can freeze, fee implications, and the VULMS process to freeze and unfreeze.
 
 ## Blog Categories
 - [LMS Handling](https://lmshandling.com/blog/category/lms-handling): Guides for VULMS quizzes, assignments, GDBs, and lecture attendance, the recurring weekly tasks each semester.
