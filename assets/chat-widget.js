@@ -75,10 +75,10 @@
     "border:2px solid #fff}" +
     "@media (max-width:600px){#lms-chat-toggle{bottom:4.7rem;right:1rem;width:50px;height:50px;font-size:22px}}" +
     "#lms-chat-panel{position:fixed;bottom:5.4rem;right:1.3rem;z-index:95;width:360px;max-width:calc(100vw - 2rem);" +
-    "height:min(560px,75vh);background:#FFFFFF;border-radius:20px;box-shadow:0 18px 50px -18px rgba(0,68,139,.4);" +
+    "height:min(520px,calc(100vh - 10rem));background:#FFFFFF;border-radius:20px;box-shadow:0 18px 50px -18px rgba(0,68,139,.4);" +
     "display:none;flex-direction:column;overflow:hidden;font-family:'Poppins',system-ui,sans-serif;border:1px solid rgba(0,68,139,.14)}" +
     "#lms-chat-panel.lms-open{display:flex}" +
-    "@media (max-width:600px){#lms-chat-panel{right:.6rem;left:.6rem;width:auto;bottom:4.7rem;height:min(70vh,520px)}}" +
+    "@media (max-width:600px){#lms-chat-panel{right:.6rem;left:.6rem;width:auto;bottom:4.7rem;height:min(66vh,calc(100vh - 8.5rem))}}" +
     "#lms-chat-head{background:linear-gradient(90deg,#032B57,#00448B);color:#fff;padding:.9rem 1rem;display:flex;align-items:center;gap:.7rem;flex:0 0 auto}" +
     "#lms-chat-head .lms-avatar{width:36px;height:36px;border-radius:50%;background:#fff;display:grid;place-items:center;" +
     "font-weight:800;color:#032B57;font-size:.72rem;flex:0 0 auto}" +
@@ -140,6 +140,7 @@
 
   var TOP_CHIPS = [
     "VU Summer Semester fee?",
+    "When will Summer Semester be announced?",
     "How to check my VU result?",
     "Midterm files for my subject",
     "Talk to a human on WhatsApp"
