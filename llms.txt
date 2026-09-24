@@ -10,6 +10,7 @@
 
 ## Tools
 - [VU CGPA Calculator](https://lmshandling.com/cgpa-calculator): free tool to estimate semester GPA and cumulative CGPA on the standard 4.0 GPA scale, for VU students to plan their academics. Not VU's official grading formula.
+- [VU Admission Portal Guide](https://lmshandling.com/vu-admission-portal): How to apply for VU admission on the official portal, apply.vu.edu.pk - eligibility, fee, step-by-step process, required documents, and a direct link to apply.
 
 ## Degree Programs
 - [VU Degree Programs](https://lmshandling.com/degrees/): Browse VU degree programs by faculty - course codes with Midterm and Finalterm exam files, LMS handling and FYP support for each degree (Computer Science, Software Engineering, IT, Business Administration, Psychology, and 20+ more).
@@ -38,7 +39,8 @@
 - [How to Improve Your VU CGPA](https://lmshandling.com/blog/vu-cgpa-improve-guide): A practical guide to raising your VU CGPA - the controllable marks in quizzes/GDBs/assignments, how exam prep quality shifts your grade band, and course-load planning.
 - [VU CGPA 1.0 to 3.0: How Many Semesters?](https://lmshandling.com/blog/vu-cgpa-1-to-3-timeline): The real math behind raising a low VU CGPA toward 3.0 - why early semesters carry more leverage, why it gets harder later in a degree, and a realistic illustrative timeline.
 - [VU GPA vs CGPA](https://lmshandling.com/blog/vu-gpa-vs-cgpa-guide): What VU's GPA and CGPA each measure, why they can look different on the same result, and where to check both correctly on VULMS.
-- [VU Summer Semester 2026 Mids](https://lmshandling.com/blog/vu-summer-semester-mids-2026): VU Summer Semester 2026 Midterm exams are on 12-13 September - exam format, a last-few-days study plan, and mistakes to avoid.
+- [VU Summer Semester 2026 Mids](https://lmshandling.com/blog/vu-summer-semester-mids-2026): VU Summer Semester 2026 Mids were held 12-13 September - exam format, mistakes to avoid, and what's next before Finals on 3-4 October.
+- [VU Summer Semester Midterm Result 2026](https://lmshandling.com/blog/vu-summer-semester-midterm-result-2026): VU Summer Semester 2026 Midterm result isn't released separately - it lands with the Finalterm result on 7 October. Full timeline: datesheet 2-3 October, papers start 4 October, results 7 October.
 - [VU Quiz Guide](https://lmshandling.com/blog/vu-quiz-guide): How VU quizzes work on VULMS: where to find them, the activation window, MCQ format, how to prepare efficiently, and mistakes that cost marks.
 - [VU Attendance Guide](https://lmshandling.com/blog/vu-attendance-guide): How VU lecture attendance works on VULMS: what counts as attendance, why staying current matters, where to check it, and common mistakes to avoid.
 - [CS201 Midterm and Finalterm Notes](https://lmshandling.com/blog/cs201-midterm-finalterm-notes): CS201 (Introduction to Programming) midterm and finalterm notes: code-wise Objective and Subjective files matched to VU's own lecture content.
