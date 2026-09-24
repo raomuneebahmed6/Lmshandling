@@ -19,12 +19,26 @@
   var STOP = {};
   for (var i = 0; i < STOPWORDS.length; i++) STOP[STOPWORDS[i]] = true;
 
+  // Light heuristic stemmer so word forms like "announced" / "announcement",
+  // or "file" / "files", overlap as the same token instead of missing each
+  // other on exact string comparison.
+  function stem(t) {
+    if (t.length > 6 && /ment$/.test(t)) t = t.slice(0, -4);
+    else if (t.length > 6 && /tion$/.test(t)) t = t.slice(0, -4);
+    else if (t.length > 5 && /ing$/.test(t)) t = t.slice(0, -3);
+    else if (t.length > 4 && /ed$/.test(t)) t = t.slice(0, -2);
+    if (t.length > 3 && /s$/.test(t) && !/ss$/.test(t)) t = t.slice(0, -1);
+    if (t.length > 3 && /e$/.test(t)) t = t.slice(0, -1);
+    return t;
+  }
+
   function tokenize(str) {
     return (str || "")
       .toLowerCase()
       .replace(/[^a-z0-9\s]/g, " ")
       .split(/\s+/)
-      .filter(function (t) { return t.length > 1 && !STOP[t]; });
+      .filter(function (t) { return t.length > 1 && !STOP[t]; })
+      .map(stem);
   }
 
   function scoreFaq(queryTokens, faq) {
@@ -98,7 +112,7 @@
     ".lms-wa-btn:hover{background:#16A34A}" +
     "#lms-chat-chips{display:flex;flex-wrap:wrap;gap:.4rem;padding:0 .9rem .7rem}" +
     ".lms-chip{background:#fff;border:1px solid rgba(0,68,139,.18);color:#00448B;font-size:.72rem;font-weight:600;" +
-    "padding:.4rem .7rem;border-radius:999px;cursor:pointer}" +
+    "padding:.4rem .7rem;border-radius:999px;cursor:pointer;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}" +
     ".lms-chip:hover{background:#FFF3D1;border-color:#F5B301}" +
     "#lms-chat-form{flex:0 0 auto;display:flex;gap:.5rem;padding:.7rem;border-top:1px solid rgba(0,68,139,.13);background:#fff}" +
     "#lms-chat-input{flex:1;border:1.5px solid rgba(0,68,139,.18);border-radius:999px;padding:.55rem .9rem;font:inherit;" +
@@ -140,7 +154,7 @@
 
   var TOP_CHIPS = [
     "VU Summer Semester fee?",
-    "When will Summer Semester be announced?",
+    "Summer Semester announcement date?",
     "How to check my VU result?",
     "Midterm files for my subject",
     "Talk to a human on WhatsApp"
