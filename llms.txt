@@ -61,6 +61,7 @@
 - [CS601 Midterm and Finalterm Notes](https://lmshandling.com/blog/cs601-data-communication-notes): CS601 (Data Communication) midterm and finalterm notes: code-wise Objective and Subjective files matched to VU's own lecture content and format.
 - [VU Course Selection Is Open - Book LMS Handling Next](https://lmshandling.com/blog/vu-course-selection-book-lms-handling-2026): VU Course Selection 2026 is open - what to do right after selecting your courses, what LMS Handling covers, and why booking it early beats waiting.
 - [VU Semester Freeze Guide: Rules & Process](https://lmshandling.com/blog/vu-semester-freeze-guide): Who's eligible to freeze a VU semester, how many semesters you can freeze, fee implications, and the VULMS process to freeze and unfreeze.
+- [VU Summer Semester 2026 Deadline Extended](https://lmshandling.com/blog/vu-summer-semester-deadline-extension-2026): VU extended the Summer Semester 2026 admission/registration deadline from 15 to 22 September 2026 - a separate extension from VU's Fall 2026 general admissions deadline (15 to 30 September).
 
 ## Blog Categories
 - [LMS Handling](https://lmshandling.com/blog/category/lms-handling): Guides for VULMS quizzes, assignments, GDBs, and lecture attendance, the recurring weekly tasks each semester.
