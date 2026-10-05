@@ -545,7 +545,7 @@ img { max-width:100%; height:auto; }
   .nav-item.open .dropdown{display:grid}
   .nav-item:hover .dropdown,.nav-item:focus-within .dropdown,.nav-item.open .dropdown{transform:none;opacity:1;visibility:visible}
   .contact-card{grid-template-columns:1fr}
-  .fyp-layout,.cgpa-panel{grid-template-columns:1fr}
+  .fyp-layout,.cgpa-panel,.cgpa-2026-grid{grid-template-columns:1fr}
   .lb-prev{left:.4rem}
   .lb-next{right:.4rem}
 }
@@ -930,7 +930,7 @@ img { max-width:100%; height:auto; }
 <section class="section" aria-labelledby="cgpa-heading">
   <div class="section-head reveal">
     <p class="section-label">CGPA Achievements</p>
-    <h2 id="cgpa-heading">Student CGPA results: Spring 2025, Fall 2025 &amp; Spring 2026.</h2>
+    <h2 id="cgpa-heading">Student CGPA results: Spring 2025 &amp; Fall 2025.</h2>
     <p>These are the real semester results of Nibaha Haq students. Achieved through LMS Handling, exam files, and guided preparation, not luck.</p>
   </div>
 
@@ -938,7 +938,6 @@ img { max-width:100%; height:auto; }
     <div class="cgpa-tabs" role="tablist">
       <button class="cgpa-tab on" data-tab="spring25" role="tab" onclick="switchTab('spring25')">🎓 Spring 2025</button>
       <button class="cgpa-tab" data-tab="fall25" role="tab" onclick="switchTab('fall25')">🎓 Fall 2025</button>
-      <button class="cgpa-tab" data-tab="spring26" role="tab" onclick="switchTab('spring26')">🎓 Spring 2026 Finals</button>
     </div>
 
     <div class="cgpa-panel on" id="tab-spring25">
@@ -1047,16 +1046,28 @@ img { max-width:100%; height:auto; }
       </div>
     </div>
 
-    <div class="cgpa-panel" id="tab-spring26">
-      <div>
-        <div class="sem-badge-row"><span class="sem-year-badge">Spring 2026</span><span style="font-size:.82rem;color:var(--muted)">12 students · a Masters degree completed</span></div>
-        <div style="border-radius:20px;overflow:hidden;box-shadow:var(--shadow);border:2px solid var(--line);cursor:zoom-in" class="shot-card" data-idx="9202">
-          <img src="/results-img/cgpa-spring2026.jpg" alt="Spring 2026 Finals CGPA results, 12 Nibaha Haq students including a completed Masters degree" style="width:100%;display:block;pointer-events:none;-webkit-user-select:none" draggable="false">
+  </div>
+</section>
+
+<!-- ══════════════════════════════════
+     CGPA RESULTS: SPRING 2026 FINALS (own section)
+═══════════════════════════════════ -->
+<section class="section" aria-labelledby="cgpa-2026-heading">
+  <div class="fyp-section reveal">
+    <div class="fyp-inner">
+      <span class="fyp-badge">🎓 Newest Achievement</span>
+      <h2 id="cgpa-2026-heading">Spring 2026 Finals: 12 students, one completed Masters.</h2>
+      <p>The latest batch of results: 12 Nibaha Haq students, from CGPA recovery to a fully completed Masters degree, through LMS Handling and code-wise 4 CGPA notes.</p>
+      <div class="cgpa-2026-grid" style="display:grid;grid-template-columns:1.1fr .9fr;gap:2rem;align-items:start">
+        <div>
+          <div class="sem-badge-row"><span class="sem-year-badge">Spring 2026</span><span style="font-size:.82rem;color:var(--muted)">12 students · a Masters degree completed</span></div>
+          <div style="border-radius:20px;overflow:hidden;box-shadow:var(--shadow);border:2px solid var(--line);cursor:zoom-in" class="shot-card" data-idx="9202">
+            <img src="/results-img/cgpa-spring2026.jpg" alt="Spring 2026 Finals CGPA results, 12 Nibaha Haq students including a completed Masters degree" style="width:100%;display:block;pointer-events:none;-webkit-user-select:none" draggable="false">
+          </div>
         </div>
-      </div>
-      <div class="cgpa-cards-col">
-        <div class="sem-badge-row"><span class="sem-year-badge">Results</span></div>
-        <div class="cgpa-card">
+        <div class="cgpa-cards-col">
+          <div class="sem-badge-row"><span class="sem-year-badge">Results</span></div>
+          <div class="cgpa-card">
   <span class="cgpa-icon">😊</span>
   <div><div class="cgpa-name">Areeba Fatima</div>
   <div class="cgpa-score">3.35 / 4</div>
@@ -1129,7 +1140,8 @@ img { max-width:100%; height:auto; }
   <div class="cgpa-detail">Degree-stuck subject cleared with Nibaha Haq notes and LMS Handling</div></div>
 </div>
 
-        <div class="achieve-formula" style="margin-top:.5rem">Hard Work + The Right Guidance = Great Results ✅</div>
+          <div class="achieve-formula" style="margin-top:.5rem">Hard Work + The Right Guidance = Great Results ✅</div>
+        </div>
       </div>
     </div>
   </div>
