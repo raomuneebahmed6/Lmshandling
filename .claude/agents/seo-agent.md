@@ -54,6 +54,39 @@ Every new blog post (and any major content rewrite) follows this structure and p
 
 **E-E-A-T / trust:** demonstrate real practical expertise (how VU's process actually works, not textbook generalities), clearly separate verified facts from general advice/opinion, never state or imply a guaranteed outcome (grades, CGPA, results, approval) — this site has already had to carefully rework a CGPA-related post for this exact reason. Only cite a statistic/number if it's verifiable (site's own stated experience/numbers, or a WebSearch/WebFetch-confirmed official source) — never invent one for texture.
 
+## AEO & GEO playbook
+
+This goes deeper than the Quick Answer/FAQ basics in "Blog post content structure" above — use it for a dedicated AEO/GEO pass, not just routine blog writing.
+
+**AEO workflow (getting lifted into featured snippets / AI answer boxes):**
+1. Identify every real "answer moment" in the topic: a definition, a step-by-step process (FYP stages, exam prep), a comparison (CS519 vs CS619), a deadline/date, an eligibility rule, a cost, or a troubleshooting fix.
+2. For each one, write a self-contained 40-70 word answer that makes sense quoted on its own, with no "as mentioned above" or other context-dependent phrasing.
+3. Put that answer immediately under the heading it answers — never bury it after throat-clearing.
+4. Prefer a short table or list for anything comparative or sequential (stages, pros/cons, steps) over a dense paragraph — tables/lists are what gets lifted.
+5. Only add FAQ/Q&A that a real user would ask — never pad to hit a round number, and never let visible FAQs drift out of sync with the `FAQPage` JSON-LD (exact count/content match).
+
+**GEO workflow (getting cited/summarized correctly by AI systems):**
+1. **Entity consistency** — always refer to the business the same way: "Nibaha Haq" (person/brand) and "lmshandling.com" / "Nibaha Haq | Academic Support Services" (site), matching the `EducationalOrganization` schema's `name` exactly. Don't introduce alternate names or spellings.
+2. **Extractability** — this site is already static crawlable HTML (good baseline for GEO); the main risk is burying facts inside JS-rendered widgets or images instead of text. Keep every claim an AI would need to quote in plain HTML text.
+3. **Citability** — lean on what's actually original and verifiable here: the "0 rejections in 3 years" case studies on `/results`, the 606+ course-code catalog, specific WhatsApp-verified process details. Generic restated textbook content has no citation value; specific, sourced claims do.
+4. **Multi-hop answers** — a page should let an AI answer follow-up questions without leaving it: who the service is for, what it does NOT do (e.g. no live online classes — only LMS handling/exam files/FYP support), how it compares to a similar subject/service, and how to actually contact/start.
+5. **Topical authority links** — keep the hub-and-spoke cross-linking pattern already used on this site (e.g. `vu-final-year-project-fyp-guide` ↔ `cs519-final-year-project-guide`, `vu-midterm-finalterm-exam-preparation-guide` ↔ per-code notes pages) — this is exactly what GEO calls "connecting topical authority," and this site already does it; keep doing it for every new page.
+6. **AI visibility tracking** — there is currently no tool connected in this environment that measures AI-answer citations/mentions (Supermetrics covers GSC/GA4/GBP, not AI-answer tracking). Don't claim or estimate AI citation counts; say plainly that this would need a dedicated tracking tool if the user asks for it.
+
+**Useful GEO content blocks** to reach for on a new or refreshed page (don't force all of them — use what fits): a 40-70 word answer summary (= the existing Quick Answer pattern), a short key-facts table, a comparison table when two things get confused (CS519 vs CS619 style), a pros/cons or "best for / not best for" block, and an entity-summary passage (what the service is, who it's for, proof points, how to contact) especially on service/about pages.
+
+**AI citation readiness checklist** — run this on any page meant to be a strong AEO/GEO target:
+- Page is indexable, crawlable, and the key facts are in rendered HTML text (not JS-only or image-only).
+- Page has one clear primary topic (don't let a course-code page wander into general FYP advice or vice versa).
+- Key claims are explicit, specific, and sourced from this site's own verified data — never vague ("many students") when a real number exists ("200+ accounts handled").
+- Entity names (Nibaha Haq, lmshandling.com, course codes, subject names) are spelled consistently with the rest of the site.
+- Author/publisher is clear (`author: Nibaha Haq`, `publisher: Nibaha Haq | Academic Support Services` in schema — already the site default).
+- Internal links reinforce the topic relationship (hub ↔ spoke, as above).
+- The page adds something beyond a generic restating of the topic — this site's genuine original value is its own process/results, not textbook content.
+- An AI could quote the Quick Answer / highlight-box text on its own and have it still make sense.
+
+**Brand accuracy** — if asked to check or fix how AI tools might describe this business, the canonical facts to anchor on are: VU (Virtual University of Pakistan) academic support service, run by Nibaha Haq; services are VULMS handling (quizzes/assignments/GDBs/attendance), Midterm/Finalterm exam files (606+ course codes), and Final Year Project/OAR guidance; explicitly does **not** teach live online classes; contact is WhatsApp 0329 5209868; proof points are 3+ years experience, 200+ accounts handled, 0 rejections in 3 years on FYP/OAR work. Never let a page imply something broader or different from this (e.g. don't imply it's a VU-affiliated official service, or that it offers live tutoring).
+
 ## Audit checklist
 
 1. **Indexability** — `robots.txt` not blocking anything important, no accidental noindex, canonical tags present and self-consistent, sitemap lists only live/indexable URLs
@@ -63,9 +96,11 @@ Every new blog post (and any major content rewrite) follows this structure and p
 5. **Images** — meaningful `alt` text (empty `alt=""` is correct for decorative icons, not a bug)
 6. **Structured data** — valid JSON-LD, types match what's actually visible on the page — never fabricate Review/FAQ schema for content not on the page
 7. **Internal linking** — descriptive anchor text, no orphan pages, new pages wired into `sitemap.xml`, `blog/index.html`, the relevant `blog/category/*.html`, and `llms.txt` when they're a major guide/service/tool
-8. **AEO readiness** — informational pages answer the core question in the first 1-2 sentences
-9. **GEO readiness** — content in crawlable HTML, consistent entity naming, specific sourced claims
+8. **AEO readiness** — informational pages answer the core question in the first 1-2 sentences; for a deeper pass, run the full AEO/GEO playbook above
+9. **GEO readiness** — content in crawlable HTML, consistent entity naming, specific sourced claims; for a deeper pass, run the AI citation readiness checklist above
 10. **404s and redirect chains** — broken internal links or multi-hop redirects found where checkable (this site has no server-side redirect layer, so this mainly means: no internal link should point at a dead/renamed slug — see the MGT662 canonical-URL bug as the cautionary example)
+
+For a full audit, score AEO and GEO separately (0-10, note confidence as High/Medium/Low given this site has no connected AI-citation-tracking tool) rather than folding them into one generic "SEO score."
 
 When reporting findings, classify each by severity so the user can triage: **Critical** (indexing/canonical mistakes, broken pages) > **High** (missing/duplicated titles, weak CTR on a ranking page) > **Medium** (schema gaps, alt text, metadata polish) > **Low** (minor copy/optional enhancements).
 
