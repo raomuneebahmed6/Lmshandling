@@ -65,10 +65,33 @@ Every new blog post (and any major content rewrite) follows this structure and p
 7. **Internal linking** — descriptive anchor text, no orphan pages, new pages wired into `sitemap.xml`, `blog/index.html`, the relevant `blog/category/*.html`, and `llms.txt` when they're a major guide/service/tool
 8. **AEO readiness** — informational pages answer the core question in the first 1-2 sentences
 9. **GEO readiness** — content in crawlable HTML, consistent entity naming, specific sourced claims
+10. **404s and redirect chains** — broken internal links or multi-hop redirects found where checkable (this site has no server-side redirect layer, so this mainly means: no internal link should point at a dead/renamed slug — see the MGT662 canonical-URL bug as the cautionary example)
+
+When reporting findings, classify each by severity so the user can triage: **Critical** (indexing/canonical mistakes, broken pages) > **High** (missing/duplicated titles, weak CTR on a ranking page) > **Medium** (schema gaps, alt text, metadata polish) > **Low** (minor copy/optional enhancements).
+
+## Local SEO & Google Business Profile (GMB)
+
+Nibaha Haq's GMB profile is an active channel for this site (VU academic support, online-only service, no physical storefront — do not assume a city/address-based LocalBusiness model unless told otherwise). When asked to review or improve it:
+
+- Confirm before changing: categories, hours, service areas, and any claim about "online classes" or similar service attributes — **do not infer or guess these from general local-SEO best practice**, this business's specifics override generic advice (e.g. 24/7 hours are accurate here because support is asynchronous; "offers_online_classes: false" is correct because this business handles LMS/exam files, not live teaching).
+- Do not invent or assume the GBP has an "add category" option in its current plan/UI — verify what's actually available before recommending a category change.
+- Useful, low-risk actions: recommending more real photos (logo, proof-of-work screenshots), consistent NAP (name/contact) across site and profile, and a review-request process — never fake or incentivized reviews.
+- Never fabricate GBP performance numbers (views, calls, direction requests) — pull them from a live Supermetrics/GBP query when available, and say plainly when that data source is unavailable (e.g. an expired API/trial) rather than estimating.
+
+## Approval boundaries
+
+Get explicit user approval before:
+
+- Changing URLs, slugs, canonical tags, `robots.txt`, or index/noindex rules (fixing an already-wrong canonical, like the MGT662 bug, is a correction, not a URL change, and doesn't need a separate approval beyond the normal report-back).
+- Adding any new tracking script, pixel, or third-party tool/plugin.
+- Publishing a new blog post or landing page at scale (one-off posts already requested by name, like a specific course-code guide, don't need a second confirmation — the request itself is the approval).
+- Editing claims, prices, testimonials, or any "0 rejections" / outcome-style statement — these must already be true and verifiable, never softened or inflated.
+- Any production deploy outside the normal PR flow, or any GSC/GA4/GBP account-level change.
+- Recommending or using a paid SEO tool — always name the free alternative first (Google Trends, Search Console, GA4, Bing Webmaster Tools, Microsoft Clarity, Lighthouse/PageSpeed, free schema validators) and only mention a paid option if the user asks for more than the free tier gives.
 
 ## Non-negotiables
 
-- Never invent keyword volume, rankings, traffic, or backlink data — this environment has no connected Search Console/GA4. State clearly when a recommendation needs that data.
+- Never invent keyword volume, rankings, traffic, backlink data, or GBP performance numbers. If a connected data source (e.g. Supermetrics) is unavailable or its trial has expired, state that plainly instead of estimating.
 - Don't add schema for content that isn't visible on the page.
 - Don't touch tracking (`gtag`/GA4) config unless explicitly asked.
 - Keep edits minimal and targeted — fix what's asked, don't restyle or refactor unrelated sections.
@@ -79,5 +102,5 @@ Every new blog post (and any major content rewrite) follows this structure and p
 1. Clarify scope if ambiguous (single page vs. site-wide, audit-only vs. fix-and-push).
 2. Gather evidence directly from the files (grep/read) — never guess at current state.
 3. Make the fix directly (Edit/Write) when it's a clear, low-risk on-page change (titles, descriptions, alt text, canonical, schema, sitemap entries).
-4. For anything that changes URLs, removes content, or alters claims/pricing, flag it for approval instead of doing it silently.
-5. Report findings with evidence (file + what was wrong) — not generic advice.
+4. For anything in **Approval boundaries** above, flag it for approval instead of doing it silently.
+5. Report findings with evidence (file + what was wrong), classified by severity (see Audit checklist) — not generic advice. For a fuller audit, structure the report as: executive summary → critical/high findings → keyword/content opportunities → what still needs user access or approval.
