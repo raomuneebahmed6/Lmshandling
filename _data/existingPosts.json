@@ -1,0 +1,612 @@
+[
+  {
+    "slug": "cs101-mcqs-objective-notes",
+    "title": "CS101 MCQs (Objective) Guide 2026",
+    "description": "CS101 (Introduction to Computing) Objective MCQs for VU midterm and finalterm: code-wise notes matched to VU's own lectures, plus a real 80% result.",
+    "image": "cs101-mcqs-objective-notes.png",
+    "category": "course-code-guides",
+    "datePublished": "2026-08-04",
+    "dateModified": "2026-10-08",
+    "readTime": "5"
+  },
+  {
+    "slug": "cs201-midterm-finalterm-notes",
+    "title": "CS201 Notes: Midterm & Finalterm Guide 2026",
+    "description": "CS201 (Introduction to Programming) midterm and finalterm notes: code-wise Objective and Subjective files matched to VU's own lecture content.",
+    "image": "cs201-midterm-finalterm-notes.png",
+    "category": "course-code-guides",
+    "datePublished": "2026-08-23",
+    "dateModified": "2026-10-08",
+    "readTime": "6"
+  },
+  {
+    "slug": "cs301-data-structures-notes",
+    "title": "CS301 Notes: Midterm & Finalterm Guide 2026",
+    "description": "CS301 (Data Structures) midterm and finalterm notes: code-wise Objective and Subjective files matched to VU's own lecture content and format.",
+    "image": "cs301-data-structures-notes.png",
+    "category": "course-code-guides",
+    "datePublished": "2026-09-03",
+    "dateModified": "2026-10-08",
+    "readTime": "6"
+  },
+  {
+    "slug": "cs401-computer-architecture-assembly-notes",
+    "title": "CS401 Notes: Midterm & Finalterm Guide 2026",
+    "description": "CS401 (Computer Architecture & Assembly Language) midterm and finalterm notes: code-wise Objective and Subjective files matched to VU's lectures.",
+    "image": "cs401-computer-architecture-assembly-notes.png",
+    "category": "course-code-guides",
+    "datePublished": "2026-09-10",
+    "dateModified": "2026-10-08",
+    "readTime": "6"
+  },
+  {
+    "slug": "cs402-theory-of-automata-notes",
+    "title": "CS402 Notes: Midterm & Finalterm Guide 2026",
+    "description": "CS402 (Theory of Automata) midterm and finalterm notes: code-wise Objective and Subjective files matched to VU's own lecture content and format.",
+    "image": "cs402-theory-of-automata-notes.png",
+    "category": "course-code-guides",
+    "datePublished": "2026-09-10",
+    "dateModified": "2026-10-08",
+    "readTime": "6"
+  },
+  {
+    "slug": "cs411-visual-programming-notes",
+    "title": "CS411 Notes: Midterm & Finalterm Guide 2026",
+    "description": "CS411 (Visual Programming) midterm and finalterm notes: code-wise Objective and Subjective files matched to VU's own lecture content and format.",
+    "image": "cs411-visual-programming-notes.png",
+    "category": "course-code-guides",
+    "datePublished": "2026-09-10",
+    "dateModified": "2026-10-08",
+    "readTime": "6"
+  },
+  {
+    "slug": "cs519-final-year-project-guide",
+    "title": "CS519 Final Year Project Guide 2026",
+    "description": "CS519 Final Year Project at VU: proposal, development, report and viva, explained stage by stage. 0 rejections in 3 years, real approved case studies.",
+    "image": "cs519-final-year-project-guide.png",
+    "category": "final-year-project",
+    "datePublished": "2026-10-08",
+    "dateModified": "2026-10-08",
+    "readTime": "6"
+  },
+  {
+    "slug": "cs601-data-communication-notes",
+    "title": "CS601 Notes: Midterm & Finalterm Guide 2026",
+    "description": "CS601 (Data Communication) midterm and finalterm notes: code-wise Objective and Subjective files matched to VU's own lecture content and format.",
+    "image": "cs601-data-communication-notes.png",
+    "category": "course-code-guides",
+    "datePublished": "2026-09-16",
+    "dateModified": "2026-10-08",
+    "readTime": "6"
+  },
+  {
+    "slug": "cs614-data-warehousing-notes",
+    "title": "CS614 Notes: Midterm & Finalterm Guide 2026",
+    "description": "CS614 (Data Warehousing) midterm and finalterm notes: code-wise Objective and Subjective files matched to VU's own lecture content and format.",
+    "image": "cs614-data-warehousing-notes.png",
+    "category": "course-code-guides",
+    "datePublished": "2026-10-08",
+    "dateModified": "2026-10-08",
+    "readTime": "6"
+  },
+  {
+    "slug": "cs621-parallel-distributed-computing-notes",
+    "title": "CS621 Notes: Midterm & Finalterm Guide 2026",
+    "description": "CS621 (Parallel and Distributed Computing) midterm and finalterm notes: code-wise Objective and Subjective files matched to VU's own lecture content.",
+    "image": "cs621-parallel-distributed-computing-notes.png",
+    "category": "course-code-guides",
+    "datePublished": "2026-10-08",
+    "dateModified": "2026-10-08",
+    "readTime": "6"
+  },
+  {
+    "slug": "cs625-professional-practices-notes",
+    "title": "CS625 Notes: Midterm & Finalterm Guide 2026",
+    "description": "CS625 (Professional Practices) midterm and finalterm notes: code-wise Objective and Subjective files matched to VU's own lecture content and format.",
+    "image": "cs625-professional-practices-notes.png",
+    "category": "course-code-guides",
+    "datePublished": "2026-10-08",
+    "dateModified": "2026-10-08",
+    "readTime": "6"
+  },
+  {
+    "slug": "eco401-economics-notes",
+    "title": "ECO401 Notes: Midterm & Finalterm Guide 2026",
+    "description": "ECO401 (Economics) midterm and finalterm notes: code-wise Objective and Subjective files matched to VU's own lecture content and exam format.",
+    "image": "eco401-economics-notes.png",
+    "category": "course-code-guides",
+    "datePublished": "2026-08-24",
+    "dateModified": "2026-10-08",
+    "readTime": "6"
+  },
+  {
+    "slug": "eng101-english-comprehension-notes",
+    "title": "ENG101 Notes: Midterm & Finalterm Guide 2026",
+    "description": "ENG101 (English Comprehension) midterm and finalterm notes: code-wise Objective and Subjective files matched to VU's own lecture content and format.",
+    "image": "eng101-english-comprehension-notes.png",
+    "category": "course-code-guides",
+    "datePublished": "2026-10-08",
+    "dateModified": "2026-10-08",
+    "readTime": "6"
+  },
+  {
+    "slug": "isl201-islamic-studies-notes",
+    "title": "ISL201 Notes: Midterm & Finalterm Guide 2026",
+    "description": "ISL201 (Islamic Studies) midterm and finalterm notes: code-wise Objective and Subjective files matched to VU's own lecture content and format.",
+    "image": "isl201-islamic-studies-notes.png",
+    "category": "course-code-guides",
+    "datePublished": "2026-10-08",
+    "dateModified": "2026-10-08",
+    "readTime": "6"
+  },
+  {
+    "slug": "mcm301-communication-skills-notes",
+    "title": "MCM301 Notes: Midterm & Finalterm Guide 2026",
+    "description": "MCM301 (Communication Skills) midterm and finalterm notes: code-wise Objective and Subjective files matched to VU's own lecture content and format.",
+    "image": "mcm301-communication-skills-notes.png",
+    "category": "course-code-guides",
+    "datePublished": "2026-09-11",
+    "dateModified": "2026-10-08",
+    "readTime": "6"
+  },
+  {
+    "slug": "mgt101-financial-accounting-notes",
+    "title": "MGT101 Notes: Midterm & Finalterm Guide 2026",
+    "description": "MGT101 (Financial Accounting) midterm and finalterm notes: code-wise Objective and Subjective files matched to VU's own lecture content and format.",
+    "image": "mgt101-financial-accounting-notes.png",
+    "category": "course-code-guides",
+    "datePublished": "2026-08-24",
+    "dateModified": "2026-10-08",
+    "readTime": "6"
+  },
+  {
+    "slug": "mgt201-principles-of-management-notes",
+    "title": "MGT201 Notes: Midterm & Finalterm Guide 2026",
+    "description": "MGT201 (Principles of Management) midterm and finalterm notes: code-wise Objective and Subjective files matched to VU's own lecture content and format.",
+    "image": "mgt201-principles-of-management-notes.png",
+    "category": "course-code-guides",
+    "datePublished": "2026-09-03",
+    "dateModified": "2026-10-08",
+    "readTime": "6"
+  },
+  {
+    "slug": "mgt211-introduction-to-business-notes",
+    "title": "MGT211 Notes: Midterm & Finalterm Guide 2026",
+    "description": "MGT211 (Introduction to Business) midterm and finalterm notes: code-wise Objective and Subjective files matched to VU's own lecture content and format.",
+    "image": "mgt211-introduction-to-business-notes.png",
+    "category": "course-code-guides",
+    "datePublished": "2026-09-11",
+    "dateModified": "2026-10-08",
+    "readTime": "6"
+  },
+  {
+    "slug": "mgt662-supply-chain-management-notes",
+    "title": "MGT662 Notes: Midterm & Finalterm Guide 2026",
+    "description": "MGT662 (Supply Chain Management) midterm and finalterm notes: code-wise Objective and Subjective files matched to VU's own lecture content and format.",
+    "image": "mgt662-supply-chain-management-notes.png",
+    "category": "course-code-guides",
+    "datePublished": "2026-10-05",
+    "dateModified": "2026-10-08",
+    "readTime": "6"
+  },
+  {
+    "slug": "pak301-pakistan-studies-notes",
+    "title": "PAK301 Notes: Midterm & Finalterm Guide 2026",
+    "description": "PAK301 (Pakistan Studies) midterm and finalterm notes: code-wise Objective and Subjective files matched to VU's own lecture content and format.",
+    "image": "pak301-pakistan-studies-notes.png",
+    "category": "course-code-guides",
+    "datePublished": "2026-10-08",
+    "dateModified": "2026-10-08",
+    "readTime": "6"
+  },
+  {
+    "slug": "psy101-introduction-to-psychology-notes",
+    "title": "PSY101 Notes: Midterm & Finalterm Guide 2026",
+    "description": "PSY101 (Introduction to Psychology) midterm and finalterm notes: code-wise Objective and Subjective files matched to VU's own lecture content and format.",
+    "image": "psy101-introduction-to-psychology-notes.png",
+    "category": "course-code-guides",
+    "datePublished": "2026-09-03",
+    "dateModified": "2026-10-08",
+    "readTime": "6"
+  },
+  {
+    "slug": "sta301-statistics-notes",
+    "title": "STA301 Notes: Midterm & Finalterm Guide 2026",
+    "description": "STA301 (Statistics and Probability) midterm and finalterm notes: code-wise Objective and Subjective files matched to VU's own lecture content.",
+    "image": "sta301-statistics-notes.png",
+    "category": "course-code-guides",
+    "datePublished": "2026-08-24",
+    "dateModified": "2026-10-08",
+    "readTime": "6"
+  },
+  {
+    "slug": "virtual-university-admission-guide",
+    "title": "Virtual University Admission Guide 2026",
+    "description": "Virtual University (VU) admission guide: eligibility, admission fee, online form, required documents, and final submission for BS, ADP, MCS, MBA and more.",
+    "image": "virtual-university-admission-guide.png",
+    "category": "admissions",
+    "datePublished": "2026-07-31",
+    "dateModified": "2026-10-08",
+    "readTime": "7"
+  },
+  {
+    "slug": "vu-admission-eligibility-criteria-2026",
+    "title": "VU Admission Eligibility Criteria 2026",
+    "description": "VU admission eligibility criteria 2026: BS, MS and MPhil requirements, minimum percentage, CGPA, entry test, and lateral entry options explained.",
+    "image": "vu-admission-eligibility-criteria-2026.png",
+    "category": "admissions",
+    "datePublished": "2026-08-23",
+    "dateModified": "2026-10-08",
+    "readTime": "6"
+  },
+  {
+    "slug": "vu-assignment-guide",
+    "title": "VU Assignment Guide: Format, Plagiarism Rules",
+    "description": "How VU assignments work on VULMS: formatting rules, submission steps, the similarity/plagiarism check, deadlines, and how to write a high-scoring assignment.",
+    "image": "vu-assignment-guide.png",
+    "category": "lms-handling",
+    "datePublished": "2026-08-19",
+    "dateModified": "2026-09-13",
+    "readTime": "7"
+  },
+  {
+    "slug": "vu-attendance-guide",
+    "title": "VU Attendance Guide: How VULMS Tracks Lectures",
+    "description": "How VU lecture attendance works on VULMS: what counts as attendance, why staying current matters, where to check it, and common mistakes to avoid.",
+    "image": "vu-attendance-guide.png",
+    "category": "lms-handling",
+    "datePublished": "2026-08-23",
+    "dateModified": "2026-09-13",
+    "readTime": "6"
+  },
+  {
+    "slug": "vu-azad-kashmir-midterm-reschedule-2026",
+    "title": "VU Azad Kashmir Midterm Reschedule: 28 Sept",
+    "description": "VU rescheduled Spring 2026 Midterm exams for Azad Kashmir students hit by internet disruptions, starting 28 September. Datesheet delivery, campuses and policy.",
+    "image": "vu-azad-kashmir-midterm-reschedule-2026.png",
+    "category": "exam-preparation",
+    "datePublished": "2026-09-28",
+    "dateModified": "2026-09-28",
+    "readTime": "4"
+  },
+  {
+    "slug": "vu-cgpa-1-to-3-timeline",
+    "title": "VU CGPA 1.0 to 3.0: How Many Semesters?",
+    "description": "Why raising a low VU CGPA toward 3.0 is realistic within a few semesters early in your degree, and how consistent LMS and exam support helps.",
+    "image": "vu-cgpa-1-to-3-timeline.png",
+    "category": "lms-handling",
+    "datePublished": "2026-09-09",
+    "dateModified": "2026-09-13",
+    "readTime": "7"
+  },
+  {
+    "slug": "vu-cgpa-improve-guide",
+    "title": "How to Improve Your VU CGPA: A Practical Guide",
+    "description": "How to improve your VU CGPA: where the easy marks are (quizzes, GDBs, assignments), how exam prep quality shifts your grade band, and how to plan course loads.",
+    "image": "vu-cgpa-improve-guide.png",
+    "category": "lms-handling",
+    "datePublished": "2026-09-07",
+    "dateModified": "2026-09-13",
+    "readTime": "6"
+  },
+  {
+    "slug": "vu-compulsory-courses-guide",
+    "title": "VU Compulsory Courses: PAK301, ISL201, ENG101",
+    "description": "What VU's PAK301, ISL201 and ENG101 compulsory courses cover, taken across nearly every program, and how to prepare each for midterm and finalterm.",
+    "image": "vu-compulsory-courses-guide.png",
+    "category": "course-code-guides",
+    "datePublished": "2026-09-13",
+    "dateModified": "2026-10-08",
+    "readTime": "7"
+  },
+  {
+    "slug": "vu-course-selection-book-lms-handling-2026",
+    "title": "VU Course Selection Open: Book LMS Handling",
+    "description": "VU Course Selection 2026 is open. Once you've picked your subjects, book LMS Handling for quizzes, assignments, GDB and attendance all semester.",
+    "image": "vu-course-selection-book-lms-handling-2026.png",
+    "category": "registration",
+    "datePublished": "2026-09-19",
+    "dateModified": "2026-09-19",
+    "readTime": "4"
+  },
+  {
+    "slug": "vu-course-selection-dates-2026",
+    "title": "VU Course Selection Dates 2026: 18 Sep & 8 Oct",
+    "description": "VU course selection opened 18 September 2026 for most students, and 8 October for Summer Semester students after their new session starts.",
+    "image": "vu-course-selection-dates-2026.png",
+    "category": "registration",
+    "datePublished": "2026-09-14",
+    "dateModified": "2026-09-19",
+    "readTime": "5"
+  },
+  {
+    "slug": "vu-datesheet-guide",
+    "title": "VU Datesheet Guide: Check Your Exam Schedule",
+    "description": "How to check your VU exam datesheet on the official portal: selecting your exam city, center, date and time, and what to do if it isn't showing yet.",
+    "image": "vu-datesheet-guide.png",
+    "category": "exam-preparation",
+    "datePublished": "2026-09-08",
+    "dateModified": "2026-09-13",
+    "readTime": "6"
+  },
+  {
+    "slug": "vu-failed-subject-guide",
+    "title": "Failed a Subject in VU Result? What to Do",
+    "description": "Failed a course in your VU result? What an F grade means for your CGPA, the difference between repeating and an improvement, and how probation works.",
+    "image": "vu-failed-subject-guide.png",
+    "category": "lms-handling",
+    "datePublished": "2026-09-04",
+    "dateModified": "2026-09-21",
+    "readTime": "6"
+  },
+  {
+    "slug": "vu-fall-2026-admission-final-days",
+    "title": "VU Fall 2026 Admissions Deadline Extended",
+    "description": "VU extended the Fall 2026 admissions deadline a second time, to 10 October 2026. What changed, who it covers, and what to do if you'd written this cycle off.",
+    "image": "vu-fall-2026-admission-final-days.png",
+    "category": "admissions",
+    "datePublished": "2026-09-24",
+    "dateModified": "2026-10-08",
+    "readTime": "5"
+  },
+  {
+    "slug": "vu-fall-2026-admissions-open",
+    "title": "VU Fall 2026 Admissions: Key Dates & Programs",
+    "description": "VU Fall 2026 admissions deadline extended again to 10 October 2026. See what's changed, plus the full ADP, diploma, MS and BS-lateral program list by faculty.",
+    "image": "vu-fall-2026-admissions-open.png",
+    "category": "admissions",
+    "datePublished": "2026-08-25",
+    "dateModified": "2026-10-08",
+    "readTime": "7"
+  },
+  {
+    "slug": "vu-fee-structure-guide",
+    "title": "VU Fee Structure Guide 2026",
+    "description": "VU's official fee structure for BS, ADP, Masters, MS and PhD: admission, registration, security and tuition fee per credit hour, effective Spring 2026.",
+    "image": "vu-fee-structure-guide.png",
+    "category": "admissions",
+    "datePublished": "2026-09-09",
+    "dateModified": "2026-09-21",
+    "readTime": "7"
+  },
+  {
+    "slug": "vu-final-year-project-fyp-guide",
+    "title": "VU FYP Guide: Proposal, OAR, PPT & Viva",
+    "description": "A complete VU FYP roadmap: choosing an organization, writing an OAR/Internship Report that doesn't get rejected, PPT prep, and viva, with real case studies.",
+    "image": "vu-final-year-project-fyp-guide.png",
+    "category": "final-year-project",
+    "datePublished": "2026-07-19",
+    "dateModified": "2026-10-08",
+    "readTime": "9"
+  },
+  {
+    "slug": "vu-finalterm-notes-pdf-2026",
+    "title": "VU Finalterm Notes PDF 2026 (Download)",
+    "description": "Download VU finalterm notes PDF 2026 for all subjects: solved Objective MCQs and Subjective short & long questions, code-wise, matched to VU's own lectures.",
+    "image": "vu-finalterm-notes-pdf-2026.png",
+    "category": "exam-preparation",
+    "datePublished": "2026-08-02",
+    "dateModified": "2026-09-21",
+    "readTime": "6"
+  },
+  {
+    "slug": "vu-gdb-graded-discussion-board-guide",
+    "title": "VU GDB Guide: How to Score High on VULMS",
+    "description": "How VU GDB (Graded Discussion Board) works on VULMS, the word limit, deadline, marking criteria, plagiarism rules, and how to write a high-scoring GDB post.",
+    "image": "vu-gdb-graded-discussion-board-guide.png",
+    "category": "lms-handling",
+    "datePublished": "2026-08-14",
+    "dateModified": "2026-09-13",
+    "readTime": "7"
+  },
+  {
+    "slug": "vu-gpa-vs-cgpa-guide",
+    "title": "VU GPA vs CGPA: Difference & How to Calculate",
+    "description": "VU GPA vs CGPA explained: what each one measures, why they can look different on your result, and where to check both correctly on VULMS.",
+    "image": "vu-gpa-vs-cgpa-guide.png",
+    "category": "lms-handling",
+    "datePublished": "2026-09-07",
+    "dateModified": "2026-09-13",
+    "readTime": "6"
+  },
+  {
+    "slug": "vu-help-guide",
+    "title": "Virtual University Help: LMS, Exam Files & FYP",
+    "description": "Stuck with VU studies? What Nibaha Haq helps with: VULMS handling, Midterm/Finalterm exam files for 606+ course codes, and Final Year Project support.",
+    "image": "vu-help-guide.png",
+    "category": "lms-handling",
+    "datePublished": "2026-09-28",
+    "dateModified": "2026-09-28",
+    "readTime": "5"
+  },
+  {
+    "slug": "vu-important-dates-2026",
+    "title": "VU Important Dates 2026: Mids, Finals & Results",
+    "description": "VU important dates 2026: LMS blocking dates for fee, Summer Semester Mids, Finals and Results schedule, plus what each deadline means for you.",
+    "image": "vu-important-dates-2026.png",
+    "category": "registration",
+    "datePublished": "2026-08-25",
+    "dateModified": "2026-09-23",
+    "readTime": "5"
+  },
+  {
+    "slug": "vu-mba-admission-2026",
+    "title": "VU MBA Admission 2026: Eligibility & Apply",
+    "description": "VU MBA admission 2026: eligibility, specializations (Marketing, Finance, HR), program structure, fee, and how to apply for Virtual University's MBA.",
+    "image": "vu-mba-admission-2026.png",
+    "category": "admissions",
+    "datePublished": "2026-08-30",
+    "dateModified": "2026-09-13",
+    "readTime": "6"
+  },
+  {
+    "slug": "vu-midterm-finalterm-exam-preparation-guide",
+    "title": "VU Midterm & Finalterm Exam Prep Guide",
+    "description": "A practical guide to VU midterm and finalterm exam preparation: how VU exams work, a smart study strategy, and how code-wise exam files help raise your CGPA.",
+    "image": "vu-midterm-finalterm-exam-preparation-guide.png",
+    "category": "exam-preparation",
+    "datePublished": "2026-07-17",
+    "dateModified": "2026-09-21",
+    "readTime": "8"
+  },
+  {
+    "slug": "vu-midterm-notes-pdf-fall-2026",
+    "title": "VU Midterm Notes PDF Fall 2026 (Download)",
+    "description": "Download VU midterm notes PDF for Fall 2026, all subjects: solved Objective MCQs and Subjective short & long questions, code-wise, matched to lectures.",
+    "image": "vu-midterm-notes-pdf-fall-2026.png",
+    "category": "exam-preparation",
+    "datePublished": "2026-09-21",
+    "dateModified": "2026-09-21",
+    "readTime": "6"
+  },
+  {
+    "slug": "vu-new-session-starts-12-october-2026",
+    "title": "VU New Session Starts 12 October: First Steps",
+    "description": "VU's new semester session begins 12 October 2026. A first-days checklist to confirm your courses, catch early quizzes and GDBs, and book LMS Handling early.",
+    "image": "vu-new-session-starts-12-october-2026.png",
+    "category": "registration",
+    "datePublished": "2026-09-26",
+    "dateModified": "2026-10-08",
+    "readTime": "5"
+  },
+  {
+    "slug": "vu-past-papers-vs-code-wise-files",
+    "title": "VU Past Papers vs Code-Wise Exam Files",
+    "description": "VU past papers vs code-wise Midterm and Finalterm files: what free past papers are good for, their limits, and when code-wise files help more.",
+    "image": "vu-past-papers-vs-code-wise-files.png",
+    "category": "exam-preparation",
+    "datePublished": "2026-09-13",
+    "dateModified": "2026-09-13",
+    "readTime": "6"
+  },
+  {
+    "slug": "vu-pros-and-cons",
+    "title": "Virtual University Pros and Cons",
+    "description": "Honest pros and cons of Virtual University Pakistan (VU): flexibility, cost, and self-discipline needed, to help you decide if VU fits your situation.",
+    "image": "vu-pros-and-cons.png",
+    "category": "admissions",
+    "datePublished": "2026-09-13",
+    "dateModified": "2026-09-13",
+    "readTime": "6"
+  },
+  {
+    "slug": "vu-quiz-guide",
+    "title": "VU Quiz Guide: How VULMS Quizzes Work",
+    "description": "How VU quizzes work on VULMS: where to find them, the activation window, MCQ format, how to prepare efficiently, and mistakes that cost marks.",
+    "image": "vu-quiz-guide.png",
+    "category": "lms-handling",
+    "datePublished": "2026-08-23",
+    "dateModified": "2026-09-13",
+    "readTime": "6"
+  },
+  {
+    "slug": "vu-result-guide",
+    "title": "How to Check Your VU Result on VULMS",
+    "description": "How to check your VU result on VULMS: logging in, finding your Grade Book, reading your course marks and GPA, and what to do if your CGPA isn't showing.",
+    "image": "vu-result-guide.png",
+    "category": "lms-handling",
+    "datePublished": "2026-09-01",
+    "dateModified": "2026-09-23",
+    "readTime": "6"
+  },
+  {
+    "slug": "vu-scholarship-guide",
+    "title": "VU Scholarship Guide: Merit & Need-Based",
+    "description": "How VU's Merit-Based and Need-Based scholarships work: CGPA and marks eligibility, how much tuition fee they cover, how to apply, and how to keep them.",
+    "image": "vu-scholarship-guide.png",
+    "category": "admissions",
+    "datePublished": "2026-09-09",
+    "dateModified": "2026-09-13",
+    "readTime": "7"
+  },
+  {
+    "slug": "vu-semester-freeze-guide",
+    "title": "VU Semester Freeze Guide: Rules & Process",
+    "description": "VU Semester Freeze rules: who's eligible, how many semesters you can freeze, fee implications, the VULMS process, and what happens if you don't resume in time.",
+    "image": "vu-semester-freeze-guide.png",
+    "category": "registration",
+    "datePublished": "2026-09-21",
+    "dateModified": "2026-10-08",
+    "readTime": "5"
+  },
+  {
+    "slug": "vu-summer-semester-deadline-extension-2026",
+    "title": "VU Summer Semester Deadline Extended to 22 Sep",
+    "description": "VU has extended the Summer Semester 2026 admission deadline from 15 to 22 September 2026, giving students one extra week to register on VULMS.",
+    "image": "vu-summer-semester-deadline-extension-2026.png",
+    "category": "registration",
+    "datePublished": "2026-09-24",
+    "dateModified": "2026-09-24",
+    "readTime": "4"
+  },
+  {
+    "slug": "vu-summer-semester-final-result-2026",
+    "title": "VU Summer Semester 2026 Final Result",
+    "description": "VU's Summer Semester 2026 Final Result lands 7 October: how your grade is calculated, where to check it on VULMS, and what to do if marks are missing.",
+    "image": "vu-summer-semester-final-result-2026.png",
+    "category": "lms-handling",
+    "datePublished": "2026-09-26",
+    "dateModified": "2026-09-26",
+    "readTime": "5"
+  },
+  {
+    "slug": "vu-summer-semester-finals-datesheet-2026",
+    "title": "VU Summer 2026 Finals: 3-4 October Datesheet",
+    "description": "VU Summer Semester 2026 Finals run 3-4 October. When the datesheet appears on VU's separate portal, what to expect, and what's next: new session and results.",
+    "image": "vu-summer-semester-finals-datesheet-2026.png",
+    "category": "exam-preparation",
+    "datePublished": "2026-09-25",
+    "dateModified": "2026-10-08",
+    "readTime": "6"
+  },
+  {
+    "slug": "vu-summer-semester-finalterm-reschedule-2026",
+    "title": "VU Summer Semester Finalterm Reschedule: 7 Oct",
+    "description": "VU rescheduled the Summer Semester 2026 Finalterm exam via a notice posted 6 October, with the paper now set for 7 October. Confirm your exact date on VULMS.",
+    "image": "vu-summer-semester-finalterm-reschedule-2026.png",
+    "category": "exam-preparation",
+    "datePublished": "2026-10-08",
+    "dateModified": "2026-10-08",
+    "readTime": "4"
+  },
+  {
+    "slug": "vu-summer-semester-mids-2026",
+    "title": "VU Summer 2026 Mids: 12-13 September Guide",
+    "description": "VU Summer Semester 2026 Mids were held 12-13 September. What the exam format covered, common mistakes to avoid, and what's next before Finals on 3-4 October.",
+    "image": "vu-summer-semester-mids-2026.png",
+    "category": "exam-preparation",
+    "datePublished": "2026-09-07",
+    "dateModified": "2026-09-23",
+    "readTime": "6"
+  },
+  {
+    "slug": "vu-summer-semester-midterm-result-2026",
+    "title": "VU Summer Semester Midterm Result 2026",
+    "description": "VU Summer Semester 2026 Midterm result isn't separate: it lands with your Finalterm result on 7 October. Here's the full timeline and how to check it.",
+    "image": "vu-result-guide.png",
+    "category": "lms-handling",
+    "datePublished": "2026-09-23",
+    "dateModified": "2026-10-08",
+    "readTime": "5"
+  },
+  {
+    "slug": "vu-summer-semester-registration-guide",
+    "title": "VU Summer Semester 2026: Dates, Apply & Fee",
+    "description": "VU Summer Semester 2026: latest dates, deadline updates, how to apply on VULMS, the fee structure, and what comes next if you registered or missed it.",
+    "image": "vu-summer-semester-registration-guide.png",
+    "category": "registration",
+    "datePublished": "2026-08-05",
+    "dateModified": "2026-09-30",
+    "readTime": "6"
+  },
+  {
+    "slug": "vulms-login-guide",
+    "title": "VULMS Login Guide: Fix Common Login Problems",
+    "description": "The correct VULMS login process, plus real fixes for wrong credentials, forgotten passwords, inactive new accounts, and browser or site-down errors.",
+    "image": "vulms-login-guide.png",
+    "category": "lms-handling",
+    "datePublished": "2026-09-08",
+    "dateModified": "2026-09-13",
+    "readTime": "6"
+  }
+]
