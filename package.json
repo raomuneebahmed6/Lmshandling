@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/raomuneebahmed6/Lmshandling#readme",
   "devDependencies": {
-    "@11ty/eleventy": "^3.1.6"
+    "@11ty/eleventy": "^3.1.6",
+    "decap-cms": "^3.16.3"
   }
 }

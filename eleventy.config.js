@@ -67,6 +67,21 @@ function buildBlogPosts(collectionApi) {
 }
 
 module.exports = function (eleventyConfig) {
+  // ---- CMS admin bundle: copied from node_modules at build time rather
+  // than committed to git, so the 5MB+ decap-cms.js file never bloats the
+  // repo and always matches the version pinned in package.json. Requires
+  // `npm install` to have run first (true for both local builds and the
+  // deploy workflow).
+  eleventyConfig.on("eleventy.before", () => {
+    const fs = require("fs");
+    const path = require("path");
+    fs.mkdirSync("admin/vendor", { recursive: true });
+    fs.copyFileSync(
+      "node_modules/decap-cms/dist/decap-cms.js",
+      "admin/vendor/decap-cms.js"
+    );
+  });
+
   // ---- Existing static content: copied through untouched, byte-identical ----
   eleventyConfig.addPassthroughCopy("assets");
   eleventyConfig.addPassthroughCopy("degrees");
