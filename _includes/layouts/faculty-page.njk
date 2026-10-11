@@ -1,3 +1,37 @@
+{#
+  faculty-page.njk — Eleventy/Nunjucks layout for the 5 CMS-generated
+  faculty-listing pages under degrees/ (degrees/faculty-csit.html,
+  degrees/faculty-arts.html, degrees/faculty-education.html,
+  degrees/faculty-management.html, degrees/faculty-science.html).
+  degrees/index.html and the 21 individual degree pages are handled
+  separately (see degree-page.njk for those), not by this file.
+
+  Same architecture as _includes/layouts/service-page.njk / degree-page.njk
+  (see service-page.njk's header comment for the full rationale): a
+  COMPLETE .njk layout, nothing routes through markdown-it, every piece of
+  per-faculty content is a frontmatter field on content/degrees/faculty-*.md,
+  and those files have an EMPTY markdown body.
+
+  The shared <style> block is copied byte-for-byte from the live faculty
+  pages (verified identical to the degree pages' own style block).
+
+  Frontmatter contract — see content/degrees/faculty-*.md for concrete
+  examples; every field below was extracted programmatically from the live
+  pages before they were deleted, so the values are verbatim, not authored
+  fresh.
+  slug, title, metaDescription, twitterDescription
+  heroAriaLabel, h1
+  degreeCards: [{h3,p,href}] (2-6 items depending on the faculty)
+  aboutH2, aboutP1
+  faq: [{question, answer}] — plain text, feeds both the visible FAQ list
+    and (via | dump) the FAQPage JSON-LD (verified identical in wording
+    across all 5 pages, differing only in "&" HTML-entity-encoding)
+  ctaP (the one CTA sentence that varies across the 5 pages)
+  codesList (comma-separated course codes across the whole faculty; feeds
+    the shared script's CODES constant even though no visible code-library
+    section uses it on these pages — present on the live pages, so kept)
+  body (markdown) — always empty; never referenced below.
+#}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,14 +52,16 @@
   });
 </script>
 
+{% set canonicalUrl = "https://lmshandling.com/degrees/" + slug %}
+
 <!-- ===================== PRIMARY SEO ===================== -->
-<title>Public Administration VU Files | Nibaha Haq</title>
-<meta name="description" content="Public Administration at Virtual University, 66 related course codes with Midterm files, Finalterm files, LMS handling and FYP support by Nibaha Haq.">
+<title>{{ title }}</title>
+<meta name="description" content="{{ metaDescription }}">
 <meta name="keywords" content="Virtual University support, VULMS handling, VU midterm files, VU finalterm files, VU final year project, FYP help, VU exam preparation, VU LMS assignment quiz GDB, Nibaha Haq, VU course codes, 4 CGPA files">
 <meta name="author" content="Nibaha Haq">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <meta name="theme-color" content="#00448B">
-<link rel="canonical" href="https://lmshandling.com/degrees/public-administration">
+<link rel="canonical" href="{{ canonicalUrl }}">
 
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
@@ -36,17 +72,17 @@
 <!-- ===================== OPEN GRAPH / SOCIAL ===================== -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Nibaha Haq | Academic Support Services">
-<meta property="og:title" content="Public Administration VU Files | Nibaha Haq">
-<meta property="og:description" content="Public Administration at Virtual University, 66 related course codes with Midterm files, Finalterm files, LMS handling and FYP support by Nibaha Haq.">
-<meta property="og:url" content="https://lmshandling.com/degrees/public-administration">
+<meta property="og:title" content="{{ title }}">
+<meta property="og:description" content="{{ metaDescription }}">
+<meta property="og:url" content="{{ canonicalUrl }}">
 <meta property="og:image" content="https://lmshandling.com/finals-img/result-01.jpg">
 <meta property="og:image:width" content="600">
 <meta property="og:image:height" content="900">
 <meta property="og:image:alt" content="Real VU CGPA result screenshot from Nibaha Haq academic support">
 <meta property="og:locale" content="en_PK">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Public Administration VU Files | Nibaha Haq">
-<meta name="twitter:description" content="VULMS handling, code-wise Midterm & Finalterm files, and Final Year Project support for Virtual University students.">
+<meta name="twitter:title" content="{{ title }}">
+<meta name="twitter:description" content="{{ twitterDescription }}">
 <meta name="twitter:image" content="https://lmshandling.com/finals-img/result-01.jpg">
 <meta name="twitter:image:alt" content="Real VU CGPA result screenshot from Nibaha Haq academic support">
 
@@ -82,12 +118,11 @@
 {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
  {"@type":"ListItem","position":1,"name":"Home","item":"https://lmshandling.com/"},
  {"@type":"ListItem","position":2,"name":"Degrees","item":"https://lmshandling.com/degrees/"},
- {"@type":"ListItem","position":3,"name":"Faculty of Management","item":"https://lmshandling.com/degrees/faculty-management"},
- {"@type":"ListItem","position":4,"name":"Public Administration","item":"https://lmshandling.com/degrees/public-administration"}]}
+ {"@type":"ListItem","position":3,"name":"{{ h1 }}","item":"{{ canonicalUrl }}"}]}
 </script>
 
 <script type="application/ld+json">
-{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What jobs can a Public Administration degree lead to?", "acceptedAnswer": {"@type": "Answer", "text": "Graduates commonly pursue roles in government departments, public sector management, local administration and competitive exams such as CSS/PMS after further preparation."}}, {"@type": "Question", "name": "Which Public Administration subjects are most requested?", "acceptedAnswer": {"@type": "Answer", "text": "Public Policy, Organizational Behavior and Administrative Law are among the most frequently ordered for Midterm and Finalterm files."}}, {"@type": "Question", "name": "Do you handle GDBs for Public Administration?", "acceptedAnswer": {"@type": "Answer", "text": "Yes, GDB, quiz, assignment and attendance handling is available for all Public Administration course codes."}}, {"@type": "Question", "name": "Is FYP guidance available for Public Administration research?", "acceptedAnswer": {"@type": "Answer", "text": "Yes, including help with policy-based research proposals and full documentation support."}}, {"@type": "Question", "name": "Is Public Administration better than Business Administration for a government career?", "acceptedAnswer": {"@type": "Answer", "text": "For a specifically government, NGO or CSS/PMS-focused path, yes: Public Administration's governance and public-policy courses target that direction more directly, while Business Administration stays broader and more corporate-management focused."}}, {"@type": "Question", "name": "Does Public Administration prepare students for CSS or PMS exams directly?", "acceptedAnswer": {"@type": "Answer", "text": "The degree's public-policy and governance coursework provides reasonable groundwork, but CSS/PMS still requires dedicated exam-specific preparation beyond the regular program content."}}]}
+{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{% for item in faq %}{"@type": "Question", "name": {{ item.question | dump | safe }}, "acceptedAnswer": {"@type": "Answer", "text": {{ item.answer | dump | safe }}}}{% if not loop.last %}, {% endif %}{% endfor %}]}
 </script>
 
 <style>
@@ -632,107 +667,61 @@ img { max-width:100%; height:auto; }
     <a href="/scheme">Study Scheme</a>
     <a href="/cgpa-calculator">CGPA Calculator</a>
     <a href="/contact">Contact</a>
-    
+
   </nav>
 </header>
 
 <main>
-<section class="page-hero section" aria-label="Public Administration introduction">
+<section class="page-hero section" aria-label="{{ heroAriaLabel }}">
   <div class="hero-bg"><div class="blob b1" data-parallax="0.2"></div><div class="blob b2" data-parallax="-0.14"></div></div>
   <div class="reveal in">
-    <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><a href="/degrees/">Degrees</a><span>/</span><a href="/degrees/faculty-management">Faculty of Management</a><span>/</span><span>Public Administration</span></nav>
-    <p class="section-label">Faculty of Management</p>
-    <h1>Public Administration</h1>
-    <p class="lead">Course codes for Public Administration at Virtual University, so tap any code to order its Midterm file, Finalterm file, or LMS handling on WhatsApp.</p>
-    <div class="hero-chips reveal" data-delay="1">
-      <span class="chip"><b>66</b> Related Codes</span>
-      <span class="chip">📘 Mid + Final Files</span>
-      <span class="chip">🧭 LMS Handling</span>
-    </div>
-    <div class="hero-actions reveal" data-delay="2" style="margin-top:1.5rem">
-      <a class="btn primary" data-whatsapp="Hello Nibaha Haq, I need files for Public Administration." target="_blank" rel="noopener" href="https://wa.me/923295209868?text=Hello%20Nibaha%20Haq%2C%20I%20need%20files%20for%20Public%20Administration.">Order Files</a>
-      <a class="btn soft" href="/services/final-year-project">FYP Support</a>
-    </div>
+    <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><a href="/degrees/">Degrees</a><span>/</span><span>{{ h1 }}</span></nav>
+    <p class="section-label">Degrees</p>
+    <h1>{{ h1 }}</h1>
+    <p class="lead">Select a degree to view its course codes, exam files, and support options.</p>
   </div>
 </section>
-
-<section class="section" id="degree-codes" aria-labelledby="codes-heading">
-  <div class="section-head reveal">
-    <p class="section-label">Course Codes</p>
-    <h2 id="codes-heading">Pick your subject code.</h2>
-    <p>These codes relate to Public Administration and nearby programs. Don't see yours? <a data-whatsapp="Hello Nibaha Haq, I study Public Administration and my subject code is not listed. Please check for me." target="_blank" rel="noopener" style="color:var(--ink-2);font-weight:600" href="https://wa.me/923295209868?text=Hello%20Nibaha%20Haq%2C%20I%20study%20Public%20Administration%20and%20my%20subject%20code%20is%20not%20listed.%20Please%20check%20for%20me.">Ask on WhatsApp</a>: 606 codes are covered in total.</p>
+<section class="section">
+  <div class="grid-3">
+    {% for card in degreeCards %}<article class="service-card reveal"{% if loop.index0 % 4 != 0 %} data-delay="{{ loop.index0 % 4 }}"{% endif %}><h3>{{ card.h3 }}</h3><p>{{ card.p }}</p><a class="read-more" href="{{ card.href }}">Open degree page</a></article>
+    {% endfor %}
   </div>
-  <div class="code-tools reveal">
-    <label class="code-search"><span aria-hidden="true">🔎</span><input type="search" id="codeSearch" placeholder="Search your code…" aria-label="Search course codes"></label>
-    <span class="code-count" id="codeCount"></span>
-  </div>
-  <div class="home-course-grid reveal" id="codeGrid" role="list"></div>
-  <p class="no-codes" id="noCodes">No matching code here. Message on WhatsApp and we'll check for you.</p>
-  <button class="btn soft toggle-codes" id="toggleCodes" aria-expanded="false">Show all codes ↓</button>
 </section>
-
 <section class="section" aria-labelledby="about-heading">
   <div class="section-head reveal">
-    <p class="section-label">About This Program</p>
-    <h2 id="about-heading">Public Administration at Virtual University</h2>
-    <p>Students who picture themselves eventually working inside a government department, a public-sector organization or an NGO tend to find BS Public Administration a more direct fit than a general Business Administration degree. Virtual University's program covers governance, public policy, organizational management and administrative law, aimed squarely at that career direction rather than corporate management broadly.</p>
-    <p style="margin-top:.8rem">The 66 related course codes make it a mid-sized Faculty of Management program, and because so much of the reading is policy-heavy, students commonly need help balancing dense assignments and GDBs with structured Midterm and Finalterm exam preparation.</p>
+    <p class="section-label">About This Faculty</p>
+    <h2 id="about-heading">{{ aboutH2 }}</h2>
+    <p>{{ aboutP1 }}</p>
+    {% if aboutP2 %}<p style="margin-top:.8rem">{{ aboutP2 }}</p>{% endif %}
   </div>
 </section>
 
-<section class="section" aria-labelledby="career-heading">
+{% if chooseH2 %}
+<section class="section" aria-labelledby="choose-heading">
   <div class="section-head reveal">
-    <p class="section-label">Career Scope</p>
-    <h2 id="career-heading">Career scope after Public Administration in Pakistan</h2>
-    <p>Government-sector roles, NGO program management and general administrative positions are the most common destinations, and for students specifically targeting competitive exams like CSS, the degree's public-policy and governance courses provide reasonable groundwork before dedicated exam preparation.</p>
-    <p style="margin-top:.8rem">Policy research and development-sector program coordination are realistic alternatives to direct government employment too, particularly for graduates who lean on the program's overlap with Sociology and Economics rather than staying purely administrative.</p>
+    <p class="section-label">{{ chooseSectionLabel }}</p>
+    <h2 id="choose-heading">{{ chooseH2 }}</h2>
+    <p>{{ chooseP1 }}</p>
+    {% if chooseP2 %}<p style="margin-top:.8rem">{{ chooseP2 }}</p>{% endif %}
   </div>
 </section>
-
-<section class="section" aria-labelledby="suits-heading">
-  <div class="section-head reveal">
-    <p class="section-label">Who This Degree Suits</p>
-    <h2 id="suits-heading">Who this degree suits</h2>
-    <p>Public Administration suits students with a specific direction in mind more than it suits students still exploring general business options. The governance, public-policy and administrative-law focus is narrower than Business Administration's broader management curriculum. It works well for students already planning toward government service, NGO work or CSS/PMS-style competitive exams, since the coursework builds directly toward that world rather than toward corporate management.</p>
-    <p style="margin-top:.8rem">It's a less natural fit for students who want a private-sector or entrepreneurship-focused degree: Business Administration or Commerce, both in the same Faculty of Management, cover that ground more directly. Students who enjoyed Sociology-style reading about institutions and social structures, or who are drawn to Economics, often find Public Administration's policy-heavy assignments and GDBs a comfortable extension of that interest rather than a difficult adjustment.</p>
-  </div>
-</section>
-
-<section class="section" aria-labelledby="related-heading">
-  <div class="section-head reveal">
-    <p class="section-label">Faculty of Management</p>
-    <h2 id="related-heading">Other programs in this faculty.</h2>
-    <p><a href="/degrees/business-administration" style="color:var(--teal);font-weight:600;text-decoration:underline">Business Administration</a> &middot; <a href="/degrees/accounting-finance" style="color:var(--teal);font-weight:600;text-decoration:underline">Accounting &amp; Finance</a> &middot; <a href="/degrees/commerce" style="color:var(--teal);font-weight:600;text-decoration:underline">Commerce</a></p>
-  </div>
-</section>
+{% endif %}
 
 <section class="section" aria-labelledby="faq-heading">
   <div class="section-head reveal">
     <p class="section-label">FAQ</p>
-    <h2 id="faq-heading">Common questions about this program.</h2>
+    <h2 id="faq-heading">Common questions about this faculty.</h2>
   </div>
   <div class="faq-list reveal">
-      <details><summary>What jobs can a Public Administration degree lead to?</summary><p>Graduates commonly pursue roles in government departments, public sector management, local administration and competitive exams such as CSS/PMS after further preparation.</p></details>
-      <details><summary>Which Public Administration subjects are most requested?</summary><p>Public Policy, Organizational Behavior and Administrative Law are among the most frequently ordered for Midterm and Finalterm files.</p></details>
-      <details><summary>Do you handle GDBs for Public Administration?</summary><p>Yes, GDB, quiz, assignment and attendance handling is available for all Public Administration course codes.</p></details>
-      <details><summary>Is FYP guidance available for Public Administration research?</summary><p>Yes, including help with policy-based research proposals and full documentation support.</p></details>
-      <details><summary>Is Public Administration better than Business Administration for a government career?</summary><p>For a specifically government, NGO or CSS/PMS-focused path, yes: Public Administration's governance and public-policy courses target that direction more directly, while Business Administration stays broader and more corporate-management focused.</p></details>
-      <details><summary>Does Public Administration prepare students for CSS or PMS exams directly?</summary><p>The degree's public-policy and governance coursework provides reasonable groundwork, but CSS/PMS still requires dedicated exam-specific preparation beyond the regular program content.</p></details>
+      {% for item in faq %}<details><summary>{{ item.question }}</summary><p>{{ item.answer }}</p></details>
+      {% endfor %}
   </div>
 </section>
 
-<section class="section" aria-label="Services">
-  <div class="grid-4">
-    <article class="service-card reveal"><h3>LMS Handling</h3><p>Quiz, assignment, GDB and attendance handled all semester.</p><a class="read-more" href="/services/lms-services">Read more<span class="sr-only"> about LMS Handling</span></a></article>
-    <article class="service-card reveal" data-delay="1"><h3>Midterm Files</h3><p>Code-wise objective + subjective midterm preparation.</p><a class="read-more" href="/services/midterm-files">Read more<span class="sr-only"> about Midterm Exam Files</span></a></article>
-    <article class="service-card reveal" data-delay="2"><h3>Finalterm Files</h3><p>4 CGPA finalterm files for focused revision.</p><a class="read-more" href="/services/finalterm-files">Read more<span class="sr-only"> about Finalterm Exam Files</span></a></article>
-    <article class="service-card reveal" data-delay="3"><h3>Final Year Project</h3><p>Proposal to viva. Complete FYP documentation support.</p><a class="read-more" href="/services/final-year-project">Read more<span class="sr-only"> about Final Year Projects</span></a></article>
-  </div>
-</section>
 <section class="section" aria-label="Get started">
   <div class="cta-band reveal">
-    <div><h2>Ready to start this semester right?</h2><p>Send your program, semester and subject codes for organized support in minutes.</p></div>
-    <a class="btn gold" data-whatsapp="Hello Nibaha Haq, I am a Public Administration student and need VU academic support." target="_blank" rel="noopener" href="https://wa.me/923295209868?text=Hello%20Nibaha%20Haq%2C%20I%20am%20a%20Public%20Administration%20student%20and%20need%20VU%20academic%20support.">Message on WhatsApp</a>
+    <div><h2>Ready to start this semester right?</h2><p>{{ ctaP }}</p></div>
+    <a class="btn gold" data-whatsapp="Hello Nibaha Haq, please guide me about my degree program files." target="_blank" rel="noopener" href="https://wa.me/923295209868?text=Hello%20Nibaha%20Haq%2C%20please%20guide%20me%20about%20my%20degree%20program%20files.">Message on WhatsApp</a>
   </div>
 </section>
 </main>
@@ -775,19 +764,6 @@ img { max-width:100%; height:auto; }
   <div class="footer-bottom"><p>© <span id="year">2026</span> Nibaha Haq. All rights reserved.</p></div>
 </footer>
 
-<div class="modal" id="codeModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-  <div class="modal-card">
-    <button class="modal-close" id="modalClose" aria-label="Close">×</button>
-    <h3 id="modalTitle">Code</h3>
-    <p id="modalBody">What do you need for this code? Choose an option: it opens directly in WhatsApp.</p>
-    <div class="modal-options">
-      <a class="opt-btn" data-service="Midterm Exam Files" href="/services/midterm-files" target="_blank" rel="noopener"><span class="opt-ic">📘</span><span><strong>Midterm Exam Files</strong><small>Objective + Subjective preparation file</small></span><span class="opt-arrow">→</span></a>
-      <a class="opt-btn" data-service="Finalterm Exam Files" href="/services/finalterm-files" target="_blank" rel="noopener"><span class="opt-ic">📚</span><span><strong>Finalterm Exam Files</strong><small>4 CGPA preparation file</small></span><span class="opt-arrow">→</span></a>
-      <a class="opt-btn" data-service="LMS Handling" href="/services/lms-services" target="_blank" rel="noopener"><span class="opt-ic">🧭</span><span><strong>LMS Handling</strong><small>Quiz, Assignment, GDB, Attendance</small></span><span class="opt-arrow">→</span></a>
-    </div>
-    <a class="btn wa full" id="modalWhatsapp" href="https://wa.me/923295209868?text=Hello%20Nibaha%20Haq%2C%20I%20need%20details%20and%20files%20for%20a%20VU%20course%20code%20(Midterm%20%2F%20Finalterm%20%2F%20LMS%20support)." target="_blank" rel="noopener">Ask about all services for this code</a>
-  </div>
-</div>
 <script>
 /* ============================================================
    Defensive init: every feature runs independently.
@@ -796,7 +772,7 @@ img { max-width:100%; height:auto; }
 const $id = i => document.getElementById(i);
 function safe(name, fn){ try { fn(); } catch (err) { console.warn("[Nibaha Haq site] skipped:", name, err); } }
 
-const CODES = "ECO302,ECO303,ECO401,ECO402,ECO403,ECO404,ECO406,ECO499A,ECO499B,ECO501,ECO601,ECO602,ECO603,ECO604,ECO605,ECO606,ECO607,ECO608,ECO609,ECO612,ECO613,ECO614,ECO615,ECO616,ECO619,ECO620,ECO622,ECO704,HRM611,HRM613,HRM617,HRM619,HRM620,HRM623,HRM624,HRM625,HRM626,HRM627,HRM628,HRM630,HRM713,HRM724,HRM727,HRM730,HRM733,HRM737,MGT101,MGT111,MGT201,MGT211,MGT301,MGT401,MGT402,MGT404,MGT411,MGT415,MGT501,MGT502,MGT503,MGT504,MGT510,MGT513,MGT520,MGT522,MGT601,MGT602,MGT603,MGT604,MGT610,MGT611,MGT612,MGT613,MGT619,MGT620,MGT621,MGT661,MGT662,MGT701,MGT703,MGT704,MGT705,MGT711,MGT713,MGT714,MGT717,MGT722,MGT723,MGT725,MGTE630,PAD603,PAD619,PAD620,PSC201,PSC401".split(",");
+const CODES = "{{ codesList }}".split(",");
 const WA_NUMBER = "923295209868";
 const waLink = msg => "https://wa.me/" + WA_NUMBER + "?text=" + encodeURIComponent(msg);
 const reduceMotion = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
