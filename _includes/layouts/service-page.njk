@@ -1,3 +1,64 @@
+{#
+  service-page.njk — Eleventy/Nunjucks layout for the 4 CMS-generated service
+  pages (services/lms-services.html, services/midterm-files.html,
+  services/finalterm-files.html, services/final-year-project.html).
+
+  Architecture (see the task that produced this file for the full rationale):
+  this is a COMPLETE .njk layout — full <head>, the entire shared <style>
+  block, header/nav/footer/WhatsApp-float chrome, and BOTH shared <script>
+  blocks all live here as literal HTML/JS. NOTHING on these 4 pages routes
+  through markdown-it: every content/services/*.md file has ONLY frontmatter
+  (hero headline/description, stat numbers, cards, FAQ, etc.) and an EMPTY
+  markdown body. This sidesteps the markdown-it raw-HTML-block bug entirely
+  (blank lines inside a <script> tag inside a markdown body get mangled by
+  markdown-it; that never happens here because no <script> ever appears in a
+  markdown body for these pages).
+
+  Verified against the 4 live files before they were deleted:
+  services/lms-services.html, services/midterm-files.html,
+  services/finalterm-files.html, services/final-year-project.html.
+  The shared <style> block below is copied byte-for-byte from those files
+  (NOT from _includes/layouts/blog-post.njk, which was found to be missing
+  one rule — .nav-item.open .dropdown{display:grid} — in its second mobile
+  @media block; that rule is present here, in both places, matching the
+  original service pages).
+
+  Frontmatter contract — see content/services/*.md for concrete examples.
+  SEO / head:
+    title, metaDescription, twitterDescription, keywords (array), slug,
+    ogImage, ogImageWidth, ogImageHeight, ogImageAlt,
+    serviceType, serviceDescription, breadcrumbName, faqAriaLabel, faqHeading,
+    faqJsonLd: [{question, answer}] (plain text, feeds the FAQPage JSON-LD —
+      kept separate from the visible `faq` array below because on the live
+      pages the two already differ in wording/HTML in several places)
+  Hero:
+    breadcrumbCurrent, heroLabel, h1, lead,
+    heroChips: [{bold, text} | {plain}],
+    heroActions: [{cls, text, waMsg} | {cls, text, href}]
+  Body sections (rendered in order, each tagged by `type`):
+    pageSections: [
+      {type:"cards", ariaId, label, heading, subtext?, iconWrapper, cards:[
+        {icon:{letter,color}|{emoji}, title, text, linkHref?, linkText?}]},
+      {type:"text", ariaId, label, heading, body},
+      {type:"journey", ariaId, label, heading, subtext,
+        steps?:[{tag,title,text}], stats:[{value,label,text}]},
+      {type:"codeLibrary", ariaId, label, heading, subtext},
+      {type:"reviews", sectionId, ariaId, label, heading, subtext,
+        trustTitle, trustText, trustChips:[...], imgPrefix,
+        rails:[{reverse, startIdx, shots:[{num, alt}]}]},
+      {type:"chips", ariaId, label, heading, subtext, chips:[...]}
+    ]
+  codeLibraryVariant: "none" | "inline" | "legacy" — controls whether the
+    inert codeModal/img-lightbox markup + matching JS appears after the
+    footer (matches the live pages: lms/FYP = "none", midterm = "inline",
+    finalterm = "legacy", which bolts on its own separate IIFE script —
+    this is reproduced verbatim rather than unified, since it's exactly
+    what the live finalterm-files.html does).
+  FAQ (visible): faq: [{question, answer}] — answer may contain raw <a>
+    links verbatim from the live pages, so it is rendered with `| safe`.
+  CTA: ctaHeading, ctaText, ctaBtnText, ctaWaMsg
+  body (markdown) — always empty for these 4 pages; never referenced below.
+#}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,14 +79,17 @@
   });
 </script>
 
+{% set canonicalUrl = "https://lmshandling.com/services/" + slug %}
+{% set keywordsStr = keywords | join(", ") %}
+
 <!-- ===================== PRIMARY SEO ===================== -->
-<title>VU Midterm Exam Files | 606+ Course Codes</title>
-<meta name="description" content="Code-wise Midterm preparation files for Virtual University students. Objective and Subjective files covering 606+ course codes, 4 CGPA focused delivery.">
-<meta name="keywords" content="Virtual University support, VULMS handling, VU midterm files, VU finalterm files, VU final year project, FYP help, VU exam preparation, VU LMS assignment quiz GDB, Nibaha Haq, VU course codes, 4 CGPA files">
+<title>{{ title }}</title>
+<meta name="description" content="{{ metaDescription }}">
+<meta name="keywords" content="{{ keywordsStr }}">
 <meta name="author" content="Nibaha Haq">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <meta name="theme-color" content="#00448B">
-<link rel="canonical" href="https://lmshandling.com/services/midterm-files">
+<link rel="canonical" href="{{ canonicalUrl }}">
 
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
@@ -36,19 +100,19 @@
 <!-- ===================== OPEN GRAPH / SOCIAL ===================== -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Nibaha Haq | Academic Support Services">
-<meta property="og:title" content="VU Midterm Exam Files | 606+ Course Codes">
-<meta property="og:description" content="Code-wise Midterm preparation files for Virtual University students. Objective and Subjective files covering 606+ course codes, 4 CGPA focused delivery.">
-<meta property="og:url" content="https://lmshandling.com/services/midterm-files">
-<meta property="og:image" content="https://lmshandling.com/finals-img/result-01.jpg">
-<meta property="og:image:width" content="600">
-<meta property="og:image:height" content="900">
-<meta property="og:image:alt" content="Real VU CGPA result screenshot from Nibaha Haq academic support">
+<meta property="og:title" content="{{ title }}">
+<meta property="og:description" content="{{ metaDescription }}">
+<meta property="og:url" content="{{ canonicalUrl }}">
+<meta property="og:image" content="{{ ogImage }}">
+<meta property="og:image:width" content="{{ ogImageWidth }}">
+<meta property="og:image:height" content="{{ ogImageHeight }}">
+<meta property="og:image:alt" content="{{ ogImageAlt }}">
 <meta property="og:locale" content="en_PK">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="VU Midterm Exam Files | 606+ Course Codes">
-<meta name="twitter:description" content="VULMS handling, code-wise Midterm & Finalterm files, and Final Year Project support for Virtual University students.">
-<meta name="twitter:image" content="https://lmshandling.com/finals-img/result-01.jpg">
-<meta name="twitter:image:alt" content="Real VU CGPA result screenshot from Nibaha Haq academic support">
+<meta name="twitter:title" content="{{ title }}">
+<meta name="twitter:description" content="{{ twitterDescription }}">
+<meta name="twitter:image" content="{{ ogImage }}">
+<meta name="twitter:image:alt" content="{{ ogImageAlt }}">
 
 <!-- ===================== FONTS ===================== -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -82,9 +146,9 @@
 {
   "@context": "https://schema.org",
   "@type": "Service",
-  "serviceType": "VU Midterm Exam Files",
-  "name": "VU Midterm Exam Files",
-  "description": "Code-wise Midterm preparation files for Virtual University students, Objective and Subjective files covering 606+ course codes.",
+  "serviceType": "{{ serviceType }}",
+  "name": "{{ serviceType }}",
+  "description": "{{ serviceDescription }}",
   "provider": {
     "@type": "EducationalOrganization",
     "name": "Nibaha Haq | Academic Support Services",
@@ -98,14 +162,14 @@
     "@type": "EducationalAudience",
     "educationalRole": "student"
   },
-  "url": "https://lmshandling.com/services/midterm-files"
+  "url": "{{ canonicalUrl }}"
 }
 </script>
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
  {"@type":"ListItem","position":1,"name":"Home","item":"https://lmshandling.com/"},
  {"@type":"ListItem","position":2,"name":"Services","item":"https://lmshandling.com/services/"},
- {"@type":"ListItem","position":3,"name":"Midterm Files","item":"https://lmshandling.com/services/midterm-files"}]}
+ {"@type":"ListItem","position":3,"name":"{{ breadcrumbName }}","item":"{{ canonicalUrl }}"}]}
 </script>
 
 <style>
@@ -598,12 +662,8 @@ img { max-width:100%; height:auto; }
   "@context": "https://schema.org",
   "@type": "FAQPage",
   "mainEntity": [
-    {"@type": "Question", "name": "What's included in the Midterm files?", "acceptedAnswer": {"@type": "Answer", "text": "Code-wise Objective (MCQ) files and Subjective (short and long question) files, prepared for your exact subject code and matched to VU's own lecture content."}},
-    {"@type": "Question", "name": "How many course codes are covered?", "acceptedAnswer": {"@type": "Answer", "text": "606+ VU course codes across Computer Science, Business, Psychology, English, Education, Mathematics, Biology and more."}},
-    {"@type": "Question", "name": "How do I order Midterm files?", "acceptedAnswer": {"@type": "Answer", "text": "Message your program, semester and subject code on WhatsApp, and files are sent directly on WhatsApp once confirmed."}},
-    {"@type": "Question", "name": "What if my subject code isn't listed?", "acceptedAnswer": {"@type": "Answer", "text": "Message it directly. Files are prepared code-wise on request, so coverage isn't limited to what's shown on this page."}},
-    {"@type": "Question", "name": "Do you cover Finalterm as well?", "acceptedAnswer": {"@type": "Answer", "text": "Yes, the Finalterm Files service offers the same Objective + Subjective setup for finalterm exams."}},
-    {"@type": "Question", "name": "Do you have notes for CS101 and CS201?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. See the CS101 MCQs (Objective) Guide and the CS201 Midterm & Finalterm Notes Guide for what each course covers and how the code-wise files work."}}
+    {% for item in faqJsonLd %}{"@type": "Question", "name": {{ item.question | dump | safe }}, "acceptedAnswer": {"@type": "Answer", "text": {{ item.answer | dump | safe }}}}{% if not loop.last %},
+    {% endif %}{% endfor %}
   ]
 }
 </script>
@@ -663,7 +723,7 @@ img { max-width:100%; height:auto; }
     <a href="/scheme">Study Scheme</a>
     <a href="/cgpa-calculator">CGPA Calculator</a>
     <a href="/contact">Contact</a>
-    
+
   </nav>
 </header>
 
@@ -671,40 +731,49 @@ img { max-width:100%; height:auto; }
 <section class="page-hero section">
   <div class="hero-bg"><div class="blob b1" data-parallax="0.2"></div><div class="blob b2" data-parallax="-0.14"></div></div>
   <div class="reveal in">
-    <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><a href="/services/">Services</a><span>/</span><span>Midterm Files</span></nav>
-    <p class="section-label">Midterm Exam Files</p>
-    <h1>Midterm preparation files for Virtual University students.</h1>
-    <p class="lead">Objective + Subjective midterm preparation with easy concepts, arranged code-wise for all 606 VU course codes.</p>
-    <div class="hero-chips reveal" data-delay="1"><span class="chip"><b>606</b> Codes</span><span class="chip">📘 Objective + Subjective</span><span class="chip">🎯 4 CGPA Focus</span></div>
-    <div class="hero-actions reveal" data-delay="2" style="margin-top:1.5rem"><a class="btn primary" href="#file-codes">Find My Code</a><a class="btn soft" data-whatsapp="Hello Nibaha Haq, I need Midterm files. My subject code is: " target="_blank" rel="noopener" href="https://wa.me/923295209868?text=Hello%20Nibaha%20Haq%2C%20I%20need%20Midterm%20files.%20My%20subject%20code%20is%3A%20">Order on WhatsApp</a></div>
+    <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><a href="/services/">Services</a><span>/</span><span>{{ breadcrumbCurrent }}</span></nav>
+    <p class="section-label">{{ heroLabel }}</p>
+    <h1>{{ h1 }}</h1>
+    <p class="lead">{{ lead }}</p>
+    <div class="hero-chips reveal" data-delay="1">{% for chip in heroChips %}<span class="chip">{% if chip.bold %}<b>{{ chip.bold }}</b> {{ chip.text }}{% else %}{{ chip.plain }}{% endif %}</span>{% endfor %}</div>
+    <div class="hero-actions reveal" data-delay="2" style="margin-top:1.5rem">{% for btn in heroActions %}{% if btn.waMsg %}<a class="btn {{ btn.cls }}" data-whatsapp="{{ btn.waMsg }}" target="_blank" rel="noopener" href="https://wa.me/923295209868?text={{ btn.waMsg | urlencode }}">{{ btn.text }}</a>{% else %}<a class="btn {{ btn.cls }}" href="{{ btn.href }}">{{ btn.text }}</a>{% endif %}{% endfor %}</div>
   </div>
 </section>
-<section class="section" aria-labelledby="feat-heading">
-  <div class="section-head reveal"><p class="section-label">What's Inside</p><h2 id="feat-heading">Objective + Subjective + easy concepts.</h2></div>
+
+{% for s in pageSections %}
+{% if s.type == "cards" %}
+<section class="section" aria-labelledby="{{ s.ariaId }}">
+  <div class="section-head reveal"><p class="section-label">{{ s.label }}</p><h2 id="{{ s.ariaId }}">{{ s.heading }}</h2>{% if s.subtext %}<p>{{ s.subtext }}</p>{% endif %}</div>
   <div class="grid-4">
-    <article class="service-card reveal"><h3>📘 Objective Files</h3><p>MCQ-focused preparation arranged code-wise for quick revision before midterm exams.</p></article>
-    <article class="service-card reveal" data-delay="1"><h3>✍️ Subjective Files</h3><p>Short and long question preparation with easy-to-understand concepts.</p></article>
-    <article class="service-card reveal" data-delay="2"><h3>🎯 4 CGPA Focus</h3><p>Files organized for maximum marks, so you study what matters most.</p></article>
-    <article class="service-card reveal" data-delay="3"><h3>📊 Exam Coverage Target</h3><p>Coverage-focused preparation to walk into exams with confidence.</p></article>
+    {% for card in s.cards %}<article class="service-card reveal"{% if not loop.first %} data-delay="{{ loop.index - 1 }}"{% endif %}>{% if s.iconWrapper %}<div class="icon" aria-hidden="true">{% if card.icon.letter %}<b style="font-size:1.2rem;color:{{ card.icon.color }}">{{ card.icon.letter }}</b>{% else %}{{ card.icon.emoji }}{% endif %}</div>{% endif %}<h3>{{ card.title }}</h3><p>{{ card.text }}{% if card.linkHref %} <a href="{{ card.linkHref }}" class="read-more">{{ card.linkText }} →</a>{% endif %}</p></article>
+    {% endfor %}
   </div>
 </section>
 
-<section class="section" aria-labelledby="mid-vs-final-heading">
-  <div class="section-head reveal"><p class="section-label">Exam Pattern</p><h2 id="mid-vs-final-heading">Why Midterm preparation is different.</h2><p>Midterm falls around the middle of the semester and covers roughly the first half of a course's lectures, so the paper is shorter and the syllabus is narrower than Finalterm. Because there's less content to revise, the files here are built for fast, focused revision; objective (MCQ) sets and short subjective answers matched to exactly what's been taught by mid-semester, rather than the full-course review a Finalterm needs.</p></div>
+{% elif s.type == "text" %}
+<section class="section" aria-labelledby="{{ s.ariaId }}">
+  <div class="section-head reveal"><p class="section-label">{{ s.label }}</p><h2 id="{{ s.ariaId }}">{{ s.heading }}</h2><p>{{ s.body }}</p></div>
 </section>
 
-<section class="section" aria-labelledby="mid-checklist-heading">
-  <div class="section-head reveal"><p class="section-label">Timing</p><h2 id="mid-checklist-heading">Midterm week checklist.</h2></div>
-  <div class="grid-4">
-    <article class="service-card reveal"><h3>📅 Check the date sheet</h3><p>Confirm your midterm schedule on VULMS as soon as it's posted; papers are usually spread across one week.</p></article>
-    <article class="service-card reveal" data-delay="1"><h3>⏱ Order 3–4 days early</h3><p>Mid-semester revision is shorter, so there's less to cover but also less buffer if a subject code changes.</p></article>
-    <article class="service-card reveal" data-delay="2"><h3>🎯 First-half range only</h3><p>Stick to the lecture range actually covered by mid-semester; Finalterm topics aren't tested here yet.</p></article>
-    <article class="service-card reveal" data-delay="3"><h3>💾 Keep the file for later</h3><p>The same Midterm concepts often resurface as background for Finalterm, so hold onto it for revision, not just the paper.</p></article>
+{% elif s.type == "journey" %}
+<section class="journey" aria-labelledby="{{ s.ariaId }}">
+  <div class="section-head reveal"><p class="section-label">{{ s.label }}</p><h2 id="{{ s.ariaId }}">{{ s.heading }}</h2><p>{{ s.subtext }}</p></div>
+  {% if s.steps %}
+  <div class="timeline" id="timeline">
+    <div class="timeline-fill" id="timelineFill"></div>
+    {% for step in s.steps %}<div class="step"><span class="tag">{{ step.tag }}</span><h3>{{ step.title }}</h3><p>{{ step.text }}</p></div>
+    {% endfor %}
+  </div>
+  {% endif %}
+  <div class="stats-grid">
+    {% for stat in s.stats %}<article class="stat-card reveal"{% if not loop.first %} data-delay="{{ loop.index - 1 }}"{% endif %}><strong>{{ stat.value }}</strong><h3>{{ stat.label }}</h3><p>{{ stat.text }}</p></article>
+    {% endfor %}
   </div>
 </section>
 
-<section class="section" id="file-codes" aria-labelledby="codes-heading">
-  <div class="section-head reveal"><p class="section-label">All 606 Course Codes</p><h2 id="codes-heading">Find your subject code for Midterm files.</h2><p>Search your code, tap it, and choose your file: the order opens directly in WhatsApp.</p></div>
+{% elif s.type == "codeLibrary" %}
+<section class="section" id="file-codes" aria-labelledby="{{ s.ariaId }}">
+  <div class="section-head reveal"><p class="section-label">{{ s.label }}</p><h2 id="{{ s.ariaId }}">{{ s.heading }}</h2><p>{{ s.subtext }}</p></div>
   <div class="code-tools reveal">
     <label class="code-search"><span aria-hidden="true">🔎</span><input type="search" id="codeSearch" placeholder="Search your code… e.g. CS201" aria-label="Search course codes"></label>
     <span class="code-count" id="codeCount"></span>
@@ -714,53 +783,51 @@ img { max-width:100%; height:auto; }
   <button class="btn soft toggle-codes" id="toggleCodes" aria-expanded="false">Show all codes ↓</button>
 </section>
 
-<!-- ================= WHATSAPP REVIEWS ================= -->
-
-
-
-
-
-<section class="section" id="reviews" aria-labelledby="wa-reviews-heading">
+{% elif s.type == "reviews" %}
+<section class="section" id="{{ s.sectionId }}" aria-labelledby="{{ s.ariaId }}">
   <div class="section-head reveal">
-    <p class="section-label">Real WhatsApp Reviews</p>
-    <h2 id="wa-reviews-heading">Students scoring 60–100% straight from these files.</h2>
-    <p>Real WhatsApp conversations after midterm exams, tap to zoom in and read.</p>
+    <p class="section-label">{{ s.label }}</p>
+    <h2 id="{{ s.ariaId }}">{{ s.heading }}</h2>
+    <p>{{ s.subtext }}</p>
   </div>
   <div class="trust-banner reveal">
   <div class="trust-left">
     <span class="trust-check" aria-hidden="true">✓</span>
     <div>
-      <strong>Authentic student reviews, unedited WhatsApp conversations</strong>
-      <p>Every screenshot is a real conversation shared by Virtual University students after their exams, reporting exactly how much of the paper came from Nibaha Haq files.</p>
+      <strong>{{ s.trustTitle }}</strong>
+      <p>{{ s.trustText }}</p>
     </div>
   </div>
   <div class="trust-chips">
-    <span>🔒 Real Screenshots</span>
-    <span>📱 WhatsApp Verified</span>
-    <span>🎓 VU Students Only</span>
+    {% for c in s.trustChips %}<span>{{ c }}</span>{% endfor %}
   </div>
 </div>
-  <div class="shot-rail-wrap reveal"><div class="shot-rail" role="list"><figure class="shot-card" data-idx="0"><img src="../reviews-img/review-01.jpg" alt="ENG518 100% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="1"><img src="../reviews-img/review-02.jpg" alt="CS201 80% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="2"><img src="../reviews-img/review-03.jpg" alt="ENG524 all from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="3"><img src="../reviews-img/review-04.jpg" alt="ENG524 85-90% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="4"><img src="../reviews-img/review-05.jpg" alt="ENG524 student thanking Nibaha Haq" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="5"><img src="../reviews-img/review-06.jpg" alt="MGT501 60-70% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="6"><img src="../reviews-img/review-07.jpg" alt="ECO401 70% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="7"><img src="../reviews-img/review-08.jpg" alt="ACC501 80% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="8"><img src="../reviews-img/review-09.jpg" alt="HRM627 75% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="9"><img src="../reviews-img/review-10.jpg" alt="PSY516 80-90% SOC404 85% PSYP402 75% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="10"><img src="../reviews-img/review-11.jpg" alt="CS101 80% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="11"><img src="../reviews-img/review-12.jpg" alt="MGT411 80% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="12"><img src="../reviews-img/review-13.jpg" alt="CS304 60% CS625 70% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="13"><img src="../reviews-img/review-14.jpg" alt="ECO401 60-70% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="14"><img src="../reviews-img/review-15.jpg" alt="MGT503 75-80% done in 20 minutes" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="15"><img src="../reviews-img/review-16.jpg" alt="MGT603 80% subjective from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="16"><img src="../reviews-img/review-17.jpg" alt="ENG516 80% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="17"><img src="../reviews-img/review-18.jpg" alt="ENG201 75% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="18"><img src="../reviews-img/review-19.jpg" alt="ECO403 60-70% MCM301 70% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="0"><img src="../reviews-img/review-01.jpg" alt="ENG518 100% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="1"><img src="../reviews-img/review-02.jpg" alt="CS201 80% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="2"><img src="../reviews-img/review-03.jpg" alt="ENG524 all from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="3"><img src="../reviews-img/review-04.jpg" alt="ENG524 85-90% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="4"><img src="../reviews-img/review-05.jpg" alt="ENG524 student thanking Nibaha Haq" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="5"><img src="../reviews-img/review-06.jpg" alt="MGT501 60-70% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="6"><img src="../reviews-img/review-07.jpg" alt="ECO401 70% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="7"><img src="../reviews-img/review-08.jpg" alt="ACC501 80% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="8"><img src="../reviews-img/review-09.jpg" alt="HRM627 75% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="9"><img src="../reviews-img/review-10.jpg" alt="PSY516 80-90% SOC404 85% PSYP402 75% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="10"><img src="../reviews-img/review-11.jpg" alt="CS101 80% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="11"><img src="../reviews-img/review-12.jpg" alt="MGT411 80% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="12"><img src="../reviews-img/review-13.jpg" alt="CS304 60% CS625 70% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="13"><img src="../reviews-img/review-14.jpg" alt="ECO401 60-70% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="14"><img src="../reviews-img/review-15.jpg" alt="MGT503 75-80% done in 20 minutes" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="15"><img src="../reviews-img/review-16.jpg" alt="MGT603 80% subjective from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="16"><img src="../reviews-img/review-17.jpg" alt="ENG516 80% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="17"><img src="../reviews-img/review-18.jpg" alt="ENG201 75% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="18"><img src="../reviews-img/review-19.jpg" alt="ECO403 60-70% MCM301 70% from files" loading="lazy" draggable="false"></figure></div></div>
-  <div class="shot-rail-wrap reveal" style="margin-top:.7rem"><div class="shot-rail rev" role="list"><figure class="shot-card" data-idx="19"><img src="../reviews-img/review-20.jpg" alt="MGMT623 80% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="20"><img src="../reviews-img/review-21.jpg" alt="CS301 70% CS601 80-85% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="21"><img src="../reviews-img/review-22.jpg" alt="4 CGPA prep style" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="22"><img src="../reviews-img/review-23.jpg" alt="SOC101 90% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="23"><img src="../reviews-img/review-24.jpg" alt="PSY101 80% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="24"><img src="../reviews-img/review-25.jpg" alt="MTH100 60% all MCQs from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="25"><img src="../reviews-img/review-26.jpg" alt="ETH100 60-70% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="26"><img src="../reviews-img/review-27.jpg" alt="MGT101 80% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="27"><img src="../reviews-img/review-28.jpg" alt="MTH302 60-70% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="28"><img src="../reviews-img/review-29.jpg" alt="MGT201 90% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="29"><img src="../reviews-img/review-30.jpg" alt="SOC101 95% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="30"><img src="../reviews-img/review-31.jpg" alt="MGT401 60% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="31"><img src="../reviews-img/review-32.jpg" alt="MCM301 100% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="32"><img src="../reviews-img/review-33.jpg" alt="MGT520 80% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="33"><img src="../reviews-img/review-34.jpg" alt="CS601 85% MCM301 80% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="34"><img src="../reviews-img/review-35.jpg" alt="PSY504 85% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="35"><img src="../reviews-img/review-36.jpg" alt="CS442 80% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="36"><img src="../reviews-img/review-37.jpg" alt="CS001 90% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="37"><img src="../reviews-img/review-38.jpg" alt="ENG101 70% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="19"><img src="../reviews-img/review-20.jpg" alt="MGMT623 80% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="20"><img src="../reviews-img/review-21.jpg" alt="CS301 70% CS601 80-85% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="21"><img src="../reviews-img/review-22.jpg" alt="4 CGPA prep style" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="22"><img src="../reviews-img/review-23.jpg" alt="SOC101 90% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="23"><img src="../reviews-img/review-24.jpg" alt="PSY101 80% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="24"><img src="../reviews-img/review-25.jpg" alt="MTH100 60% all MCQs from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="25"><img src="../reviews-img/review-26.jpg" alt="ETH100 60-70% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="26"><img src="../reviews-img/review-27.jpg" alt="MGT101 80% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="27"><img src="../reviews-img/review-28.jpg" alt="MTH302 60-70% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="28"><img src="../reviews-img/review-29.jpg" alt="MGT201 90% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="29"><img src="../reviews-img/review-30.jpg" alt="SOC101 95% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="30"><img src="../reviews-img/review-31.jpg" alt="MGT401 60% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="31"><img src="../reviews-img/review-32.jpg" alt="MCM301 100% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="32"><img src="../reviews-img/review-33.jpg" alt="MGT520 80% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="33"><img src="../reviews-img/review-34.jpg" alt="CS601 85% MCM301 80% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="34"><img src="../reviews-img/review-35.jpg" alt="PSY504 85% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="35"><img src="../reviews-img/review-36.jpg" alt="CS442 80% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="36"><img src="../reviews-img/review-37.jpg" alt="CS001 90% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="37"><img src="../reviews-img/review-38.jpg" alt="ENG101 70% from files" loading="lazy" draggable="false"></figure></div></div>
-  <div class="shot-rail-wrap reveal" style="margin-top:.7rem"><div class="shot-rail" role="list"><figure class="shot-card" data-idx="38"><img src="../reviews-img/review-39.jpg" alt="ISL202 80-90% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="39"><img src="../reviews-img/review-40.jpg" alt="ECO401 50% files 50% conceptual" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="40"><img src="../reviews-img/review-41.jpg" alt="MGT101 Financial Accounting 95% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="41"><img src="../reviews-img/review-42.jpg" alt="Bio101 60-70% Eng101 90% Psy401 60-70% Mth302 60-70% Pak301 50-60% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="42"><img src="../reviews-img/review-43.jpg" alt="PSY403 80% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="43"><img src="../reviews-img/review-44.jpg" alt="PSY502 70% PSY611 85% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="44"><img src="../reviews-img/review-45.jpg" alt="PSY611 85% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="45"><img src="../reviews-img/review-46.jpg" alt="URDU101 50-60% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="46"><img src="../reviews-img/review-47.jpg" alt="BIO101 70% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="47"><img src="../reviews-img/review-48.jpg" alt="MGT611 90% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="48"><img src="../reviews-img/review-49.jpg" alt="MGMT622 75% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="49"><img src="../reviews-img/review-50.jpg" alt="CS435 80-85% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="50"><img src="../reviews-img/review-51.jpg" alt="MGT503 80% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="51"><img src="../reviews-img/review-52.jpg" alt="MGT502 80% subjective covered all from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="52"><img src="../reviews-img/review-53.jpg" alt="SOC301 75% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="53"><img src="../reviews-img/review-54.jpg" alt="MGT111 100% exact from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="54"><img src="../reviews-img/review-55.jpg" alt="PSYP402 assignment praise" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="55"><img src="../reviews-img/review-56.jpg" alt="PSYP402 report 100% requirements met" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="38"><img src="../reviews-img/review-39.jpg" alt="ISL202 80-90% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="39"><img src="../reviews-img/review-40.jpg" alt="ECO401 50% files 50% conceptual" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="40"><img src="../reviews-img/review-41.jpg" alt="MGT101 Financial Accounting 95% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="41"><img src="../reviews-img/review-42.jpg" alt="Bio101 60-70% Eng101 90% Psy401 60-70% Mth302 60-70% Pak301 50-60% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="42"><img src="../reviews-img/review-43.jpg" alt="PSY403 80% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="43"><img src="../reviews-img/review-44.jpg" alt="PSY502 70% PSY611 85% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="44"><img src="../reviews-img/review-45.jpg" alt="PSY611 85% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="45"><img src="../reviews-img/review-46.jpg" alt="URDU101 50-60% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="46"><img src="../reviews-img/review-47.jpg" alt="BIO101 70% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="47"><img src="../reviews-img/review-48.jpg" alt="MGT611 90% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="48"><img src="../reviews-img/review-49.jpg" alt="MGMT622 75% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="49"><img src="../reviews-img/review-50.jpg" alt="CS435 80-85% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="50"><img src="../reviews-img/review-51.jpg" alt="MGT503 80% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="51"><img src="../reviews-img/review-52.jpg" alt="MGT502 80% subjective covered all from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="52"><img src="../reviews-img/review-53.jpg" alt="SOC301 75% from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="53"><img src="../reviews-img/review-54.jpg" alt="MGT111 100% exact from files" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="54"><img src="../reviews-img/review-55.jpg" alt="PSYP402 assignment praise" loading="lazy" draggable="false"></figure><figure class="shot-card" data-idx="55"><img src="../reviews-img/review-56.jpg" alt="PSYP402 report 100% requirements met" loading="lazy" draggable="false"></figure></div></div>
-
+  {% for rail in s.rails %}
+  <div class="shot-rail-wrap reveal"{% if not loop.first %} style="margin-top:.7rem"{% endif %}><div class="shot-rail{% if rail.reverse %} rev{% endif %}" role="list">{% for pass in range(0, 2) %}{% for shot in rail.shots %}<figure class="shot-card" data-idx="{{ rail.startIdx + loop.index0 }}"><img src="{{ s.imgPrefix }}{{ shot.num }}.jpg" alt="{{ shot.alt }}" loading="lazy" draggable="false"></figure>{% endfor %}{% endfor %}</div></div>
+  {% endfor %}
 </section>
 
-<section class="section" aria-label="Midterm files FAQ">
-  <div class="section-head reveal"><p class="section-label">FAQ</p><h2>Midterm files: frequently asked questions.</h2></div>
+{% elif s.type == "chips" %}
+<section class="section" aria-labelledby="{{ s.ariaId }}">
+  <div class="section-head reveal"><p class="section-label">{{ s.label }}</p><h2 id="{{ s.ariaId }}">{{ s.heading }}</h2><p>{{ s.subtext }}</p></div>
+  <div class="subject-chips reveal">
+    {% for c in s.chips %}<span class="chip">{{ c }}</span>{% endfor %}
+  </div>
+</section>
+{% endif %}
+{% endfor %}
+
+<section class="section" aria-label="{{ faqAriaLabel }}">
+  <div class="section-head reveal"><p class="section-label">FAQ</p><h2>{{ faqHeading }}</h2></div>
   <div class="faq-list reveal">
-    <details><summary>What's included in the Midterm files?</summary><p>Code-wise Objective (MCQ) files and Subjective (short and long question) files, prepared for your exact subject code and matched to VU's own lecture content.</p></details>
-    <details><summary>How many course codes are covered?</summary><p>606+ VU course codes across Computer Science, Business, Psychology, English, Education, Mathematics, Biology and more.</p></details>
-    <details><summary>How do I order Midterm files?</summary><p>Message your program, semester and subject code on WhatsApp, and files are sent directly on WhatsApp once confirmed.</p></details>
-    <details><summary>What if my subject code isn't listed?</summary><p>Message it directly. Files are prepared code-wise on request, so coverage isn't limited to what's shown on this page.</p></details>
-    <details><summary>Do you cover Finalterm as well?</summary><p>Yes, see the <a href="/services/finalterm-files" style="color:var(--teal);font-weight:600;text-decoration:underline">Finalterm Files</a> page for the same Objective + Subjective setup for finalterm.</p></details>
-    <details><summary>Do you have notes for CS101 and CS201?</summary><p>Yes. See the <a href="/blog/cs101-mcqs-objective-notes" style="color:var(--teal);font-weight:600;text-decoration:underline">CS101 MCQs (Objective) Guide</a> and the <a href="/blog/cs201-midterm-finalterm-notes" style="color:var(--teal);font-weight:600;text-decoration:underline">CS201 Midterm &amp; Finalterm Notes Guide</a> for what each course covers and how the code-wise files work.</p></details>
+    {% for item in faq %}<details><summary>{{ item.question }}</summary><p>{{ item.answer | safe }}</p></details>
+    {% endfor %}
   </div>
 </section>
 
 <section class="section" aria-label="Get started">
-  <div class="cta-band reveal"><div><h2>Exams coming? Get your midterm file today.</h2><p>Send your program, semester and subject code for a quick reply on WhatsApp.</p></div>
-  <a class="btn gold" data-whatsapp="Hello Nibaha Haq, I want Midterm files. My subject code is: " target="_blank" rel="noopener" href="https://wa.me/923295209868?text=Hello%20Nibaha%20Haq%2C%20I%20want%20Midterm%20files.%20My%20subject%20code%20is%3A%20">Order Files Now</a></div>
+  <div class="cta-band reveal"><div><h2>{{ ctaHeading }}</h2><p>{{ ctaText }}</p></div>
+  <a class="btn gold" data-whatsapp="{{ ctaWaMsg }}" target="_blank" rel="noopener" href="https://wa.me/923295209868?text={{ ctaWaMsg | urlencode }}">{{ ctaBtnText }}</a></div>
 </section>
 </main>
 
@@ -802,6 +869,7 @@ img { max-width:100%; height:auto; }
   <div class="footer-bottom"><p>© <span id="year">2026</span> Nibaha Haq. All rights reserved.</p></div>
 </footer>
 
+{% if codeLibraryVariant == "inline" or codeLibraryVariant == "legacy" %}
 <div class="modal" id="codeModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
   <div class="modal-card">
     <button class="modal-close" id="modalClose" aria-label="Close">×</button>
@@ -815,6 +883,8 @@ img { max-width:100%; height:auto; }
     <a class="btn wa full" id="modalWhatsapp" href="https://wa.me/923295209868?text=Hello%20Nibaha%20Haq%2C%20I%20need%20details%20and%20files%20for%20a%20VU%20course%20code%20(Midterm%20%2F%20Finalterm%20%2F%20LMS%20support)." target="_blank" rel="noopener">Ask about all services for this code</a>
   </div>
 </div>
+{% endif %}
+{% if codeLibraryVariant == "inline" %}
 <div class="img-lightbox" id="imgLightbox" role="dialog" aria-modal="true" aria-label="Review screenshot">
   <div class="lb-inner">
     <button class="lb-close" id="lbClose" aria-label="Close">×</button>
@@ -824,6 +894,7 @@ img { max-width:100%; height:auto; }
     <p class="lb-caption"></p>
   </div>
 </div>
+{% endif %}
 <script>
 /* ============================================================
    Defensive init: every feature runs independently.
@@ -1002,7 +1073,7 @@ safe("code-library", () => {
   });
 });
 
-/* ---------- mobile menu ---------- */
+/* ---------- mobile menu{{ " v2" if mobileMenuV2 else "" }} ---------- */
 safe("mobile-menu", () => {
   const menuToggle = $id("menuToggle"), mainNav = $id("mainNav"), siteHeader = $id("siteHeader");
   if (!menuToggle || !mainNav) return;
@@ -1040,8 +1111,7 @@ safe("query-form", () => {
     window.open(waLink(msg), "_blank");
   });
 });
-
-
+{% if codeLibraryVariant == "inline" %}
 /* ---------- screenshot lightbox ---------- */
 safe("screenshot-lightbox", () => {
   const lb = $id("imgLightbox"), im = lb ? lb.querySelector("#lightboxImg") : null;
@@ -1087,12 +1157,71 @@ safe("screenshot-lightbox", () => {
   }, { passive:true });
 });
 
+{% endif %}
 /* ---------- footer year ---------- */
 safe("footer-year", () => {
   const y = $id("year");
   if (y) y.textContent = new Date().getFullYear();
 });
 </script>
+{% if codeLibraryVariant == "legacy" %}
+<div class="img-lightbox" id="imgLightbox" role="dialog" aria-modal="true" aria-label="Review screenshot">
+  <div class="lb-inner">
+    <button class="lb-close" id="lbClose" aria-label="Close">×</button>
+    <button class="lb-nav lb-prev" id="lbPrev" aria-label="Previous">‹</button>
+    <button class="lb-nav lb-next" id="lbNext" aria-label="Next">›</button>
+    <img id="lightboxImg" src="" alt="">
+    <p class="lb-caption"></p>
+  </div>
+</div>
+<script>
+(function(){
+  var $id=function(i){return document.getElementById(i);};
+  function safe(n,fn){try{fn();}catch(e){console.warn(n,e);}}
+  safe("finals-lightbox",function(){
+    var lb=$id("imgLightbox"),lbIm=lb?lb.querySelector("#lightboxImg"):null,lbCp=lb?lb.querySelector(".lb-caption"):null;
+    if(!lb||!lbIm)return;
+    function allCards(){return Array.from(document.querySelectorAll(".shot-card"));}
+    function openAt(card){
+      var img=card.querySelector("img"),cap=card.querySelector("figcaption");
+      lbIm.src=img.src;lbIm.alt=img.alt||"";
+      if(lbCp)lbCp.textContent="";
+      lb.dataset.currentIdx=allCards().indexOf(card);
+      lb.classList.add("open");document.body.style.overflow="hidden";
+    }
+    function closeLb(){lb.classList.remove("open");document.body.style.overflow="";}
+    function navigate(dir){
+      var cards=allCards();var idx=parseInt(lb.dataset.currentIdx||"0")+dir;
+      if(idx<0)idx=cards.length-1;if(idx>=cards.length)idx=0;openAt(cards[idx]);
+    }
+    document.addEventListener("click",function(e){
+      var card=e.target.closest&&e.target.closest(".shot-card");
+      if(card){openAt(card);return;}
+      if(e.target===lb)closeLb();
+    });
+    var prev=$id("lbPrev"),next=$id("lbNext"),close=$id("lbClose");
+    if(prev)prev.addEventListener("click",function(e){e.stopPropagation();navigate(-1);});
+    if(next)next.addEventListener("click",function(e){e.stopPropagation();navigate(1);});
+    if(close)close.addEventListener("click",function(e){e.stopPropagation();closeLb();});
+    document.addEventListener("keydown",function(e){
+      if(!lb.classList.contains("open"))return;
+      if(e.key==="Escape")closeLb();
+      if(e.key==="ArrowRight")navigate(1);
+      if(e.key==="ArrowLeft")navigate(-1);
+    });
+    var sx=0;
+    lb.addEventListener("touchstart",function(e){sx=e.touches[0].clientX;},{passive:true});
+    lb.addEventListener("touchend",function(e){var dx=e.changedTouches[0].clientX-sx;if(Math.abs(dx)>50)navigate(dx<0?1:-1);},{passive:true});
+    document.addEventListener("contextmenu",function(e){if(e.target.closest&&e.target.closest(".shot-card,.img-lightbox"))e.preventDefault();});
+    // footer year
+    var y=$id("year");if(y)y.textContent=new Date().getFullYear();
+    // whatsapp links
+    var WA="923295209868";
+    document.querySelectorAll("[data-whatsapp]").forEach(function(el){el.href="https://wa.me/"+WA+"?text="+encodeURIComponent(el.dataset.whatsapp);});
+  });
+})();
+</script>
+{% endif %}
 <script src="/assets/chat-widget.js" defer></script>
 </body>
 </html>
