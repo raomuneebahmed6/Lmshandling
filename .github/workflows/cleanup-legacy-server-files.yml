@@ -27,11 +27,6 @@ jobs:
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
         run: |
           FTP_SERVER="$(printf '%s' "$FTP_SERVER" | tr -d '\r\n ')"
-          echo "--- debug: deleting eleventy.config.js verbosely ---"
-          curl -v -u "$FTP_USERNAME:$FTP_PASSWORD" "ftp://$FTP_SERVER/eleventy.config.js" -Q "DELE eleventy.config.js" 2>&1 || true
-          echo "--- debug: listing root directory ---"
-          curl -s -u "$FTP_USERNAME:$FTP_PASSWORD" "ftp://$FTP_SERVER/" || true
-          echo "--- end debug ---"
           curl -sS -u "$FTP_USERNAME:$FTP_PASSWORD" "ftp://$FTP_SERVER/" \
             -Q "-DELE eleventy.config.js" \
             -Q "-DELE package.json" \
@@ -70,10 +65,19 @@ jobs:
             -Q "-DELE content/degrees/sociology.md" \
             -Q "-DELE content/degrees/biotechnology.md" \
             -Q "-DELE content/degrees/bed-hons-early-childhood.md" \
+            -Q "-DELE _includes/layouts/service-page.njk" \
+            -Q "-DELE _includes/layouts/faculty-page.njk" \
+            -Q "-DELE _includes/layouts/degree-page.njk" \
+            -Q "-DELE _includes/layouts/blog-post.njk" \
+            -Q "-DELE .claude/agents/seo-agent.md" \
             -Q "-RMD content/blog" \
             -Q "-RMD content/services" \
             -Q "-RMD content/degrees" \
             -Q "-RMD content" \
             -Q "-RMD _data" \
+            -Q "-RMD _includes/layouts" \
+            -Q "-RMD _includes" \
+            -Q "-RMD .claude/agents" \
+            -Q "-RMD .claude" \
             || true
           echo "Cleanup commands sent (individual failures for already-missing paths are expected and ignored)."
