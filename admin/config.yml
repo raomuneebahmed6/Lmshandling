@@ -88,7 +88,7 @@ collections:
       - label: "Read Time (minutes)"
         name: "readTime"
         widget: "number"
-        valueType: "int"
+        value_type: "int"
         min: 1
         max: 30
         default: 5

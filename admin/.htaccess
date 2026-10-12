@@ -4,7 +4,7 @@
 # at runtime). Scoping the relaxed policy to this directory keeps the
 # rest of the site under the stricter policy.
 <IfModule mod_headers.c>
-  Header set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob: https:; connect-src 'self' https://api.github.com https://github.com; frame-ancestors 'self'; base-uri 'self'; object-src 'none'"
+  Header set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob: https:; connect-src 'self' https://api.github.com https://github.com https://cloudflareinsights.com; frame-ancestors 'self'; base-uri 'self'; object-src 'none'"
 </IfModule>
 
 # Hostinger/Apache serves .yml as text/plain by default, which Decap CMS's
