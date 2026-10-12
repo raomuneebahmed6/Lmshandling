@@ -7,11 +7,6 @@ name: Clean up legacy source files on Hostinger
 # on an already-missing path just fails that one quote command.
 on:
   workflow_dispatch: {}
-  push:
-    branches:
-      - claude/website-blogs-seo-3jpp70
-    paths:
-      - .github/workflows/cleanup-legacy-server-files.yml
 
 permissions:
   contents: read
