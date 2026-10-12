@@ -26,6 +26,7 @@ jobs:
           FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
         run: |
+          FTP_SERVER="$(printf '%s' "$FTP_SERVER" | tr -d '\r\n ')"
           curl -sS -u "$FTP_USERNAME:$FTP_PASSWORD" "ftp://$FTP_SERVER/" \
             -Q "-DELE eleventy.config.js" \
             -Q "-DELE package.json" \
