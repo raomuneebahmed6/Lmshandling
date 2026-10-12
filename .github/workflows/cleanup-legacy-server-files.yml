@@ -27,6 +27,11 @@ jobs:
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
         run: |
           FTP_SERVER="$(printf '%s' "$FTP_SERVER" | tr -d '\r\n ')"
+          echo "--- debug: deleting eleventy.config.js verbosely ---"
+          curl -v -u "$FTP_USERNAME:$FTP_PASSWORD" "ftp://$FTP_SERVER/eleventy.config.js" -Q "DELE eleventy.config.js" 2>&1 || true
+          echo "--- debug: listing root directory ---"
+          curl -s -u "$FTP_USERNAME:$FTP_PASSWORD" "ftp://$FTP_SERVER/" || true
+          echo "--- end debug ---"
           curl -sS -u "$FTP_USERNAME:$FTP_PASSWORD" "ftp://$FTP_SERVER/" \
             -Q "-DELE eleventy.config.js" \
             -Q "-DELE package.json" \
