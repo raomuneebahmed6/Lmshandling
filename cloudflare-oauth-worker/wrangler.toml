@@ -7,6 +7,6 @@ compatibility_date = "2024-01-01"
 # same-origin. Cloudflare proxies lmshandling.com, so these two paths are
 # answered by this Worker and everything else still goes to Hostinger.
 routes = [
-  { pattern = "lmshandling.com/auth", zone_name = "lmshandling.com" },
-  { pattern = "lmshandling.com/callback", zone_name = "lmshandling.com" }
+  { pattern = "lmshandling.com/auth*", zone_name = "lmshandling.com" },
+  { pattern = "lmshandling.com/callback*", zone_name = "lmshandling.com" }
 ]
