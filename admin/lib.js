@@ -92,7 +92,12 @@
     menu: '<path d="M3 6h18M3 12h18M3 18h18"/>',
     trash: '<path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>',
     edit: '<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4z"/>',
-    alert: '<path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0zM12 9v4M12 17h.01"/>'
+    alert: '<path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0zM12 9v4M12 17h.01"/>',
+    eye: '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/>',
+    eyeoff: '<path d="M17.9 17.9A10.9 10.9 0 0 1 12 20C5 20 1 12 1 12a19.8 19.8 0 0 1 5.1-5.9M9.9 4.2A10.7 10.7 0 0 1 12 4c7 0 11 8 11 8a19.7 19.7 0 0 1-3.2 4.2M14.1 14.1a3 3 0 1 1-4.2-4.2M1 1l22 22"/>',
+    trend: '<path d="M23 6l-9.5 9.5-5-5L1 18M17 6h6v6"/>',
+    shield: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/>',
+    search: '<circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/>'
   };
   function icon(n) { return '<svg class="i" viewBox="0 0 24 24" aria-hidden="true">' + (ICONS[n] || '') + '</svg>'; }
 
@@ -106,6 +111,7 @@
         if (r.status === 404 && opts.soft404) return null;
         return (r.status === 204 ? Promise.resolve(null) : r.json().catch(function () { return null; })).then(function (data) {
           if (r.status === 401 && !opts.noAuthRedirect) { window.dispatchEvent(new Event('studio:unauth')); }
+          if (data && data.reconnect) { window.dispatchEvent(new Event('studio:reconnect')); }
           if (!r.ok) { var e = new Error((data && data.message) || ('Error ' + r.status)); e.status = r.status; throw e; }
           return data;
         });
@@ -198,10 +204,13 @@
   }
   function parseCommit(c) {
     var first = String((c.commit && c.commit.message) || '').split('\n')[0];
+    // the Worker stamps the VERIFIED account on every change: " [studio:name]"
+    var st = /\s\[studio:([^\]]+)\]\s*$/.exec(first), verified = st ? st[1] : '';
+    if (st) first = first.replace(/\s\[studio:[^\]]+\]\s*$/, '');
     var m = /^\[(manual|auto)\]\s+(Publish|Update)\s+post:\s+(.*?)\s+\((?:by|approved by)\s+([^)]+)\)(?:\s+\[slug:([^\]]+)\])?\s*$/.exec(first);
     var date = c.commit && c.commit.author && c.commit.author.date;
-    if (m) return { source: m[1], kind: m[2], title: m[3], by: m[4], slug: m[5] || '', date: date, url: c.html_url, sha: c.sha, known: true };
-    return { source: 'manual', kind: 'Update', title: first.slice(0, 90), by: (c.commit && c.commit.author && c.commit.author.name) || '', slug: '', date: date, url: c.html_url, sha: c.sha, known: false };
+    if (m) return { source: m[1], kind: m[2], title: m[3], by: verified || m[4], verified: !!verified, slug: m[5] || '', date: date, url: c.html_url, sha: c.sha, known: true };
+    return { source: 'manual', kind: 'Update', title: first.slice(0, 90), by: verified || (c.commit && c.commit.author && c.commit.author.name) || '', verified: !!verified, slug: '', date: date, url: c.html_url, sha: c.sha, known: false };
   }
 
   /* ---------- text diff for update proposals ---------- */

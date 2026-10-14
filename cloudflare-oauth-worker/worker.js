@@ -15,7 +15,9 @@
 // Vars:            REPO (default raomuneebahmed6/Lmshandling), ALLOWED_ORIGIN
 
 const SESSION_HOURS = 12;
-const PBKDF2_ITERATIONS = 100000; // Workers cap PBKDF2 at 100k
+const PBKDF2_ITERATIONS = 100000; // Workers cap PBKDF2 at 100k (login throttling covers the rest)
+const MIN_PASSWORD = 10;
+const DRAFTS_BRANCH = "blog-drafts";
 const enc = new TextEncoder();
 const dec = new TextDecoder();
 
@@ -88,7 +90,7 @@ async function sessionSecret(env) {
 }
 
 async function makeSession(env, user) {
-  const payload = b64u.enc(enc.encode(JSON.stringify({ u: user.name, r: user.role, e: Date.now() + SESSION_HOURS * 3600 * 1000 })));
+  const payload = b64u.enc(enc.encode(JSON.stringify({ u: user.name, r: user.role, v: user.ver || 0, e: Date.now() + SESSION_HOURS * 3600 * 1000 })));
   const sig = b64u.enc(await hmac(await sessionSecret(env), payload));
   return payload + "." + sig;
 }
@@ -106,6 +108,8 @@ async function readSession(env, request) {
   // the account must still exist (deleted users are logged out at once)
   const u = await env.CMS.get("user:" + data.u, "json");
   if (!u) return null;
+  // a password change or reset bumps `ver`, which signs out every older session
+  if ((u.ver || 0) !== (data.v || 0)) return null;
   return { name: u.name, role: u.role };
 }
 
@@ -119,59 +123,129 @@ async function usersExist(env) {
 }
 
 const validName = (n) => /^[a-z0-9._-]{3,32}$/.test(n);
-const validPass = (p) => typeof p === "string" && p.length >= 8 && p.length <= 200;
+const validPass = (p) => typeof p === "string" && p.length >= MIN_PASSWORD && p.length <= 200;
+const PASS_MSG = `Password must be at least ${MIN_PASSWORD} characters`;
 
-async function createUser(env, name, password, role) {
+async function createUser(env, name, password, role, prev) {
   const salt = crypto.getRandomValues(new Uint8Array(16));
   const hash = await hashPassword(password, salt);
-  await env.CMS.put("user:" + name, JSON.stringify({ name, role, salt: b64u.enc(salt), hash: b64u.enc(hash), created: new Date().toISOString() }));
+  const ver = prev ? (prev.ver || 0) + 1 : 0;
+  const created = prev && prev.created ? prev.created : new Date().toISOString();
+  await env.CMS.put("user:" + name, JSON.stringify({ name, role, ver, salt: b64u.enc(salt), hash: b64u.enc(hash), created }));
+  return { name, role, ver };
 }
 
+// null = not connected, false = connected but cannot be decrypted (the OAuth
+// client secret was rotated): the admin must press "Reconnect GitHub".
 async function ghToken(env) {
   const boxed = await env.CMS.get("cfg:gh");
-  return boxed ? unseal(env, boxed) : null;
+  if (!boxed) return null;
+  try { return await unseal(env, boxed); } catch (e) { return false; }
 }
 
 /* ---------- GitHub allow-list proxy ---------- */
-function allowed(method, path, repo) {
-  const R = repo.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  const rules = [
-    ["GET", new RegExp(`^repos/${R}$`)],
-    ["GET", new RegExp(`^repos/${R}/contents/.*$`)],
-    ["PUT", new RegExp(`^repos/${R}/contents/.+$`)],
-    ["DELETE", new RegExp(`^repos/${R}/contents/.+$`)],
-    ["GET", new RegExp(`^repos/${R}/commits$`)],
-    ["GET", new RegExp(`^repos/${R}/git/trees/.+$`)],
-    ["GET", new RegExp(`^repos/${R}/actions/runs(/\\d+)?$`)],
-    ["POST", new RegExp(`^repos/${R}/actions/workflows/[A-Za-z0-9._-]+/dispatches$`)],
-  ];
-  return rules.some(([m, re]) => m === method && re.test(path));
+// Read access is broad; WRITE access is limited to exactly what the admin UI
+// needs, by role. Without this an editor could rewrite scripts/ or workflow
+// prompts and run code in CI with the site's FTP and Claude secrets.
+const WORKFLOWS = ["write-blog.yml", "refresh-blog.yml", "seo-audit.yml"];
+const UNSAFE_HTML = /<\s*(script|iframe|object|embed|form|link|meta|base|style)\b|\son[a-z]+\s*=|javascript:|data:text\/html/i;
+
+const escRe = (t) => String(t).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+function readAllowed(method, path, repo) {
+  const R = escRe(repo);
+  if (method === "GET") {
+    return [`^repos/${R}$`, `^repos/${R}/contents/.*$`, `^repos/${R}/commits$`, `^repos/${R}/git/trees/.+$`, `^repos/${R}/actions/runs(/\\d+)?$`].some((re) => new RegExp(re).test(path));
+  }
+  if (method === "POST") {
+    const m = new RegExp(`^repos/${R}/actions/workflows/([A-Za-z0-9._-]+)/dispatches$`).exec(path);
+    return !!m && WORKFLOWS.includes(m[1]);
+  }
+  return false;
 }
 
-async function proxyGitHub(env, request, url) {
+// Decide whether `role` may PUT/DELETE `file` on `branch`. Returns an error string or null.
+function writeError(env, role, method, file, branch, contentB64) {
+  const deploy = env.BRANCH || "claude/website-blogs-seo-3jpp70";
+  if (branch !== deploy && branch !== DRAFTS_BRANCH) return "Writes to that branch are not allowed";
+  if (branch === DRAFTS_BRANCH) {
+    if (/^drafts\/[A-Za-z0-9._-]+\.md$/.test(file)) return null;
+    if (method === "DELETE" && /^drafts\/refresh\/[A-Za-z0-9._-]+\.(md|html)$/.test(file)) return null;
+    return "That draft path is not allowed";
+  }
+  if (method === "PUT" && /^content\/blog\/[a-z0-9-]+\.md$/.test(file)) {
+    let text = "";
+    try { text = dec.decode(b64u.dec(String(contentB64 || "").replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""))); } catch (e) { return "Invalid file content"; }
+    if (text.length > 400000) return "Post is too large";
+    const bodyOnly = text.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n/, "").replace(/data-[a-z-]+="[^"]*"/g, "");
+    if (UNSAFE_HTML.test(bodyOnly)) return "The post contains unsafe HTML (script, iframe, onclick, javascript: ...)";
+    return null;
+  }
+  if (method === "PUT" && /^assets\/blog-images\/[A-Za-z0-9._-]+\.(png|jpe?g|webp)$/.test(file)) {
+    return String(contentB64 || "").length > 2800000 ? "Image is larger than 2 MB" : null;
+  }
+  if (role === "admin" && method === "PUT" && /^blog\/[a-z0-9-]+\.html$/.test(file)) return null; // approved legacy page update
+  if (method === "PUT" && /^blog\/[a-z0-9-]+\.html$/.test(file)) return "Only admins can publish updates to the older hand-built pages";
+  if (role === "admin" && method === "PUT" && file === ".github/cms-settings.json") {
+    try { const j = JSON.parse(dec.decode(b64u.dec(String(contentB64 || "").replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "")))); if (!j.autoUpdate) return "Invalid settings"; } catch (e) { return "Invalid settings"; }
+    return null;
+  }
+  return "Blog Studio cannot change that file";
+}
+
+async function proxyGitHub(env, request, url, session) {
   const repo = env.REPO || "raomuneebahmed6/Lmshandling";
   const path = decodeURIComponent(url.pathname.slice("/api/gh/".length));
-  if (path.includes("..") || !allowed(request.method, path, repo)) return json({ message: "Blocked by Blog Studio" }, 403);
-  const token = await ghToken(env);
-  if (!token) return json({ message: "GitHub is not connected yet" }, 409);
+  if (path.includes("..")) return json({ message: "Blocked by Blog Studio" }, 403);
   const init = {
     method: request.method,
-    headers: {
-      Authorization: "Bearer " + token,
-      Accept: "application/vnd.github+json",
-      "X-GitHub-Api-Version": "2022-11-28",
-      "User-Agent": "lmshandling-blog-studio",
-    },
+    headers: { Accept: "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28", "User-Agent": "lmshandling-blog-studio" },
   };
-  if (request.method !== "GET") {
-    init.body = await request.text();
+  const contentsRe = new RegExp(`^repos/${escRe(repo)}/contents/(.+)$`);
+  if (request.method === "PUT" || request.method === "DELETE") {
+    const m = contentsRe.exec(path);
+    if (!m) return json({ message: "Blocked by Blog Studio" }, 403);
+    let body;
+    try { body = await request.json(); } catch (e) { return json({ message: "Bad request" }, 400); }
+    const err = writeError(env, session.role, request.method, m[1], body.branch, body.content);
+    if (err) return json({ message: err }, 403);
+    // stamp the VERIFIED account name on every change, so Activity can trust it
+    body.message = String(body.message || "Update").split("\n")[0].slice(0, 200) + " [studio:" + session.name + "]";
+    init.body = JSON.stringify(body);
     init.headers["Content-Type"] = "application/json";
+  } else {
+    if (!readAllowed(request.method, path, repo)) return json({ message: "Blocked by Blog Studio" }, 403);
+    if (request.method !== "GET") {
+      let body;
+      try { body = await request.json(); } catch (e) { body = {}; }
+      const deploy = env.BRANCH || "claude/website-blogs-seo-3jpp70";
+      if (body.ref !== deploy) return json({ message: "Workflows can only run on the site branch" }, 403);
+      init.body = JSON.stringify(body);
+      init.headers["Content-Type"] = "application/json";
+    }
   }
+  const token = await ghToken(env);
+  if (token === null) return json({ message: "GitHub is not connected yet" }, 409);
+  if (token === false) return json({ message: "GitHub connection needs to be reconnected (Settings > GitHub connection)", reconnect: true }, 409);
+  init.headers.Authorization = "Bearer " + token;
   const r = await fetch("https://api.github.com/" + path + url.search, init);
   return new Response(r.status === 204 ? null : await r.text(), {
     status: r.status,
     headers: { "Content-Type": r.headers.get("Content-Type") || "application/json", "Cache-Control": "no-store" },
   });
+}
+
+/* ---------- GitHub grant (short-lived, from the OAuth popup) ---------- */
+async function verifyGrant(env, grant) {
+  const boxed = grant ? await env.CMS.get("grant:" + grant) : null;
+  if (!boxed) return { error: "GitHub connection expired. Connect again.", status: 400 };
+  let token;
+  try { token = await unseal(env, boxed); } catch (e) { return { error: "GitHub connection expired. Connect again.", status: 400 }; }
+  const repo = env.REPO || "raomuneebahmed6/Lmshandling";
+  const r = await fetch("https://api.github.com/repos/" + repo, { headers: { Authorization: "Bearer " + token, "User-Agent": "lmshandling-blog-studio", Accept: "application/vnd.github+json" } });
+  const info = await r.json().catch(() => ({}));
+  if (!r.ok || !info.permissions || !info.permissions.push) return { error: "That GitHub account cannot write to the site repository.", status: 403 };
+  return { token };
 }
 
 /* ---------- login throttling ---------- */
@@ -194,7 +268,8 @@ async function handleApi(request, env, url) {
 
   if (route === "/state" && method === "GET") {
     const session = await readSession(env, request);
-    return json({ setup: !(await usersExist(env)), user: session, github: !!(await env.CMS.get("cfg:gh")) });
+    const t = await ghToken(env);
+    return json({ setup: !(await usersExist(env)), user: session, github: t === null ? "none" : (t === false ? "broken" : "ok") });
   }
 
   if (route === "/login" && method === "POST") {
@@ -223,19 +298,31 @@ async function handleApi(request, env, url) {
     const body = await request.json().catch(() => ({}));
     const name = String(body.username || "").toLowerCase().trim();
     if (!validName(name)) return json({ message: "Username: 3-32 letters, numbers, . _ -" }, 400);
-    if (!validPass(body.password)) return json({ message: "Password must be at least 8 characters" }, 400);
-    const boxed = await env.CMS.get("grant:" + body.grant);
-    if (!boxed) return json({ message: "GitHub connection expired. Connect again." }, 400);
-    const token = await unseal(env, boxed);
-    const repo = env.REPO || "raomuneebahmed6/Lmshandling";
-    const r = await fetch("https://api.github.com/repos/" + repo, { headers: { Authorization: "Bearer " + token, "User-Agent": "lmshandling-blog-studio", Accept: "application/vnd.github+json" } });
-    const info = await r.json().catch(() => ({}));
-    if (!r.ok || !info.permissions || !info.permissions.push) return json({ message: "That GitHub account cannot write to the site repository." }, 403);
-    await env.CMS.put("cfg:gh", await seal(env, token));
+    if (!validPass(body.password)) return json({ message: PASS_MSG }, 400);
+    const g = await verifyGrant(env, body.grant);
+    if (g.error) return json({ message: g.error }, g.status);
+    await env.CMS.put("cfg:gh", await seal(env, g.token));
     await env.CMS.delete("grant:" + body.grant);
-    await createUser(env, name, body.password, "admin");
-    const u = { name, role: "admin" };
-    return json({ user: u }, 200, { "Set-Cookie": cookie(await makeSession(env, u), SESSION_HOURS * 3600) });
+    const u = await createUser(env, name, body.password, "admin");
+    return json({ user: { name: u.name, role: u.role } }, 200, { "Set-Cookie": cookie(await makeSession(env, u), SESSION_HOURS * 3600) });
+  }
+
+  // Forgot password: whoever can authorise the GitHub OAuth app with push
+  // access to the site repository may set a new password for any account.
+  // (There is no email service, so the repository itself is the proof of ownership.)
+  if (route === "/recover" && method === "POST") {
+    const body = await request.json().catch(() => ({}));
+    const ip = request.headers.get("CF-Connecting-IP") || "unknown";
+    if (await throttled(env, "rec:" + ip)) return json({ message: "Too many attempts. Try again later." }, 429);
+    const name = String(body.username || "").toLowerCase().trim();
+    if (!validPass(body.password)) return json({ message: PASS_MSG }, 400);
+    const g = await verifyGrant(env, body.grant);
+    if (g.error) { await recordFail(env, "rec:" + ip); return json({ message: g.error }, g.status); }
+    const u = await env.CMS.get("user:" + name, "json");
+    if (!u) return json({ message: "No account with that username" }, 404);
+    await createUser(env, u.name, body.password, u.role, u);
+    await env.CMS.delete("grant:" + body.grant);
+    return json({ ok: true });
   }
 
   // Everything below needs a logged-in session.
@@ -251,12 +338,13 @@ async function handleApi(request, env, url) {
     if (!u) return json({ message: "Account not found" }, 404);
     const hash = await hashPassword(String(body.current || ""), b64u.dec(u.salt));
     if (!timingSafeEqual(hash, b64u.dec(u.hash))) return json({ message: "Current password is wrong" }, 400);
-    if (!validPass(body.password)) return json({ message: "New password must be at least 8 characters" }, 400);
-    await createUser(env, u.name, body.password, u.role);
-    return json({ ok: true });
+    if (!validPass(body.password)) return json({ message: PASS_MSG }, 400);
+    const nu = await createUser(env, u.name, body.password, u.role, u);
+    // every other signed-in browser is logged out; this one stays signed in
+    return json({ ok: true }, 200, { "Set-Cookie": cookie(await makeSession(env, nu), SESSION_HOURS * 3600) });
   }
 
-  if (route.startsWith("/gh/")) return proxyGitHub(env, request, url);
+  if (route.startsWith("/gh/")) return proxyGitHub(env, request, url, session);
 
   // ---- admin-only: users and GitHub connection
   if (session.role !== "admin") return json({ message: "Admins only" }, 403);
@@ -274,7 +362,7 @@ async function handleApi(request, env, url) {
     const body = await request.json().catch(() => ({}));
     const name = String(body.username || "").toLowerCase().trim();
     if (!validName(name)) return json({ message: "Username: 3-32 letters, numbers, . _ -" }, 400);
-    if (!validPass(body.password)) return json({ message: "Password must be at least 8 characters" }, 400);
+    if (!validPass(body.password)) return json({ message: PASS_MSG }, 400);
     if (await env.CMS.get("user:" + name)) return json({ message: "That username already exists" }, 409);
     await createUser(env, name, body.password, body.role === "admin" ? "admin" : "editor");
     return json({ ok: true });
@@ -290,15 +378,15 @@ async function handleApi(request, env, url) {
     const body = await request.json().catch(() => ({}));
     const u = await env.CMS.get("user:" + m[1], "json");
     if (!u) return json({ message: "No such user" }, 404);
-    if (!validPass(body.password)) return json({ message: "Password must be at least 8 characters" }, 400);
-    await createUser(env, u.name, body.password, u.role);
+    if (!validPass(body.password)) return json({ message: PASS_MSG }, 400);
+    await createUser(env, u.name, body.password, u.role, u); // bumps the version: that user is signed out everywhere
     return json({ ok: true });
   }
   if (route === "/github/connect" && method === "POST") {
     const body = await request.json().catch(() => ({}));
-    const boxed = await env.CMS.get("grant:" + body.grant);
-    if (!boxed) return json({ message: "GitHub connection expired. Connect again." }, 400);
-    await env.CMS.put("cfg:gh", boxed);
+    const g = await verifyGrant(env, body.grant);
+    if (g.error) return json({ message: g.error }, g.status);
+    await env.CMS.put("cfg:gh", await seal(env, g.token));
     await env.CMS.delete("grant:" + body.grant);
     return json({ ok: true });
   }

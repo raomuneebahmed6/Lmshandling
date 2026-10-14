@@ -19,4 +19,5 @@ id = "e579eefac64b4acdacc2d4b0bf60f814"
 
 [vars]
 REPO = "raomuneebahmed6/Lmshandling"
+BRANCH = "claude/website-blogs-seo-3jpp70"
 ALLOWED_ORIGIN = "https://lmshandling.com"

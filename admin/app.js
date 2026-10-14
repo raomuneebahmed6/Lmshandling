@@ -14,13 +14,29 @@
       '<ul><li>Keyword in, full SEO blog out</li><li>Auto-update keeps old posts fresh</li><li>See exactly which posts changed and when</li></ul></div>' +
       '<div class="authform"><div class="box"><h2>' + esc(title) + '</h2><p class="sub">' + esc(sub) + '</p>' + form + '</div></div></div>';
   }
-  function renderLogin(msg) {
+  // password input with a show/hide eye button
+  function pwField(id, label, ac, hint) {
+    return '<label class="f">' + label + (hint ? ' <small>' + hint + '</small>' : '') + '</label><div class="pw"><input type="password" id="' + id + '" autocomplete="' + ac + '">' +
+      '<button type="button" class="pwt" data-pwt="' + id + '" aria-label="Show password" title="Show password">' + icon('eye') + '</button></div>';
+  }
+  if (!window.__lmhPw) {
+    window.__lmhPw = true;
+    document.addEventListener('click', function (e) {
+      var b = e.target.closest('[data-pwt]'); if (!b) return;
+      var inp = document.getElementById(b.getAttribute('data-pwt')); if (!inp) return;
+      var show = inp.type === 'password'; inp.type = show ? 'text' : 'password';
+      b.innerHTML = icon(show ? 'eyeoff' : 'eye'); b.setAttribute('aria-label', show ? 'Hide password' : 'Show password'); b.title = show ? 'Hide password' : 'Show password';
+    });
+  }
+  function renderLogin(msg, ok) {
     clearInterval(poll); me = null; data = null;
     authShell('Welcome back', 'Sign in with your Blog Studio username.',
-      (msg ? '<div class="alert err">' + esc(msg) + '</div>' : '') +
+      (msg ? '<div class="alert ' + (ok ? 'ok' : 'err') + '">' + esc(msg) + '</div>' : '') +
       '<form id="lf"><label class="f">Username</label><input type="text" id="lu" autocomplete="username" autocapitalize="none" autofocus>' +
-      '<label class="f">Password</label><input type="password" id="lp" autocomplete="current-password">' +
-      '<div id="lerr"></div><button class="btn" type="submit" id="lgo">Sign in</button></form>');
+      pwField('lp', 'Password', 'current-password') +
+      '<div id="lerr"></div><button class="btn" type="submit" id="lgo">Sign in</button>' +
+      '<p style="text-align:center;margin:1rem 0 0"><a href="#" id="forgot">Forgot password?</a></p></form>');
+    document.getElementById('forgot').onclick = function (e) { e.preventDefault(); renderRecover(); };
     document.getElementById('lf').onsubmit = function (e) {
       e.preventDefault();
       var b = document.getElementById('lgo'); b.disabled = true; b.textContent = 'Signing in…';
@@ -42,14 +58,41 @@
     }
     window.addEventListener('message', onMsg);
   }
+  // Forgot password: there is no email service, so ownership of the site's GitHub repository is the proof.
+  function renderRecover() {
+    var grant = null;
+    authShell('Reset your password', 'Prove you own the site, then choose a new password.',
+      '<div class="alert info">Step 1: sign in with the GitHub account that owns the site repository (the same one used at setup). Nothing is changed on GitHub.</div>' +
+      '<button class="btn ghost" id="gh" type="button">Connect GitHub</button><div id="ghok"></div>' +
+      '<form id="rf" style="display:none"><label class="f">Your Blog Studio username</label><input type="text" id="ru" autocomplete="username" autocapitalize="none">' +
+      pwField('rp', 'New password', 'new-password', '(10+ characters)') + pwField('rp2', 'Repeat new password', 'new-password') +
+      '<div id="rerr"></div><button class="btn" type="submit" id="rgo">Set new password</button></form>' +
+      '<p style="text-align:center;margin:1rem 0 0"><a href="#" id="back">Back to sign in</a></p>');
+    document.getElementById('back').onclick = function (e) { e.preventDefault(); renderLogin(); };
+    document.getElementById('gh').onclick = function () {
+      connectGitHub(function (g) {
+        grant = g; document.getElementById('gh').style.display = 'none';
+        document.getElementById('ghok').innerHTML = '<div class="alert ok">GitHub verified. Choose a new password.</div>';
+        document.getElementById('rf').style.display = 'block';
+      });
+    };
+    document.getElementById('rf').onsubmit = function (e) {
+      e.preventDefault();
+      var p = document.getElementById('rp').value, err = document.getElementById('rerr');
+      if (p !== document.getElementById('rp2').value) { err.innerHTML = '<div class="alert err">Passwords do not match.</div>'; return; }
+      var b = document.getElementById('rgo'); b.disabled = true;
+      L.api('/recover', { method: 'POST', body: { grant: grant, username: document.getElementById('ru').value, password: p }, noAuthRedirect: true })
+        .then(function () { renderLogin('Password changed. Sign in with your new password.', true); })
+        .catch(function (er) { b.disabled = false; err.innerHTML = '<div class="alert err">' + esc(er.message) + '</div>'; });
+    };
+  }
   function renderSetup() {
     var grant = null;
     authShell('Set up Blog Studio', 'One-time setup. Connect GitHub, then choose your admin username and password.',
       '<div class="alert info">Step 1: connect the GitHub account that owns the site repository. You only do this once; after that nobody needs GitHub to sign in.</div>' +
       '<button class="btn ghost" id="gh" type="button" style="margin-top:.2rem">Connect GitHub</button><div id="ghok"></div>' +
       '<form id="sf" style="display:none"><label class="f">Admin username</label><input type="text" id="su" autocomplete="username" autocapitalize="none" placeholder="e.g. muneeb">' +
-      '<label class="f">Password <small>(8+ characters)</small></label><input type="password" id="sp" autocomplete="new-password">' +
-      '<label class="f">Repeat password</label><input type="password" id="sp2" autocomplete="new-password"><div id="serr"></div>' +
+      pwField('sp', 'Password', 'new-password', '(10+ characters)') + pwField('sp2', 'Repeat password', 'new-password') + '<div id="serr"></div>' +
       '<button class="btn" type="submit" id="sgo">Create admin account</button></form>');
     document.getElementById('gh').onclick = function () {
       connectGitHub(function (g) {
@@ -77,10 +120,17 @@
     }).catch(function (e) { $app.innerHTML = '<p class="boot">Could not reach the Blog Studio server (' + esc(e.message) + '). <a href="">Retry</a></p>'; });
   }
   window.addEventListener('studio:unauth', function () { if (me) renderLogin('Your session ended. Please sign in again.'); });
+  // The GitHub link can no longer be decrypted (the OAuth secret was rotated): admins must reconnect once.
+  window.addEventListener('studio:reconnect', function () {
+    var c = document.getElementById('content'); if (!c || document.getElementById('rcban')) return;
+    var d = document.createElement('div'); d.id = 'rcban'; d.className = 'alert warn';
+    d.innerHTML = me && me.role === 'admin' ? 'GitHub needs to be reconnected. <a href="#/settings">Open Settings</a> and press <b>Reconnect GitHub</b>.' : 'GitHub needs to be reconnected. Ask an admin to open Settings and press Reconnect GitHub.';
+    c.insertBefore(d, c.firstChild);
+  });
 
   /* ======================= shell ======================= */
   var NAV = [
-    ['Main', [['dash', '#/', 'home', 'Dashboard'], ['posts', '#/posts', 'file', 'All Posts'], ['new', '#/new', 'pen', 'Write New']]],
+    ['Main', [['dash', '#/', 'home', 'Dashboard'], ['seo', '#/seo', 'trend', 'SEO Health'], ['posts', '#/posts', 'file', 'All Posts'], ['new', '#/new', 'pen', 'Write New']]],
     ['Content', [['review', '#/review', 'inbox', 'Drafts & Review'], ['cats', '#/categories', 'folder', 'Categories'], ['tags', '#/tags', 'tag', 'Tags']]],
     ['Manage', [['activity', '#/activity', 'activity', 'Activity'], ['settings', '#/settings', 'users', 'Settings']]]
   ];
@@ -124,7 +174,8 @@
     loading = Promise.all([
       L.listDir('content/blog', L.BRANCH), L.getFile('_data/existingPosts.json', L.BRANCH), L.listDir('drafts', L.DRAFTS),
       L.listDir('drafts/refresh', L.DRAFTS), commitsFor('content/blog'), commitsFor('blog'), L.getFile('.github/cms-settings.json', L.BRANCH),
-      L.gh('repos/' + L.REPO + '/actions/runs?per_page=25').catch(function () { return { workflow_runs: [] }; })
+      L.gh('repos/' + L.REPO + '/actions/runs?per_page=25').catch(function () { return { workflow_runs: [] }; }),
+      L.getFile('reports/seo.json', L.DRAFTS).catch(function () { return null; })
     ]).then(function (r) {
       var mdFiles = r[0].filter(function (f) { return /\.md$/.test(f.name); });
       var legacy = []; try { legacy = JSON.parse(r[1].text); } catch (e) { /* ignore */ }
@@ -135,7 +186,9 @@
       r[4].concat(r[5]).forEach(function (c) { if (!seen[c.sha] && c.parents && c.parents.length < 2) { seen[c.sha] = 1; commits.push(L.parseCommit(c)); } });
       commits.sort(function (a, b) { return a.date < b.date ? 1 : -1; });
       var last = {}; commits.forEach(function (c) { if (c.slug && !last[c.slug]) last[c.slug] = c; });
-      var runs = (r[7].workflow_runs || []).filter(function (x) { return /Write blog|Refresh blogs/.test(x.name || ''); });
+      var runs = (r[7].workflow_runs || []).filter(function (x) { return /Write blog|Refresh blogs|SEO audit/.test(x.name || ''); });
+      var seo = null; try { seo = r[8] ? JSON.parse(r[8].text) : null; } catch (e) { /* no report yet */ }
+      var seoByPath = {}; if (seo) (seo.pages || []).forEach(function (p) { seoByPath[p.path] = p; });
       return Promise.all([
         L.pool(mdFiles, 6, function (f) {
           return L.getFile('content/blog/' + f.name, L.BRANCH).then(function (g) {
@@ -158,7 +211,8 @@
         var posts = md.concat(leg); posts.forEach(function (p) { var c = last[p.slug]; p.source = c ? c.source : null; p.lastBy = c ? c.by : ''; });
         var bySlug = {}; posts.forEach(function (p) { bySlug[p.slug] = p; });
         proposals.forEach(function (p) { p.title = (bySlug[p.slug] || {}).title || p.slug; });
-        data = { posts: posts, drafts: drafts, proposals: proposals, commits: commits, runs: runs, settings: settings, bySlug: bySlug, settingsSha: r[6] ? r[6].sha : null, loadedAt: Date.now() };
+        posts.forEach(function (p) { var sp = seoByPath['/blog/' + p.slug]; p.seo = sp ? sp.score : null; p.seoFlags = sp ? sp.flags : []; });
+        data = { posts: posts, drafts: drafts, proposals: proposals, commits: commits, runs: runs, settings: settings, bySlug: bySlug, seo: seo, settingsSha: r[6] ? r[6].sha : null, loadedAt: Date.now() };
         loading = null; return data;
       });
     }).catch(function (e) { loading = null; throw e; });
@@ -200,7 +254,7 @@
           return '<tr><td class="ti"><b>' + esc(p.title) + '</b><small>' + esc(L.catLabel(p.category)) + ' · last updated ' + esc(L.fmtDate(p.modified)) + ' (' + esc(L.rel(p.modified)) + ')</small></td><td class="act"><button class="btn sm" data-au="' + esc(p.slug) + '">' + icon('refresh') + ' Auto-update</button></td></tr>';
         }).join('') + '</tbody></table></div>' : '<p class="empty">Every post was updated within ' + s.staleDays + ' days. 🎉</p>') + '</div>' +
         '<div class="card flush"><div class="hd"><h2>Recent activity</h2><a class="btn ghost sm" href="#/activity">See all</a></div><ul class="feed">' + feed + '</ul></div></div>' +
-        '<div>' + writeCard() + '<div class="card"><h2>Auto-update</h2><p class="sub">' + (s.enabled ? 'Every Monday Claude refreshes up to ' + s.perRun + ' post(s) older than ' + s.staleDays + ' days and leaves them for your review.' : 'Weekly auto-update is off.') + '</p>' +
+        '<div>' + seoCard() + writeCard() + '<div class="card"><h2>Auto-update</h2><p class="sub">' + (s.enabled ? 'Every Monday Claude refreshes up to ' + s.perRun + ' post(s) older than ' + s.staleDays + ' days and leaves them for your review.' : 'Weekly auto-update is off.') + '</p>' +
         '<a class="btn ghost sm" href="#/settings">Change settings</a> ' + (pend ? '<a class="btn gold sm" href="#/review">Review ' + pend + '</a>' : '') + '</div></div></div>';
       var c = page('dash', crumb('Dashboard'), html);
       c.onclick = function (e) { var a = e.target.closest('[data-au]'); if (a) autoUpdate([a.getAttribute('data-au')]); };
@@ -210,7 +264,7 @@
   function stat(ic, cls, n, label) { return '<div class="stat"><div class="ic ' + cls + '">' + icon(ic) + '</div><div><b>' + n + '</b><span>' + esc(label) + '</span></div></div>'; }
   function feedItem(c) {
     return '<li><div class="dot ' + (c.source === 'auto' ? 'auto' : '') + '">' + icon(c.source === 'auto' ? 'refresh' : 'edit') + '</div><div><b>' + esc(c.title) + '</b><small>' +
-      (c.known ? esc(c.kind === 'Publish' ? 'Published' : 'Updated') + ' · ' + (c.source === 'auto' ? 'Auto-update (Claude), approved by ' : 'by ') + esc(c.by) : 'Site change by ' + esc(c.by)) + ' · ' + esc(L.rel(c.date)) + '</small></div></li>';
+      (c.known ? esc(c.kind === 'Publish' ? 'Published' : 'Updated') + ' · ' + (c.source === 'auto' ? 'Auto-update (Claude), approved by ' : 'by ') + esc(c.by) : 'Site change by ' + esc(c.by)) + (c.verified ? ' <span title="Account verified by the server">✓</span>' : '') + ' · ' + esc(L.rel(c.date)) + '</small></div></li>';
   }
 
   /* ======================= write ======================= */
@@ -314,13 +368,14 @@
       return '<tr><td style="width:30px">' + (live ? '<input type="checkbox" data-pick="' + esc(p.slug) + '">' : '') + '</td>' +
         '<td class="ti"><b>' + esc(p.title) + '</b><small>/blog/' + esc(p.slug) + '</small></td><td>' + esc(L.catLabel(p.category)) + '</td>' +
         '<td><span class="pill ' + (p.status === 'Draft' ? 'warn' : (p.status === 'Published' ? 'ok' : 'grey')) + '">' + p.status + '</span>' + (p.hasProposal ? ' <a href="#/review/' + esc(p.slug) + '" class="pill gold" style="text-decoration:none">Update ready</a>' : '') + '</td>' +
+        '<td>' + (p.seo == null ? '<span class="hint">-</span>' : '<span class="pill ' + (p.seo >= 90 ? 'ok' : (p.seo >= 70 ? 'warn' : 'bad')) + '" title="' + esc((p.seoFlags || []).join(', ') || 'No issues found') + '">' + p.seo + '</span>') + '</td>' +
         '<td>' + esc(L.fmtDate(p.modified)) + ' <small style="color:var(--mute)">' + esc(L.rel(p.modified)) + '</small> ' + (stale ? '<span class="pill bad">Stale</span> ' : '') + srcBadge(p) + '</td>' +
         '<td class="act">' + (live ? '<a class="iconbtn" title="Open live page" href="' + L.SITE + '/blog/' + esc(p.slug) + '" target="_blank" rel="noopener">' + icon('ext') + '</a>' : '') +
         (p.kind === 'md' ? '<a class="btn ghost sm" href="#/edit/post:' + esc(encodeURIComponent(p.file)) + '">' + icon('edit') + ' Edit</a>' : '') +
         (p.kind === 'draft' ? '<a class="btn ghost sm" href="#/edit/draft:' + esc(encodeURIComponent(p.file)) + '">' + icon('edit') + ' Edit</a>' : '') +
         (live ? '<button class="btn sm" data-au="' + esc(p.slug) + '">' + icon('refresh') + ' Auto-update</button>' : '') + '</td></tr>';
     }).join('');
-    return { total: rows.length, html: body || '<tr><td colspan="6" class="empty">No posts match.</td></tr>', more: rows.length > show.length };
+    return { total: rows.length, html: body || '<tr><td colspan="7" class="empty">No posts match.</td></tr>', more: rows.length > show.length };
   }
   function pagePosts() {
     loadingPage('posts', crumb('All Posts'));
@@ -331,7 +386,7 @@
         '<select id="fs"><option value="">All status</option>' + ['Published', 'Legacy', 'Draft'].map(function (s) { return '<option' + (F.status === s ? ' selected' : '') + '>' + s + '</option>'; }).join('') + '</select>' +
         '<select id="fu"><option value="">Any update date</option>' + [['7', 'Updated last 7 days'], ['30', 'Updated last 30 days'], ['stale', 'Stale (needs refresh)'], ['auto', 'Last update: Auto'], ['manual', 'Last update: Manual']].map(function (o) { return '<option value="' + o[0] + '"' + (F.upd === o[0] ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('') + '</select></div>' +
         '<div id="bulk" style="display:none;padding:.7rem 1.2rem;background:var(--gold-soft);border-bottom:1px solid var(--line)"><b id="bn"></b> selected <button class="btn sm" id="bgo">' + icon('refresh') + ' Auto-update selected</button></div>' +
-        '<div class="tw"><table class="t"><thead><tr><th></th><th>Title</th><th>Category</th><th>Status</th><th>Last updated</th><th></th></tr></thead><tbody id="rows"></tbody></table></div><div id="more" style="padding:1rem;text-align:center"></div></div>';
+        '<div class="tw"><table class="t"><thead><tr><th></th><th>Title</th><th>Category</th><th>Status</th><th title="Latest SEO audit score for this page">SEO</th><th>Last updated</th><th></th></tr></thead><tbody id="rows"></tbody></table></div><div id="more" style="padding:1rem;text-align:center"></div></div>';
       var c = page('posts', crumb('All Posts'), html);
       function draw() {
         var r = pageRows(); document.getElementById('rows').innerHTML = r.html;
@@ -498,6 +553,99 @@
     }).catch(function (e) { errPage('activity', e); });
   }
 
+  /* ======================= SEO health ======================= */
+  var CATNAME = { technical: 'Technical SEO', onpage: 'On-page SEO', content: 'Content', structured: 'Structured data', aeo: 'AI and answer readiness', security: 'Security', performance: 'Speed (mobile)' };
+  var CATHINT = { technical: 'Crawling, indexing, redirects, links', onpage: 'Titles, descriptions, headings', content: 'Length, images, structure', structured: 'Schema markup for rich results', aeo: 'FAQs and llms.txt for AI answers', security: 'Headers, HTTPS, exposed files', performance: 'Lighthouse on key pages' };
+  var FLAGNAME = { T_NON200: 'Not 200', T_REDIRECT: 'Redirects', T_NOINDEX: 'noindex', T_CANON_MISSING: 'No canonical', T_CANON_DIFF: 'Canonical differs', T_ORPHAN: 'Orphan', T_SLOW: 'Slow', T_HEAVY: 'Heavy HTML', O_TITLE_MISSING: 'No title', O_TITLE_LONG: 'Title long', O_TITLE_SHORT: 'Title short', O_TITLE_DUP: 'Duplicate title', O_DESC_MISSING: 'No description', O_DESC_LEN: 'Description length', O_DESC_DUP: 'Duplicate description', O_H1_MISSING: 'No H1', O_H1_MULTI: 'Several H1', O_LANG: 'No lang', O_VIEWPORT: 'No viewport', O_OG: 'Open Graph', O_TWITTER: 'Twitter card', C_THIN: 'Thin', C_ALT: 'Image alt', C_IMGDIM: 'Image size', C_H2: 'No H2', S_NONE: 'No schema', S_INVALID: 'Invalid schema', S_BREADCRUMB: 'Breadcrumb', S_ARTICLE: 'Article schema', A_FAQ: 'No FAQ schema', SEC_MIXED: 'Mixed content', SEC_NOOPENER: 'noopener' };
+  function scoreCls(n) { return n >= 90 ? 'good' : (n >= 70 ? 'mid' : 'low'); }
+  function ring(n) { return '<div class="ring ' + scoreCls(n) + '" style="--p:' + n + '"><b>' + n + '</b></div>'; }
+  function spark(hist) {
+    if (!hist || hist.length < 2) return '<p class="hint">The trend line appears after the next audit.</p>';
+    var w = 260, h = 54, v = hist.map(function (x) { return x.score; }), mn = Math.min.apply(null, v), mx = Math.max.apply(null, v), pts = v.map(function (n, i) { return Math.round(i * (w / (v.length - 1))) + ',' + Math.round(h - 4 - (n - mn) / ((mx - mn) || 1) * (h - 10)); }).join(' ');
+    var d = v[v.length - 1] - v[0];
+    return '<svg viewBox="0 0 ' + w + ' ' + h + '" class="spark" role="img" aria-label="Score trend"><polyline fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" points="' + pts + '"/></svg><p class="hint">' + (d === 0 ? 'No change' : (d > 0 ? '+' : '') + d + ' points') + ' over the last ' + v.length + ' audits</p>';
+  }
+  function seoCard() {
+    var r = data && data.seo;
+    if (!r) return '<div class="card"><h2>SEO Health</h2><p class="sub">No audit yet. Run the first one to see your site status.</p><a class="btn" href="#/seo">' + icon('trend') + ' Open SEO Health</a></div>';
+    var s = r.summary, top = r.issues[0];
+    return '<div class="card"><div class="seohead">' + ring(s.score) + '<div><h2>SEO Health</h2><p class="sub" style="margin:0">' + esc(L.rel(r.generatedAt)) + ' · ' + r.pagesCrawled + ' pages</p>' +
+      '<p class="sub" style="margin:.25rem 0 0">' + (s.issuesHigh ? '<span class="pill bad">' + s.issuesHigh + ' high</span> ' : '') + (s.issuesMedium ? '<span class="pill warn">' + s.issuesMedium + ' medium</span> ' : '') + (s.issuesLow ? '<span class="pill grey">' + s.issuesLow + ' low</span>' : '') + (r.issues.length ? '' : '<span class="pill ok">No issues</span>') + '</p></div></div>' +
+      (top ? '<p class="hint" style="margin:.8rem 0 0">Top issue: <b>' + esc(top.title) + '</b></p>' : '') + '<div style="margin-top:.8rem"><a class="btn ghost sm" href="#/seo">See full report</a></div></div>';
+  }
+  function seoSuggestions(r) {
+    var out = [];
+    r.issues.filter(function (i) { return i.severity !== 'low'; }).slice(0, 4).forEach(function (i) { out.push({ t: i.fix, s: i.title }); });
+    if (!r.performance.measured) out.push({ t: 'Run the audit from GitHub (Run audit now) so Lighthouse speed scores are measured.', s: 'Speed is not measured yet' });
+    out.push({ t: 'Connect Google Search Console and submit sitemap.xml. It shows real clicks, impressions, rankings and which pages Google has indexed.', s: 'Google data is missing' });
+    out.push({ t: 'Add backlinks from relevant education sites and student communities. Rankings depend heavily on trusted links, which this audit cannot see.', s: 'Backlinks are not measured' });
+    out.push({ t: 'Keep refreshing older posts (Auto-update) and answer real student questions with FAQ sections.', s: 'Content freshness' });
+    return out.slice(0, 7);
+  }
+  function pageSeo() {
+    loadingPage('seo', crumb('SEO Health'));
+    loadData(true).then(function () {
+      var r = data.seo, running = data.runs.some(function (x) { return /SEO audit/.test(x.name || '') && x.status !== 'completed'; });
+      var runBtn = '<button class="btn gold" id="runaudit"' + (running ? ' disabled' : '') + '>' + icon('refresh') + (running ? ' Audit running…' : ' Run audit now') + '</button>';
+      if (!r) {
+        var c0 = page('seo', crumb('SEO Health'), head('SEO Health', 'A full check of your live site: SEO, speed, mobile and security.', runBtn) +
+          '<div class="card"><h2>No audit yet</h2><p class="sub">Press <b>Run audit now</b>. It crawls every page of lmshandling.com like a search engine, checks security headers and speed, and takes about 3-5 minutes. It also runs automatically every night and after each site update.</p></div>');
+        wireAudit(c0, null); return;
+      }
+      var s = r.summary, cats = Object.keys(s.categories);
+      var html = head('SEO Health', 'Last audit ' + esc(L.rel(r.generatedAt)) + ' (' + esc(L.fmtDate(r.generatedAt)) + ') · ' + r.pagesCrawled + ' pages crawled of ' + esc(r.site), runBtn) +
+        '<div class="alert info">' + esc(r.notes) + ' Rankings and clicks are not included; see <b>Not measured yet</b> below.</div>' +
+        '<div class="cols seo"><div class="card"><div class="seohead big">' + ring(s.score) + '<div><h2>Overall score</h2><p class="sub" style="margin:0">' + (s.issuesHigh ? s.issuesHigh + ' high priority, ' : '') + s.issuesMedium + ' medium, ' + s.issuesLow + ' low</p>' + spark(r.history) + '</div></div></div>' +
+        '<div class="card"><h2>By area</h2><div class="cats">' + cats.map(function (k) { var n = s.categories[k]; return '<div class="cat"><div class="cl"><b>' + esc(CATNAME[k] || k) + '</b><span>' + n + '</span></div><div class="meter"><i class="' + scoreCls(n) + '" style="width:' + n + '%"></i></div><small>' + esc(CATHINT[k] || '') + '</small></div>'; }).join('') + '</div></div></div>' +
+        '<div class="card flush"><div class="hd"><h2>Issues to fix</h2><select id="isf" style="width:auto"><option value="">All priorities</option><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option></select></div><div id="isl"></div></div>' +
+        '<div class="cols"><div class="card flush"><div class="hd"><h2>' + icon('shield') + ' Security</h2></div><ul class="feed">' + r.security.map(function (x) { return '<li><div class="dot ' + (x.ok ? '' : 'auto') + '">' + icon(x.ok ? 'check' : 'alert') + '</div><div><b>' + esc(x.name) + '</b><small>' + (x.ok ? 'OK' + (x.value ? ' · ' + esc(x.value.slice(0, 70)) : '') : 'Missing') + '</small></div></li>'; }).join('') +
+        '<li><div class="dot ' + (r.exposed.length ? 'auto' : '') + '">' + icon(r.exposed.length ? 'alert' : 'check') + '</div><div><b>Sensitive files not exposed</b><small>' + (r.exposed.length ? esc(r.exposed.join(', ')) : 'None of 15 common risky paths are public') + '</small></div></li></ul></div>' +
+        '<div class="card flush"><div class="hd"><h2>Speed on mobile</h2></div>' + (r.performance.measured ? '<div class="tw"><table class="t"><thead><tr><th>Page</th><th>Perf</th><th>LCP</th><th>CLS</th><th>TBT</th></tr></thead><tbody>' + r.performance.pages.map(function (p) { return '<tr><td>' + esc(p.path) + '</td><td><span class="pill ' + (p.performance >= 90 ? 'ok' : (p.performance >= 50 ? 'warn' : 'bad')) + '">' + p.performance + '</span></td><td>' + esc(p.lcp) + '</td><td>' + esc(p.cls) + '</td><td>' + esc(p.tbt) + '</td></tr>'; }).join('') + '</tbody></table></div>' : '<p class="empty">' + esc(r.performance.note || 'Not measured yet.') + '</p>') + '</div></div>' +
+        '<div class="cols"><div class="card"><h2>Recommended next steps</h2><ol class="steps2">' + seoSuggestions(r).map(function (x) { return '<li><b>' + esc(x.s) + '</b><br><span>' + esc(x.t) + '</span></li>'; }).join('') + '</ol></div>' +
+        '<div class="card"><h2>Not measured yet</h2><p class="sub">These need Google or paid tools, so they are not part of the score:</p><ul class="plain">' + r.notMeasured.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></div></div>' +
+        '<div class="card flush"><div class="hd"><h2>All pages</h2></div><div class="filters"><input type="text" id="pq" placeholder="Search page…"><select id="ps"><option value="asc">Worst first</option><option value="desc">Best first</option><option value="words">Most words</option></select></div><div class="tw"><table class="t"><thead><tr><th>Page</th><th>SEO</th><th>Issues</th><th>Words</th><th>Response</th></tr></thead><tbody id="prow"></tbody></table></div><div id="pmore" style="padding:1rem;text-align:center"></div></div>';
+      var c = page('seo', crumb('SEO Health'), html);
+      var show = 25;
+      function drawIssues() {
+        var f = document.getElementById('isf').value, list = r.issues.filter(function (i) { return !f || i.severity === f; });
+        document.getElementById('isl').innerHTML = list.length ? list.map(function (i) {
+          return '<details class="iss"><summary><span class="pill ' + (i.severity === 'high' ? 'bad' : (i.severity === 'medium' ? 'warn' : 'grey')) + '">' + i.severity + '</span><b>' + esc(i.title) + '</b><span class="pill">' + (i.site ? 'whole site' : i.count + ' page' + (i.count === 1 ? '' : 's')) + '</span></summary><div class="ib"><p><b>Why it matters:</b> ' + esc(i.why) + '</p><p><b>How to fix:</b> ' + esc(i.fix) + '</p>' +
+            (i.urls.length ? '<ul class="plain">' + i.urls.slice(0, 15).map(function (u) { var href = /^https?:/.test(u) ? u : (u.charAt(0) === '/' ? r.site + u : ''); return '<li>' + (href ? '<a href="' + esc(href) + '" target="_blank" rel="noopener">' + esc(u.replace(r.site, '') || '/') + '</a>' : esc(u)) + '</li>'; }).join('') + (i.urls.length > 15 ? '<li class="hint">… and ' + (i.count - 15) + ' more</li>' : '') + '</ul>' : '') + (i.extra.length ? '<p class="hint">' + i.extra.slice(0, 4).map(esc).join('<br>') + '</p>' : '') + '</div></details>';
+        }).join('') : '<p class="empty">Nothing to fix here. 🎉</p>';
+      }
+      function drawPages() {
+        var q = document.getElementById('pq').value.toLowerCase(), sort = document.getElementById('ps').value;
+        var rows = r.pages.filter(function (p) { return !q || (p.path + ' ' + (p.title || '')).toLowerCase().indexOf(q) >= 0; }).sort(function (a, b) { return sort === 'desc' ? b.score - a.score : (sort === 'words' ? (b.words || 0) - (a.words || 0) : a.score - b.score); });
+        document.getElementById('prow').innerHTML = rows.slice(0, show).map(function (p) {
+          return '<tr><td class="ti"><b>' + esc(p.path) + '</b><small>' + esc(p.title || '') + '</small></td><td><span class="pill ' + (p.score >= 90 ? 'ok' : (p.score >= 70 ? 'warn' : 'bad')) + '">' + p.score + '</span></td><td>' + (p.flags.length ? p.flags.map(function (f) { return '<span class="pill grey" style="margin:1px">' + esc(FLAGNAME[f] || f) + '</span>'; }).join(' ') : '<span class="hint">None</span>') + '</td><td>' + (p.words || '') + '</td><td>' + (p.ms || 0) + ' ms</td></tr>';
+        }).join('') || '<tr><td colspan="5" class="empty">No pages match.</td></tr>';
+        document.getElementById('pmore').innerHTML = rows.length > show ? '<button class="btn ghost" id="pm">Show more</button>' : '';
+        if (rows.length > show) document.getElementById('pm').onclick = function () { show += 25; drawPages(); };
+      }
+      document.getElementById('isf').onchange = drawIssues; document.getElementById('pq').oninput = function () { show = 25; drawPages(); }; document.getElementById('ps').onchange = function () { show = 25; drawPages(); };
+      drawIssues(); drawPages(); wireAudit(c, r);
+    }).catch(function (e) { errPage('seo', e); });
+  }
+  function wireAudit(c, r) {
+    var b = document.getElementById('runaudit'); if (!b) return;
+    b.onclick = function () {
+      b.disabled = true; b.innerHTML = icon('refresh') + ' Starting…';
+      L.dispatch('seo-audit.yml', {}).then(function () {
+        L.toast('Audit started. This page refreshes when it finishes (3-5 minutes).');
+        var before = r ? r.generatedAt : '', tries = 0; clearInterval(poll);
+        b.innerHTML = icon('refresh') + ' Audit running…';
+        poll = setInterval(function () {
+          tries++;
+          L.getFile('reports/seo.json', L.DRAFTS).then(function (g) {
+            var j = null; try { j = g ? JSON.parse(g.text) : null; } catch (e) { /* wait */ }
+            if (j && j.generatedAt !== before) { clearInterval(poll); data = null; L.toast('New SEO report is ready'); pageSeo(); }
+            else if (tries > 50) { clearInterval(poll); L.toast('The audit is taking long. Check Activity for the run.', true); b.disabled = false; b.innerHTML = icon('refresh') + ' Run audit now'; }
+          }).catch(function () { /* keep waiting */ });
+        }, 10000);
+      }).catch(function (e) { L.toast(e.message, true); b.disabled = false; b.innerHTML = icon('refresh') + ' Run audit now'; });
+    };
+  }
+
   /* ======================= settings ======================= */
   function pageSettings() {
     loadingPage('settings', crumb('Settings'));
@@ -506,16 +654,16 @@
       var users = r[1].users, s = data.settings.autoUpdate;
       var html = head('Settings', 'Account, team and automation') +
         '<div class="cols"><div>' +
-        '<div class="card"><h2>Change my password</h2><label class="f">Current password</label><input type="password" id="pc" autocomplete="current-password"><label class="f">New password <small>(8+ characters)</small></label><input type="password" id="pn" autocomplete="new-password"><div style="margin-top:1rem"><button class="btn" id="pgo">Update password</button></div></div>' +
+        '<div class="card"><h2>Change my password</h2>' + pwField('pc', 'Current password', 'current-password') + pwField('pn', 'New password', 'new-password', '(10+ characters)') + '<div style="margin-top:1rem"><button class="btn" id="pgo">Update password</button></div><p class="hint">Changing it signs you out on every other device.</p></div>' +
         (isAdmin ? '<div class="card flush"><div class="hd"><h2>Team</h2></div><div class="tw"><table class="t"><tbody>' + users.map(function (u) {
           return '<tr><td class="ti"><b>' + esc(u.name) + '</b><small>' + esc(u.role) + ' · added ' + esc(L.fmtDate(u.created)) + '</small></td><td class="act"><button class="btn ghost sm" data-pw="' + esc(u.name) + '">Reset password</button>' + (u.name !== me.name ? '<button class="btn danger sm" data-del="' + esc(u.name) + '">' + icon('trash') + '</button>' : '') + '</td></tr>';
-        }).join('') + '</tbody></table></div><div style="padding:1.1rem 1.2rem;border-top:1px solid var(--line)"><h2 style="font-size:.92rem">Add a team member</h2><div class="row"><div><label class="f">Username</label><input type="text" id="nu" autocapitalize="none"></div><div><label class="f">Password</label><input type="password" id="np" autocomplete="new-password"></div><div class="fit"><label class="f">Role</label><select id="nr"><option value="editor">Editor</option><option value="admin">Admin</option></select></div><div class="fit"><button class="btn" id="nadd">Add</button></div></div><p class="hint">Editors can write, edit and publish posts. Admins can also manage the team and settings.</p></div></div>' : '') +
+        }).join('') + '</tbody></table></div><div style="padding:1.1rem 1.2rem;border-top:1px solid var(--line)"><h2 style="font-size:.92rem">Add a team member</h2><div class="row"><div><label class="f">Username</label><input type="text" id="nu" autocapitalize="none"></div><div>' + pwField('np', 'Password', 'new-password', '(10+)') + '</div><div class="fit"><label class="f">Role</label><select id="nr"><option value="editor">Editor</option><option value="admin">Admin</option></select></div><div class="fit"><button class="btn" id="nadd">Add</button></div></div><p class="hint">Editors can write, edit and publish posts. Admins can also manage the team and settings.</p></div></div>' : '') +
         '</div><div>' +
         (isAdmin ? '<div class="card"><h2>Auto-update</h2><p class="sub">Claude refreshes old posts and leaves them for your review. It never publishes by itself.</p>' +
           '<label class="f" style="display:flex;gap:.6rem;align-items:center;margin-top:0"><input type="checkbox" id="ae"' + (s.enabled ? ' checked' : '') + ' style="width:auto"> Run automatically every Monday (08:00 Pakistan time)</label>' +
           '<div class="row"><div><label class="f">Stale after (days)</label><input type="number" id="sd" min="30" max="720" value="' + s.staleDays + '"></div><div><label class="f">Posts per run</label><input type="number" id="pr" min="1" max="5" value="' + s.perRun + '"></div></div>' +
           '<div style="margin-top:1rem"><button class="btn" id="asv">Save</button> <button class="btn ghost" id="arun">' + icon('refresh') + ' Run now</button></div></div>' +
-          '<div class="card"><h2>GitHub connection</h2><p class="sub">' + (r[2].github ? 'Connected. Blog Studio publishes through this account.' : 'Not connected.') + '</p><button class="btn ghost" id="gc">Reconnect GitHub</button></div>' : '') +
+          '<div class="card"><h2>GitHub connection</h2><p class="sub">' + (r[2].github === 'ok' ? 'Connected. Blog Studio publishes through this account.' : (r[2].github === 'broken' ? 'The saved connection can no longer be read (the GitHub OAuth secret was changed). Press Reconnect to fix it.' : 'Not connected.')) + '</p><button class="btn ghost" id="gc">Reconnect GitHub</button></div>' : '') +
         '</div></div>';
       var c = page('settings', crumb('Settings'), html);
       document.getElementById('pgo').onclick = function () {
@@ -527,7 +675,7 @@
       };
       c.onclick = function (e) {
         var pw = e.target.closest('[data-pw]'), del = e.target.closest('[data-del]');
-        if (pw) { var np = window.prompt('New password for ' + pw.getAttribute('data-pw') + ' (8+ characters):'); if (np) L.api('/users/' + encodeURIComponent(pw.getAttribute('data-pw')) + '/password', { method: 'POST', body: { password: np } }).then(function () { L.toast('Password reset'); }).catch(function (er) { L.toast(er.message, true); }); }
+        if (pw) { var np = window.prompt('New password for ' + pw.getAttribute('data-pw') + ' (10+ characters):'); if (np) L.api('/users/' + encodeURIComponent(pw.getAttribute('data-pw')) + '/password', { method: 'POST', body: { password: np } }).then(function () { L.toast('Password reset'); }).catch(function (er) { L.toast(er.message, true); }); }
         if (del && window.confirm('Remove ' + del.getAttribute('data-del') + '? They will be signed out immediately.')) L.api('/users/' + encodeURIComponent(del.getAttribute('data-del')), { method: 'DELETE' }).then(function () { L.toast('Member removed'); pageSettings(); }).catch(function (er) { L.toast(er.message, true); });
       };
       document.getElementById('asv').onclick = function () {
@@ -762,6 +910,7 @@
     if (!me) return;
     var h = location.hash.replace(/^#/, '') || '/', base = h.split('?')[0], m;
     if (base === '/') return pageDash();
+    if (base === '/seo') return pageSeo();
     if (base === '/posts') return pagePosts();
     if (base === '/new') return pageNew();
     if (base === '/review') return pageReview();

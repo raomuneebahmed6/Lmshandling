@@ -9,3 +9,4 @@ node_modules/
 # Blog Studio drafts/scripts are not site pages
 drafts/
 scripts/
+reports/

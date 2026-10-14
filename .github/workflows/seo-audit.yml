@@ -1,0 +1,84 @@
+name: SEO audit
+
+# Crawls the LIVE site, runs Lighthouse on key pages, and writes reports/seo.json
+# to the (non-deployed) `blog-drafts` branch. Blog Studio shows it on "SEO Health".
+# Runs daily, after every successful site deploy, and from the "Run audit now" button.
+
+run-name: "SEO audit (${{ github.event_name }})"
+
+on:
+  schedule:
+    - cron: "0 1 * * *" # 06:00 Pakistan time
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["Build and deploy to Hostinger"]
+    types: [completed]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: seo-audit
+  cancel-in-progress: true
+
+jobs:
+  audit:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout site
+        uses: actions/checkout@v4
+        with:
+          ref: claude/website-blogs-seo-3jpp70
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Wait for the deploy to settle
+        if: github.event_name == 'workflow_run'
+        run: sleep 75
+
+      - name: Lighthouse (mobile) on key pages
+        continue-on-error: true
+        run: |
+          mkdir -p lh
+          POST=$(curl -fsS https://lmshandling.com/sitemap.xml | grep -oE 'https://lmshandling.com/blog/[a-z0-9-]+' | head -1)
+          i=0
+          for u in https://lmshandling.com/ https://lmshandling.com/services/ "$POST" https://lmshandling.com/cgpa-calculator; do
+            [ -n "$u" ] || continue
+            i=$((i+1))
+            npx --yes lighthouse@12 "$u" --quiet --output=json --output-path="lh/lh-$i.json" \
+              --only-categories=performance,seo,accessibility,best-practices \
+              --chrome-flags="--headless=new --no-sandbox" || echo "Lighthouse failed for $u"
+          done
+          ls -la lh || true
+
+      - name: Run the audit
+        run: |
+          git fetch -q origin blog-drafts 2>/dev/null && git show origin/blog-drafts:reports/seo.json > "$RUNNER_TEMP/prev.json" 2>/dev/null || echo '{}' > "$RUNNER_TEMP/prev.json"
+          LH_DIR=lh node scripts/seo-audit.js reports/seo.json "$RUNNER_TEMP/prev.json"
+
+      - name: Push the report to the blog-drafts branch
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -e
+          cp reports/seo.json "$RUNNER_TEMP/seo.json"
+          rm -rf "$RUNNER_TEMP/d" && mkdir "$RUNNER_TEMP/d" && cd "$RUNNER_TEMP/d"
+          git init -q
+          git config user.name "seo-audit"
+          git config user.email "seo-audit@users.noreply.github.com"
+          git remote add origin "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          if git fetch -q origin blog-drafts; then git checkout -q -B blog-drafts FETCH_HEAD; else git checkout -q --orphan blog-drafts; fi
+          mkdir -p reports && cp "$RUNNER_TEMP/seo.json" reports/seo.json
+          git add reports
+          git commit -q -m "SEO audit report" || { echo "No change"; exit 0; }
+          git push -q origin blog-drafts
