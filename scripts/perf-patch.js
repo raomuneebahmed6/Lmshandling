@@ -63,6 +63,21 @@ const REV_NEW = `  const io = new IntersectionObserver(entries => {
     else io.observe(el);
   });`;
 
+// v2: v1 read each element's layout and wrote its class inside the same loop (forced layout
+// for every element, slow on heavy pages). v2 reads ALL positions first, then writes.
+const REV_V2 = `  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); } });
+  }, { threshold:.05, rootMargin:"0px 0px 140px 0px" });
+  const vh = window.innerHeight || 800;
+  const list = Array.prototype.slice.call(els);
+  // read phase (one layout), then write phase: no forced reflow per element
+  const tops = list.map(el => el.getBoundingClientRect().top);
+  list.forEach((el, i) => {
+    // already on screen: show at once (an entrance animation here only delays the Largest Contentful Paint)
+    if (tops[i] < vh * .95){ el.style.transition = "none"; el.classList.add("in"); }
+    else io.observe(el);
+  });`;
+
 let changed = 0, already = 0, unmatched = [];
 for (const f of files) {
   const raw = fs.readFileSync(f, "utf8");
@@ -77,8 +92,9 @@ for (const f of files) {
     else if (!t.includes(GA_NEW_LOAD)) unmatched.push(path.relative(root, f) + " (GA)");
   }
   if (hasRev) {
-    if (t.includes(REV_OLD)) { t = t.replace(REV_OLD, REV_NEW); touched = true; }
-    else if (!t.includes(REV_NEW)) unmatched.push(path.relative(root, f) + " (reveal)");
+    if (t.includes(REV_OLD)) { t = t.replace(REV_OLD, REV_V2); touched = true; }
+    else if (t.includes(REV_NEW)) { t = t.replace(REV_NEW, REV_V2); touched = true; }
+    else if (!t.includes(REV_V2)) unmatched.push(path.relative(root, f) + " (reveal)");
   }
   if (touched) { changed++; if (!CHECK) fs.writeFileSync(f, crlf ? t.replace(/\n/g, "\r\n") : t, "utf8"); } else already++;
 }

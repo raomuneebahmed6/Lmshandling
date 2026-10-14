@@ -664,9 +664,12 @@ safe("reveals", () => {
     entries.forEach(e => { if (e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); } });
   }, { threshold:.05, rootMargin:"0px 0px 140px 0px" });
   const vh = window.innerHeight || 800;
-  els.forEach(el => {
+  const list = Array.prototype.slice.call(els);
+  // read phase (one layout), then write phase: no forced reflow per element
+  const tops = list.map(el => el.getBoundingClientRect().top);
+  list.forEach((el, i) => {
     // already on screen: show at once (an entrance animation here only delays the Largest Contentful Paint)
-    if (el.getBoundingClientRect().top < vh * .95){ el.style.transition = "none"; el.classList.add("in"); }
+    if (tops[i] < vh * .95){ el.style.transition = "none"; el.classList.add("in"); }
     else io.observe(el);
   });
 });
