@@ -1,79 +1,47 @@
 {
- "generatedAt": "2026-10-14T15:59:24.276Z",
+ "generatedAt": "2026-10-14T16:25:21.352Z",
  "site": "https://lmshandling.com",
- "durationSec": 6,
+ "durationSec": 9,
  "pagesCrawled": 110,
  "summary": {
-  "score": 97,
+  "score": 98,
   "categories": {
-   "technical": 99,
-   "onpage": 98,
-   "content": 99,
+   "technical": 98,
+   "onpage": 100,
+   "content": 100,
    "structured": 100,
    "aeo": 100,
    "security": 100,
-   "performance": 82
+   "performance": 85
   },
   "issuesHigh": 0,
   "issuesMedium": 1,
-  "issuesLow": 2
+  "issuesLow": 0
  },
  "issues": [
   {
-   "id": "O_TITLE_LONG",
-   "category": "onpage",
-   "severity": "medium",
-   "title": "Titles over 60 characters",
-   "why": "They get cut off in Google results.",
-   "fix": "Shorten to 60 characters or fewer.",
-   "count": 1,
-   "site": false,
-   "urls": [
-    "https://lmshandling.com/services/lms-services"
-   ],
-   "extra": [],
-   "penalty": 2.5
-  },
-  {
-   "id": "C_IMGDIM",
-   "category": "content",
-   "severity": "low",
-   "title": "Images without width/height",
-   "why": "Layout shifts while loading (CLS).",
-   "fix": "Set width and height on images.",
-   "count": 5,
-   "site": false,
-   "urls": [
-    "https://lmshandling.com/",
-    "https://lmshandling.com/reviews",
-    "https://lmshandling.com/services/midterm-files",
-    "https://lmshandling.com/services/finalterm-files",
-    "https://lmshandling.com/results"
-   ],
-   "extra": [],
-   "penalty": 1.1
-  },
-  {
-   "id": "T_HEAVY",
+   "id": "T_TBT",
    "category": "technical",
-   "severity": "low",
-   "title": "Very large HTML pages (over 500 KB)",
-   "why": "Heavy pages are slow on mobile.",
-   "fix": "Move inline CSS/JS to cached files and lazy-load images.",
+   "severity": "medium",
+   "title": "Pages where scripts block the main thread (Total Blocking Time over 600 ms)",
+   "why": "The page feels frozen while it loads, which hurts Core Web Vitals.",
+   "fix": "Delay third-party scripts (analytics, chat, bot checks) until after the page is interactive.",
    "count": 1,
    "site": false,
    "urls": [
-    "https://lmshandling.com/scheme"
+    "/"
    ],
-   "extra": [],
-   "penalty": 1.1
+   "extra": [
+    "Total Blocking Time 4,690 ms"
+   ],
+   "penalty": 2.5
   }
  ],
  "pages": [
   {
    "path": "/",
    "status": 200,
-   "ms": 611,
+   "ms": 922,
    "title": "VU LMS Handling, Exam Files & FYP Help | Nibaha Haq",
    "titleLen": 51,
    "descLen": 157,
@@ -86,15 +54,13 @@
     "Service",
     "FAQPage"
    ],
-   "flags": [
-    "C_IMGDIM"
-   ],
-   "score": 97
+   "flags": [],
+   "score": 100
   },
   {
    "path": "/about",
    "status": 200,
-   "ms": 197,
+   "ms": 748,
    "title": "VU Academic Support Mentor | About Nibaha Haq",
    "titleLen": 45,
    "descLen": 155,
@@ -111,7 +77,7 @@
   {
    "path": "/services",
    "status": 200,
-   "ms": 226,
+   "ms": 282,
    "title": "VU Services | LMS Handling, Exam Files & FYP",
    "titleLen": 44,
    "descLen": 143,
@@ -128,7 +94,7 @@
   {
    "path": "/contact",
    "status": 200,
-   "ms": 461,
+   "ms": 288,
    "title": "Contact Nibaha Haq | WhatsApp 0329 5209868",
    "titleLen": 42,
    "descLen": 152,
@@ -145,7 +111,7 @@
   {
    "path": "/reviews",
    "status": 200,
-   "ms": 537,
+   "ms": 276,
    "title": "VU Student Reviews | 60–100% Exams | Nibaha Haq",
    "titleLen": 47,
    "descLen": 151,
@@ -156,15 +122,13 @@
     "EducationalOrganization",
     "BreadcrumbList"
    ],
-   "flags": [
-    "C_IMGDIM"
-   ],
-   "score": 97
+   "flags": [],
+   "score": 100
   },
   {
    "path": "/vu-notes",
    "status": 200,
-   "ms": 206,
+   "ms": 318,
    "title": "VU Exam Files Store | Nibaha Haq",
    "titleLen": 32,
    "descLen": 154,
@@ -182,7 +146,7 @@
   {
    "path": "/vu-admission-portal",
    "status": 200,
-   "ms": 182,
+   "ms": 235,
    "title": "VU Admission Portal: Apply Online Step by Step | Nibaha Haq",
    "titleLen": 59,
    "descLen": 140,
@@ -202,7 +166,7 @@
   {
    "path": "/cgpa-calculator",
    "status": 200,
-   "ms": 149,
+   "ms": 242,
    "title": "VU CGPA Calculator | Nibaha Haq",
    "titleLen": 31,
    "descLen": 146,
@@ -221,7 +185,7 @@
   {
    "path": "/scheme",
    "status": 200,
-   "ms": 207,
+   "ms": 437,
    "title": "VU Study Scheme: BSCS, BSSE & More Course Codes | Nibaha Haq",
    "titleLen": 60,
    "descLen": 149,
@@ -232,15 +196,13 @@
     "EducationalOrganization",
     "BreadcrumbList"
    ],
-   "flags": [
-    "T_HEAVY"
-   ],
-   "score": 97
+   "flags": [],
+   "score": 100
   },
   {
    "path": "/degrees",
    "status": 200,
-   "ms": 162,
+   "ms": 261,
    "title": "VU Degree Programs | Faculty-wise Course Codes",
    "titleLen": 46,
    "descLen": 144,
@@ -257,7 +219,7 @@
   {
    "path": "/degrees/computer-science",
    "status": 200,
-   "ms": 472,
+   "ms": 223,
    "title": "Computer Science VU Files | Nibaha Haq",
    "titleLen": 38,
    "descLen": 144,
@@ -275,7 +237,7 @@
   {
    "path": "/degrees/software-engineering",
    "status": 200,
-   "ms": 170,
+   "ms": 378,
    "title": "Software Engineering VU Files | Nibaha Haq",
    "titleLen": 42,
    "descLen": 148,
@@ -293,7 +255,7 @@
   {
    "path": "/degrees/information-technology",
    "status": 200,
-   "ms": 192,
+   "ms": 243,
    "title": "Information Technology VU Files | Nibaha Haq",
    "titleLen": 44,
    "descLen": 150,
@@ -311,7 +273,7 @@
   {
    "path": "/degrees/business-administration",
    "status": 200,
-   "ms": 141,
+   "ms": 257,
    "title": "Business Administration VU Files | Nibaha Haq",
    "titleLen": 45,
    "descLen": 152,
@@ -329,7 +291,7 @@
   {
    "path": "/degrees/accounting-finance",
    "status": 200,
-   "ms": 156,
+   "ms": 409,
    "title": "Accounting & Finance VU Files | Nibaha Haq",
    "titleLen": 42,
    "descLen": 148,
@@ -347,7 +309,7 @@
   {
    "path": "/degrees/psychology",
    "status": 200,
-   "ms": 150,
+   "ms": 244,
    "title": "Psychology VU Files | Nibaha Haq",
    "titleLen": 32,
    "descLen": 147,
@@ -365,7 +327,7 @@
   {
    "path": "/degrees/mass-communication",
    "status": 200,
-   "ms": 233,
+   "ms": 236,
    "title": "Mass Communication VU Files | Nibaha Haq",
    "titleLen": 40,
    "descLen": 146,
@@ -383,7 +345,7 @@
   {
    "path": "/degrees/economics",
    "status": 200,
-   "ms": 182,
+   "ms": 240,
    "title": "Economics VU Files | Nibaha Haq",
    "titleLen": 31,
    "descLen": 146,
@@ -401,7 +363,7 @@
   {
    "path": "/degrees/sociology",
    "status": 200,
-   "ms": 174,
+   "ms": 278,
    "title": "Sociology VU Files | Nibaha Haq",
    "titleLen": 31,
    "descLen": 146,
@@ -419,7 +381,7 @@
   {
    "path": "/degrees/english-applied-linguistics",
    "status": 200,
-   "ms": 167,
+   "ms": 256,
    "title": "English (Applied Linguistics) VU Files | Nibaha Haq",
    "titleLen": 51,
    "descLen": 157,
@@ -437,7 +399,7 @@
   {
    "path": "/degrees/mathematics",
    "status": 200,
-   "ms": 410,
+   "ms": 235,
    "title": "Mathematics VU Files | Nibaha Haq",
    "titleLen": 33,
    "descLen": 148,
@@ -455,7 +417,7 @@
   {
    "path": "/degrees/statistics",
    "status": 200,
-   "ms": 196,
+   "ms": 221,
    "title": "Statistics VU Files | Nibaha Haq",
    "titleLen": 32,
    "descLen": 147,
@@ -473,7 +435,7 @@
   {
    "path": "/degrees/zoology",
    "status": 200,
-   "ms": 142,
+   "ms": 253,
    "title": "Zoology VU Files | Nibaha Haq",
    "titleLen": 29,
    "descLen": 144,
@@ -491,7 +453,7 @@
   {
    "path": "/degrees/bioinformatics",
    "status": 200,
-   "ms": 168,
+   "ms": 244,
    "title": "Bioinformatics VU Files | Nibaha Haq",
    "titleLen": 36,
    "descLen": 143,
@@ -509,7 +471,7 @@
   {
    "path": "/degrees/biotechnology",
    "status": 200,
-   "ms": 176,
+   "ms": 272,
    "title": "Biotechnology VU Files | Nibaha Haq",
    "titleLen": 35,
    "descLen": 141,
@@ -527,7 +489,7 @@
   {
    "path": "/degrees/bed-hons-elementary",
    "status": 200,
-   "ms": 148,
+   "ms": 220,
    "title": "B.Ed. (Hons) Elementary VU Files | Nibaha Haq",
    "titleLen": 45,
    "descLen": 151,
@@ -545,7 +507,7 @@
   {
    "path": "/degrees/bed-hons-early-childhood",
    "status": 200,
-   "ms": 157,
+   "ms": 261,
    "title": "B.Ed Early Childhood Education VU Files | Nibaha Haq",
    "titleLen": 52,
    "descLen": 146,
@@ -563,7 +525,7 @@
   {
    "path": "/degrees/islamic-studies",
    "status": 200,
-   "ms": 162,
+   "ms": 248,
    "title": "Islamic Studies VU Files | Nibaha Haq",
    "titleLen": 37,
    "descLen": 142,
@@ -581,7 +543,7 @@
   {
    "path": "/degrees/public-administration",
    "status": 200,
-   "ms": 213,
+   "ms": 249,
    "title": "Public Administration VU Files | Nibaha Haq",
    "titleLen": 43,
    "descLen": 149,
@@ -599,7 +561,7 @@
   {
    "path": "/degrees/data-science",
    "status": 200,
-   "ms": 170,
+   "ms": 213,
    "title": "Data Science VU Files | Nibaha Haq",
    "titleLen": 34,
    "descLen": 141,
@@ -617,7 +579,7 @@
   {
    "path": "/degrees/commerce",
    "status": 200,
-   "ms": 192,
+   "ms": 241,
    "title": "Commerce VU Files | Nibaha Haq",
    "titleLen": 30,
    "descLen": 145,
@@ -635,7 +597,7 @@
   {
    "path": "/degrees/faculty-csit",
    "status": 200,
-   "ms": 132,
+   "ms": 257,
    "title": "Faculty of Computer Science & IT | Nibaha Haq VU Support",
    "titleLen": 56,
    "descLen": 155,
@@ -653,7 +615,7 @@
   {
    "path": "/degrees/faculty-management",
    "status": 200,
-   "ms": 179,
+   "ms": 238,
    "title": "Faculty of Management | Nibaha Haq VU Support",
    "titleLen": 45,
    "descLen": 144,
@@ -671,7 +633,7 @@
   {
    "path": "/degrees/faculty-arts",
    "status": 200,
-   "ms": 441,
+   "ms": 309,
    "title": "Faculty of Arts | Nibaha Haq VU Support",
    "titleLen": 39,
    "descLen": 147,
@@ -689,7 +651,7 @@
   {
    "path": "/degrees/faculty-science",
    "status": 200,
-   "ms": 193,
+   "ms": 235,
    "title": "Faculty of Science & Technology | Nibaha Haq VU Support",
    "titleLen": 55,
    "descLen": 154,
@@ -707,7 +669,7 @@
   {
    "path": "/degrees/faculty-education",
    "status": 200,
-   "ms": 154,
+   "ms": 245,
    "title": "Faculty of Education | Nibaha Haq VU Support",
    "titleLen": 44,
    "descLen": 143,
@@ -725,7 +687,7 @@
   {
    "path": "/services/lms-services",
    "status": 200,
-   "ms": 170,
+   "ms": 218,
    "title": "LMS Handling for VU Students: Quizzes, GDBs & More | Nibaha Haq",
    "titleLen": 63,
    "descLen": 152,
@@ -738,15 +700,13 @@
     "BreadcrumbList",
     "FAQPage"
    ],
-   "flags": [
-    "O_TITLE_LONG"
-   ],
-   "score": 92
+   "flags": [],
+   "score": 100
   },
   {
    "path": "/services/midterm-files",
    "status": 200,
-   "ms": 166,
+   "ms": 291,
    "title": "VU Midterm Exam Files | 606+ Course Codes",
    "titleLen": 41,
    "descLen": 152,
@@ -759,15 +719,13 @@
     "BreadcrumbList",
     "FAQPage"
    ],
-   "flags": [
-    "C_IMGDIM"
-   ],
-   "score": 97
+   "flags": [],
+   "score": 100
   },
   {
    "path": "/services/finalterm-files",
    "status": 200,
-   "ms": 146,
+   "ms": 274,
    "title": "VU Finalterm Exam Files | 606+ Course Codes",
    "titleLen": 43,
    "descLen": 154,
@@ -780,15 +738,13 @@
     "BreadcrumbList",
     "FAQPage"
    ],
-   "flags": [
-    "C_IMGDIM"
-   ],
-   "score": 97
+   "flags": [],
+   "score": 100
   },
   {
    "path": "/services/final-year-project",
    "status": 200,
-   "ms": 180,
+   "ms": 218,
    "title": "VU Final Year Project Help | CS619 & CS519",
    "titleLen": 42,
    "descLen": 146,
@@ -807,7 +763,7 @@
   {
    "path": "/results",
    "status": 200,
-   "ms": 162,
+   "ms": 246,
    "title": "VU Student Results & FYP Approvals | Nibaha Haq",
    "titleLen": 47,
    "descLen": 154,
@@ -818,15 +774,13 @@
     "EducationalOrganization",
     "BreadcrumbList"
    ],
-   "flags": [
-    "C_IMGDIM"
-   ],
-   "score": 97
+   "flags": [],
+   "score": 100
   },
   {
    "path": "/blog",
    "status": 200,
-   "ms": 199,
+   "ms": 255,
    "title": "VU Blog: Exam Prep, LMS & FYP Guides | Nibaha Haq",
    "titleLen": 49,
    "descLen": 157,
@@ -843,7 +797,7 @@
   {
    "path": "/blog/vu-gdb-submission-format",
    "status": 200,
-   "ms": 147,
+   "ms": 253,
    "title": "VU GDB Submission Format Guide 2026 | Nibaha Haq",
    "titleLen": 48,
    "descLen": 146,
@@ -862,7 +816,7 @@
   {
    "path": "/blog/cs519-final-year-project-guide",
    "status": 200,
-   "ms": 179,
+   "ms": 281,
    "title": "CS519 Final Year Project Guide 2026 | Nibaha Haq",
    "titleLen": 48,
    "descLen": 150,
@@ -883,7 +837,7 @@
   {
    "path": "/blog/cs614-data-warehousing-notes",
    "status": 200,
-   "ms": 165,
+   "ms": 268,
    "title": "CS614 Notes: Midterm & Finalterm Guide 2026 | Nibaha Haq",
    "titleLen": 56,
    "descLen": 142,
@@ -904,7 +858,7 @@
   {
    "path": "/blog/cs621-parallel-distributed-computing-notes",
    "status": 200,
-   "ms": 168,
+   "ms": 312,
    "title": "CS621 Notes: Midterm & Finalterm Guide 2026 | Nibaha Haq",
    "titleLen": 56,
    "descLen": 149,
@@ -925,7 +879,7 @@
   {
    "path": "/blog/cs625-professional-practices-notes",
    "status": 200,
-   "ms": 159,
+   "ms": 220,
    "title": "CS625 Notes: Midterm & Finalterm Guide 2026 | Nibaha Haq",
    "titleLen": 56,
    "descLen": 148,
@@ -946,7 +900,7 @@
   {
    "path": "/blog/eng101-english-comprehension-notes",
    "status": 200,
-   "ms": 165,
+   "ms": 244,
    "title": "ENG101 Notes: Midterm & Finalterm Guide 2026 | Nibaha Haq",
    "titleLen": 57,
    "descLen": 148,
@@ -967,7 +921,7 @@
   {
    "path": "/blog/isl201-islamic-studies-notes",
    "status": 200,
-   "ms": 165,
+   "ms": 245,
    "title": "ISL201 Notes: Midterm & Finalterm Guide 2026 | Nibaha Haq",
    "titleLen": 57,
    "descLen": 142,
@@ -988,7 +942,7 @@
   {
    "path": "/blog/pak301-pakistan-studies-notes",
    "status": 200,
-   "ms": 154,
+   "ms": 261,
    "title": "PAK301 Notes: Midterm & Finalterm Guide 2026 | Nibaha Haq",
    "titleLen": 57,
    "descLen": 143,
@@ -1009,7 +963,7 @@
   {
    "path": "/blog/vu-summer-semester-finalterm-reschedule-2026",
    "status": 200,
-   "ms": 174,
+   "ms": 782,
    "title": "VU Summer Semester Finalterm Reschedule: 7 Oct | Nibaha Haq",
    "titleLen": 59,
    "descLen": 157,
@@ -1029,7 +983,7 @@
   {
    "path": "/blog/mgt662-supply-chain-management-notes",
    "status": 200,
-   "ms": 508,
+   "ms": 216,
    "title": "MGT662 Notes: Midterm & Finalterm Guide 2026 | Nibaha Haq",
    "titleLen": 57,
    "descLen": 150,
@@ -1050,7 +1004,7 @@
   {
    "path": "/blog/vu-azad-kashmir-midterm-reschedule-2026",
    "status": 200,
-   "ms": 150,
+   "ms": 230,
    "title": "VU Azad Kashmir Midterm Reschedule: 28 Sept | Nibaha Haq",
    "titleLen": 56,
    "descLen": 159,
@@ -1070,7 +1024,7 @@
   {
    "path": "/blog/vu-help-guide",
    "status": 200,
-   "ms": 145,
+   "ms": 227,
    "title": "Virtual University Help: LMS, Exam Files & FYP | Nibaha Haq",
    "titleLen": 59,
    "descLen": 150,
@@ -1089,7 +1043,7 @@
   {
    "path": "/blog/vu-new-session-starts-12-october-2026",
    "status": 200,
-   "ms": 157,
+   "ms": 412,
    "title": "VU New Session Starts 12 October: First Steps | Nibaha Haq",
    "titleLen": 58,
    "descLen": 156,
@@ -1108,7 +1062,7 @@
   {
    "path": "/blog/vu-summer-semester-final-result-2026",
    "status": 200,
-   "ms": 174,
+   "ms": 264,
    "title": "VU Summer Semester 2026 Final Result | Nibaha Haq",
    "titleLen": 49,
    "descLen": 150,
@@ -1127,7 +1081,7 @@
   {
    "path": "/blog/vu-summer-semester-finals-datesheet-2026",
    "status": 200,
-   "ms": 235,
+   "ms": 263,
    "title": "VU Summer 2026 Finals: 3-4 October Datesheet | Nibaha Haq",
    "titleLen": 57,
    "descLen": 157,
@@ -1147,7 +1101,7 @@
   {
    "path": "/blog/vu-fall-2026-admission-final-days",
    "status": 200,
-   "ms": 148,
+   "ms": 235,
    "title": "VU Fall 2026 Admissions Deadline Extended | Nibaha Haq",
    "titleLen": 54,
    "descLen": 157,
@@ -1166,7 +1120,7 @@
   {
    "path": "/blog/vu-summer-semester-deadline-extension-2026",
    "status": 200,
-   "ms": 171,
+   "ms": 814,
    "title": "VU Summer Semester Deadline Extended to 22 Sep | Nibaha Haq",
    "titleLen": 59,
    "descLen": 142,
@@ -1185,7 +1139,7 @@
   {
    "path": "/blog/vu-summer-semester-midterm-result-2026",
    "status": 200,
-   "ms": 153,
+   "ms": 217,
    "title": "VU Summer Semester Midterm Result 2026 | Nibaha Haq",
    "titleLen": 51,
    "descLen": 150,
@@ -1205,7 +1159,7 @@
   {
    "path": "/blog/vu-midterm-notes-pdf-fall-2026",
    "status": 200,
-   "ms": 153,
+   "ms": 276,
    "title": "VU Midterm Notes PDF Fall 2026 (Download) | Nibaha Haq",
    "titleLen": 54,
    "descLen": 151,
@@ -1225,7 +1179,7 @@
   {
    "path": "/blog/vu-semester-freeze-guide",
    "status": 200,
-   "ms": 235,
+   "ms": 228,
    "title": "VU Semester Freeze Guide: Rules & Process | Nibaha Haq",
    "titleLen": 54,
    "descLen": 159,
@@ -1244,7 +1198,7 @@
   {
    "path": "/blog/vu-course-selection-book-lms-handling-2026",
    "status": 200,
-   "ms": 149,
+   "ms": 419,
    "title": "VU Course Selection Open: Book LMS Handling | Nibaha Haq",
    "titleLen": 56,
    "descLen": 144,
@@ -1263,7 +1217,7 @@
   {
    "path": "/blog/cs601-data-communication-notes",
    "status": 200,
-   "ms": 157,
+   "ms": 261,
    "title": "CS601 Notes: Midterm & Finalterm Guide 2026 | Nibaha Haq",
    "titleLen": 56,
    "descLen": 144,
@@ -1284,7 +1238,7 @@
   {
    "path": "/blog/vu-course-selection-dates-2026",
    "status": 200,
-   "ms": 190,
+   "ms": 301,
    "title": "VU Course Selection Dates 2026: 18 Sep & 8 Oct | Nibaha Haq",
    "titleLen": 59,
    "descLen": 138,
@@ -1304,7 +1258,7 @@
   {
    "path": "/blog/vu-compulsory-courses-guide",
    "status": 200,
-   "ms": 147,
+   "ms": 265,
    "title": "VU Compulsory Courses: PAK301, ISL201, ENG101 | Nibaha Haq",
    "titleLen": 58,
    "descLen": 147,
@@ -1325,7 +1279,7 @@
   {
    "path": "/blog/vu-past-papers-vs-code-wise-files",
    "status": 200,
-   "ms": 186,
+   "ms": 254,
    "title": "VU Past Papers vs Code-Wise Exam Files | Nibaha Haq",
    "titleLen": 51,
    "descLen": 142,
@@ -1344,7 +1298,7 @@
   {
    "path": "/blog/vu-pros-and-cons",
    "status": 200,
-   "ms": 168,
+   "ms": 217,
    "title": "Virtual University Pros and Cons | Nibaha Haq",
    "titleLen": 45,
    "descLen": 150,
@@ -1363,7 +1317,7 @@
   {
    "path": "/blog/mcm301-communication-skills-notes",
    "status": 200,
-   "ms": 174,
+   "ms": 247,
    "title": "MCM301 Notes: Midterm & Finalterm Guide 2026 | Nibaha Haq",
    "titleLen": 57,
    "descLen": 147,
@@ -1384,7 +1338,7 @@
   {
    "path": "/blog/mgt211-introduction-to-business-notes",
    "status": 200,
-   "ms": 144,
+   "ms": 315,
    "title": "MGT211 Notes: Midterm & Finalterm Guide 2026 | Nibaha Haq",
    "titleLen": 57,
    "descLen": 151,
@@ -1405,7 +1359,7 @@
   {
    "path": "/blog/cs401-computer-architecture-assembly-notes",
    "status": 200,
-   "ms": 148,
+   "ms": 270,
    "title": "CS401 Notes: Midterm & Finalterm Guide 2026 | Nibaha Haq",
    "titleLen": 56,
    "descLen": 145,
@@ -1426,7 +1380,7 @@
   {
    "path": "/blog/cs402-theory-of-automata-notes",
    "status": 200,
-   "ms": 161,
+   "ms": 250,
    "title": "CS402 Notes: Midterm & Finalterm Guide 2026 | Nibaha Haq",
    "titleLen": 56,
    "descLen": 144,
@@ -1447,7 +1401,7 @@
   {
    "path": "/blog/cs411-visual-programming-notes",
    "status": 200,
-   "ms": 148,
+   "ms": 235,
    "title": "CS411 Notes: Midterm & Finalterm Guide 2026 | Nibaha Haq",
    "titleLen": 56,
    "descLen": 144,
@@ -1468,7 +1422,7 @@
   {
    "path": "/blog/vu-cgpa-1-to-3-timeline",
    "status": 200,
-   "ms": 191,
+   "ms": 225,
    "title": "VU CGPA 1.0 to 3.0: How Many Semesters? | Nibaha Haq",
    "titleLen": 52,
    "descLen": 141,
@@ -1487,7 +1441,7 @@
   {
    "path": "/blog/vu-fee-structure-guide",
    "status": 200,
-   "ms": 161,
+   "ms": 221,
    "title": "VU Fee Structure Guide 2026 | Nibaha Haq",
    "titleLen": 40,
    "descLen": 151,
@@ -1506,7 +1460,7 @@
   {
    "path": "/blog/vu-scholarship-guide",
    "status": 200,
-   "ms": 170,
+   "ms": 225,
    "title": "VU Scholarship Guide: Merit & Need-Based | Nibaha Haq",
    "titleLen": 53,
    "descLen": 151,
@@ -1525,7 +1479,7 @@
   {
    "path": "/blog/vu-datesheet-guide",
    "status": 200,
-   "ms": 176,
+   "ms": 261,
    "title": "VU Datesheet Guide: Check Your Exam Schedule | Nibaha Haq",
    "titleLen": 57,
    "descLen": 148,
@@ -1544,7 +1498,7 @@
   {
    "path": "/blog/vulms-login-guide",
    "status": 200,
-   "ms": 165,
+   "ms": 236,
    "title": "VULMS Login Guide: Fix Common Login Problems | Nibaha Haq",
    "titleLen": 57,
    "descLen": 148,
@@ -1563,7 +1517,7 @@
   {
    "path": "/blog/vu-cgpa-improve-guide",
    "status": 200,
-   "ms": 177,
+   "ms": 225,
    "title": "How to Improve Your VU CGPA: A Practical Guide | Nibaha Haq",
    "titleLen": 59,
    "descLen": 159,
@@ -1582,7 +1536,7 @@
   {
    "path": "/blog/vu-gpa-vs-cgpa-guide",
    "status": 200,
-   "ms": 157,
+   "ms": 220,
    "title": "VU GPA vs CGPA: Difference & How to Calculate | Nibaha Haq",
    "titleLen": 58,
    "descLen": 137,
@@ -1601,7 +1555,7 @@
   {
    "path": "/blog/vu-summer-semester-mids-2026",
    "status": 200,
-   "ms": 171,
+   "ms": 215,
    "title": "VU Summer 2026 Mids: 12-13 September Guide | Nibaha Haq",
    "titleLen": 55,
    "descLen": 157,
@@ -1621,7 +1575,7 @@
   {
    "path": "/blog/vu-failed-subject-guide",
    "status": 200,
-   "ms": 213,
+   "ms": 235,
    "title": "Failed a Subject in VU Result? What to Do | Nibaha Haq",
    "titleLen": 54,
    "descLen": 149,
@@ -1640,7 +1594,7 @@
   {
    "path": "/blog/cs301-data-structures-notes",
    "status": 200,
-   "ms": 182,
+   "ms": 260,
    "title": "CS301 Notes: Midterm & Finalterm Guide 2026 | Nibaha Haq",
    "titleLen": 56,
    "descLen": 141,
@@ -1661,7 +1615,7 @@
   {
    "path": "/blog/mgt201-principles-of-management-notes",
    "status": 200,
-   "ms": 165,
+   "ms": 231,
    "title": "MGT201 Notes: Midterm & Finalterm Guide 2026 | Nibaha Haq",
    "titleLen": 57,
    "descLen": 151,
@@ -1682,7 +1636,7 @@
   {
    "path": "/blog/psy101-introduction-to-psychology-notes",
    "status": 200,
-   "ms": 142,
+   "ms": 230,
    "title": "PSY101 Notes: Midterm & Finalterm Guide 2026 | Nibaha Haq",
    "titleLen": 57,
    "descLen": 153,
@@ -1703,7 +1657,7 @@
   {
    "path": "/blog/vu-result-guide",
    "status": 200,
-   "ms": 162,
+   "ms": 226,
    "title": "How to Check Your VU Result on VULMS | Nibaha Haq",
    "titleLen": 49,
    "descLen": 152,
@@ -1722,7 +1676,7 @@
   {
    "path": "/blog/vu-mba-admission-2026",
    "status": 200,
-   "ms": 145,
+   "ms": 197,
    "title": "VU MBA Admission 2026: Eligibility & Apply | Nibaha Haq",
    "titleLen": 55,
    "descLen": 148,
@@ -1741,7 +1695,7 @@
   {
    "path": "/blog/vu-fall-2026-admissions-open",
    "status": 200,
-   "ms": 164,
+   "ms": 228,
    "title": "VU Fall 2026 Admissions: Key Dates & Programs | Nibaha Haq",
    "titleLen": 58,
    "descLen": 158,
@@ -1760,7 +1714,7 @@
   {
    "path": "/blog/vu-important-dates-2026",
    "status": 200,
-   "ms": 175,
+   "ms": 243,
    "title": "VU Important Dates 2026: Mids, Finals & Results | Nibaha Haq",
    "titleLen": 60,
    "descLen": 142,
@@ -1780,7 +1734,7 @@
   {
    "path": "/blog/eco401-economics-notes",
    "status": 200,
-   "ms": 152,
+   "ms": 265,
    "title": "ECO401 Notes: Midterm & Finalterm Guide 2026 | Nibaha Haq",
    "titleLen": 57,
    "descLen": 141,
@@ -1801,7 +1755,7 @@
   {
    "path": "/blog/mgt101-financial-accounting-notes",
    "status": 200,
-   "ms": 151,
+   "ms": 558,
    "title": "MGT101 Notes: Midterm & Finalterm Guide 2026 | Nibaha Haq",
    "titleLen": 57,
    "descLen": 147,
@@ -1822,7 +1776,7 @@
   {
    "path": "/blog/sta301-statistics-notes",
    "status": 200,
-   "ms": 132,
+   "ms": 216,
    "title": "STA301 Notes: Midterm & Finalterm Guide 2026 | Nibaha Haq",
    "titleLen": 57,
    "descLen": 142,
@@ -1843,7 +1797,7 @@
   {
    "path": "/blog/cs201-midterm-finalterm-notes",
    "status": 200,
-   "ms": 143,
+   "ms": 225,
    "title": "CS201 Notes: Midterm & Finalterm Guide 2026 | Nibaha Haq",
    "titleLen": 56,
    "descLen": 142,
@@ -1864,7 +1818,7 @@
   {
    "path": "/blog/vu-admission-eligibility-criteria-2026",
    "status": 200,
-   "ms": 161,
+   "ms": 225,
    "title": "VU Admission Eligibility Criteria 2026 | Nibaha Haq",
    "titleLen": 51,
    "descLen": 145,
@@ -1883,7 +1837,7 @@
   {
    "path": "/blog/vu-attendance-guide",
    "status": 200,
-   "ms": 157,
+   "ms": 232,
    "title": "VU Attendance Guide: How VULMS Tracks Lectures | Nibaha Haq",
    "titleLen": 59,
    "descLen": 146,
@@ -1902,7 +1856,7 @@
   {
    "path": "/blog/vu-quiz-guide",
    "status": 200,
-   "ms": 169,
+   "ms": 226,
    "title": "VU Quiz Guide: How VULMS Quizzes Work | Nibaha Haq",
    "titleLen": 50,
    "descLen": 142,
@@ -1921,7 +1875,7 @@
   {
    "path": "/blog/vu-assignment-guide",
    "status": 200,
-   "ms": 145,
+   "ms": 234,
    "title": "VU Assignment Guide: Format, Plagiarism Rules | Nibaha Haq",
    "titleLen": 58,
    "descLen": 157,
@@ -1940,7 +1894,7 @@
   {
    "path": "/blog/vu-gdb-graded-discussion-board-guide",
    "status": 200,
-   "ms": 153,
+   "ms": 222,
    "title": "VU GDB Guide: How to Score High on VULMS | Nibaha Haq",
    "titleLen": 53,
    "descLen": 156,
@@ -1959,7 +1913,7 @@
   {
    "path": "/blog/vu-summer-semester-registration-guide",
    "status": 200,
-   "ms": 145,
+   "ms": 233,
    "title": "VU Summer Semester 2026: Dates, Apply & Fee | Nibaha Haq",
    "titleLen": 56,
    "descLen": 150,
@@ -1980,7 +1934,7 @@
   {
    "path": "/blog/cs101-mcqs-objective-notes",
    "status": 200,
-   "ms": 173,
+   "ms": 285,
    "title": "CS101 MCQs (Objective) Guide 2026 | Nibaha Haq",
    "titleLen": 46,
    "descLen": 148,
@@ -2001,7 +1955,7 @@
   {
    "path": "/blog/vu-finalterm-notes-pdf-2026",
    "status": 200,
-   "ms": 150,
+   "ms": 243,
    "title": "VU Finalterm Notes PDF 2026 (Download) | Nibaha Haq",
    "titleLen": 51,
    "descLen": 156,
@@ -2021,7 +1975,7 @@
   {
    "path": "/blog/virtual-university-admission-guide",
    "status": 200,
-   "ms": 139,
+   "ms": 222,
    "title": "Virtual University Admission Guide 2026 | Nibaha Haq",
    "titleLen": 52,
    "descLen": 154,
@@ -2041,7 +1995,7 @@
   {
    "path": "/blog/vu-final-year-project-fyp-guide",
    "status": 200,
-   "ms": 162,
+   "ms": 354,
    "title": "VU FYP Guide: Proposal, OAR, PPT & Viva | Nibaha Haq",
    "titleLen": 52,
    "descLen": 156,
@@ -2061,7 +2015,7 @@
   {
    "path": "/blog/vu-midterm-finalterm-exam-preparation-guide",
    "status": 200,
-   "ms": 156,
+   "ms": 250,
    "title": "VU Midterm & Finalterm Exam Prep Guide | Nibaha Haq",
    "titleLen": 51,
    "descLen": 157,
@@ -2081,7 +2035,7 @@
   {
    "path": "/blog/category/lms-handling",
    "status": 200,
-   "ms": 161,
+   "ms": 378,
    "title": "LMS Handling Guides | Nibaha Haq",
    "titleLen": 32,
    "descLen": 152,
@@ -2100,7 +2054,7 @@
   {
    "path": "/blog/category/exam-preparation",
    "status": 200,
-   "ms": 162,
+   "ms": 244,
    "title": "Exam Preparation Guides | Nibaha Haq",
    "titleLen": 36,
    "descLen": 145,
@@ -2119,7 +2073,7 @@
   {
    "path": "/blog/category/course-code-guides",
    "status": 200,
-   "ms": 136,
+   "ms": 219,
    "title": "Course Code Guides | Nibaha Haq",
    "titleLen": 31,
    "descLen": 146,
@@ -2138,7 +2092,7 @@
   {
    "path": "/blog/category/admissions",
    "status": 200,
-   "ms": 158,
+   "ms": 234,
    "title": "VU Admissions Guides | Nibaha Haq",
    "titleLen": 33,
    "descLen": 153,
@@ -2157,7 +2111,7 @@
   {
    "path": "/blog/category/final-year-project",
    "status": 200,
-   "ms": 145,
+   "ms": 270,
    "title": "VU Final Year Project Guides | Nibaha Haq",
    "titleLen": 41,
    "descLen": 154,
@@ -2176,7 +2130,7 @@
   {
    "path": "/blog/category/registration",
    "status": 200,
-   "ms": 146,
+   "ms": 267,
    "title": "VU Registration Guides | Nibaha Haq",
    "titleLen": 35,
    "descLen": 149,
@@ -2241,42 +2195,42 @@
   "pages": [
    {
     "path": "/",
-    "performance": 73,
+    "performance": 59,
     "seo": 100,
     "accessibility": 91,
     "bestPractices": 82,
-    "lcp": "2.4 s",
-    "cls": "0.009",
-    "tbt": "1,010 ms",
-    "fcp": "2.3 s",
-    "si": "3.2 s"
+    "lcp": "2.8 s",
+    "cls": "0.021",
+    "tbt": "4,690 ms",
+    "fcp": "2.6 s",
+    "si": "4.7 s"
    },
    {
     "path": "/services",
-    "performance": 97,
+    "performance": 98,
     "seo": 100,
     "accessibility": 100,
     "bestPractices": 82,
     "lcp": "1.9 s",
     "cls": "0.002",
-    "tbt": "140 ms",
+    "tbt": "0 ms",
     "fcp": "1.8 s",
-    "si": "1.9 s"
+    "si": "2.6 s"
    },
    {
     "path": "/cgpa-calculator",
-    "performance": 77,
+    "performance": 98,
     "seo": 100,
     "accessibility": 93,
     "bestPractices": 82,
-    "lcp": "5.4 s",
-    "cls": "0.001",
-    "tbt": "190 ms",
+    "lcp": "1.9 s",
+    "cls": "0.004",
+    "tbt": "80 ms",
     "fcp": "1.8 s",
-    "si": "1.8 s"
+    "si": "2.6 s"
    }
   ],
-  "score": 82,
+  "score": 85,
   "lighthouseSeo": 100,
   "accessibility": 95
  },
@@ -2292,6 +2246,19 @@
     "aeo": 100,
     "security": 100,
     "performance": 82
+   }
+  },
+  {
+   "date": "2026-10-14",
+   "score": 98,
+   "categories": {
+    "technical": 98,
+    "onpage": 100,
+    "content": 100,
+    "structured": 100,
+    "aeo": 100,
+    "security": 100,
+    "performance": 85
    }
   }
  ],
