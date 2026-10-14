@@ -34,15 +34,27 @@
       (msg ? '<div class="alert ' + (ok ? 'ok' : 'err') + '">' + esc(msg) + '</div>' : '') +
       '<form id="lf"><label class="f">Username</label><input type="text" id="lu" autocomplete="username" autocapitalize="none" autofocus>' +
       pwField('lp', 'Password', 'current-password') +
-      '<div id="lerr"></div><button class="btn" type="submit" id="lgo">Sign in</button>' +
+      '<div id="lerr"></div><div id="l2fa"></div><button class="btn" type="submit" id="lgo">Sign in</button>' +
       '<p style="text-align:center;margin:1rem 0 0"><a href="#" id="forgot">Forgot password?</a></p></form>');
     document.getElementById('forgot').onclick = function (e) { e.preventDefault(); renderRecover(); };
     document.getElementById('lf').onsubmit = function (e) {
       e.preventDefault();
       var b = document.getElementById('lgo'); b.disabled = true; b.textContent = 'Signing in…';
-      L.api('/login', { method: 'POST', body: { username: document.getElementById('lu').value, password: document.getElementById('lp').value }, noAuthRedirect: true })
-        .then(function (r) { me = r.user; start(); })
-        .catch(function (er) { b.disabled = false; b.textContent = 'Sign in'; document.getElementById('lerr').innerHTML = '<div class="alert err">' + esc(er.message) + '</div>'; });
+      var codeEl = document.getElementById('lc'), body = { username: document.getElementById('lu').value, password: document.getElementById('lp').value };
+      if (codeEl) body.code = codeEl.value;
+      L.api('/login', { method: 'POST', body: body, noAuthRedirect: true })
+        .then(function (r) {
+          if (r.need2fa) { // password was right: ask for the authenticator code
+            b.disabled = false; b.textContent = 'Verify and sign in';
+            if (!document.getElementById('lc')) {
+              document.getElementById('l2fa').innerHTML = '<div class="alert info">Two-step login is on. Enter the 6-digit code from your authenticator app, or one of your recovery codes.</div><label class="f">Code</label><input type="text" id="lc" inputmode="numeric" autocomplete="one-time-code" autocapitalize="none" placeholder="123456">';
+              document.getElementById('lc').focus();
+            }
+            return;
+          }
+          me = r.user; start();
+        })
+        .catch(function (er) { b.disabled = false; b.textContent = document.getElementById('lc') ? 'Verify and sign in' : 'Sign in'; document.getElementById('lerr').innerHTML = '<div class="alert err">' + esc(er.message) + '</div>'; });
     };
   }
   function connectGitHub(done) {
@@ -130,9 +142,9 @@
 
   /* ======================= shell ======================= */
   var NAV = [
-    ['Main', [['dash', '#/', 'home', 'Dashboard'], ['seo', '#/seo', 'trend', 'SEO Health'], ['posts', '#/posts', 'file', 'All Posts'], ['new', '#/new', 'pen', 'Write New']]],
-    ['Content', [['review', '#/review', 'inbox', 'Drafts & Review'], ['cats', '#/categories', 'folder', 'Categories'], ['tags', '#/tags', 'tag', 'Tags']]],
-    ['Manage', [['activity', '#/activity', 'activity', 'Activity'], ['settings', '#/settings', 'users', 'Settings']]]
+    ['Main', [['dash', '#/', 'home', 'Dashboard'], ['seo', '#/seo', 'trend', 'SEO Health'], ['search', '#/search', 'chart', 'Search Performance'], ['posts', '#/posts', 'file', 'All Posts'], ['new', '#/new', 'pen', 'Write New']]],
+    ['Content', [['review', '#/review', 'inbox', 'Drafts & Review'], ['cats', '#/categories', 'folder', 'Categories'], ['tags', '#/tags', 'tag', 'Tags'], ['media', '#/media', 'image', 'Media']]],
+    ['Manage', [['activity', '#/activity', 'activity', 'Activity'], ['redirects', '#/redirects', 'redirect', 'Redirects', true], ['settings', '#/settings', 'users', 'Settings']]]
   ];
   function ensureShell() {
     if (document.getElementById('shell')) return;
@@ -148,7 +160,7 @@
   function drawNav(active) {
     var pend = data ? data.proposals.length + data.drafts.length : 0;
     document.getElementById('nav').innerHTML = NAV.map(function (sec) {
-      return '<h6>' + sec[0] + '</h6>' + sec[1].filter(function (i) { return i[0] !== 'settings' || true; }).map(function (i) {
+      return '<h6>' + sec[0] + '</h6>' + sec[1].filter(function (i) { return !i[4] || me.role === 'admin'; }).map(function (i) {
         return '<a href="' + i[1] + '" class="' + (i[0] === active ? 'on' : '') + '">' + icon(i[2]) + '<span>' + i[3] + '</span>' + (i[0] === 'review' && pend ? '<span class="badge">' + pend + '</span>' : '') + '</a>';
       }).join('');
     }).join('');
@@ -526,6 +538,147 @@
     }).catch(function (e) { errPage('tags', e); });
   }
 
+  /* ======================= search performance (Google Search Console) ======================= */
+  function nfmt(n) { return Math.round(n).toLocaleString('en-US'); }
+  function delta(cur, prev, lowerIsBetter, fixed) {
+    if (!prev) return '<span class="hint">new</span>';
+    var d = cur - prev, pct = prev ? d / prev * 100 : 0, good = lowerIsBetter ? d < 0 : d > 0;
+    if (Math.abs(pct) < 0.5 && !lowerIsBetter) return '<span class="hint">no change</span>';
+    var txt = lowerIsBetter ? (Math.abs(d)).toFixed(fixed == null ? 1 : fixed) + ' places' : Math.abs(pct).toFixed(0) + '%';
+    if (lowerIsBetter && Math.abs(d) < 0.05) return '<span class="hint">no change</span>';
+    return '<span class="dl ' + (good ? 'up' : 'down') + '">' + (good ? '▲' : '▼') + ' ' + txt + '</span>';
+  }
+  function searchSetup(msg, email) {
+    return '<div class="card"><h2>' + icon('chart') + ' Connect Google Search Console</h2>' + (msg ? '<div class="alert warn">' + esc(msg) + '</div>' : '') +
+      '<p class="sub">This page shows your real Google data: clicks, impressions, average position and the keywords people used. It needs a one-time, read-only connection (about 10 minutes, no cost).</p>' +
+      '<ol class="steps2"><li><b>Create a Google Cloud project</b> and turn on the <i>Google Search Console API</i><br><span>console.cloud.google.com → New project → APIs &amp; Services → Library → "Google Search Console API" → Enable.</span></li>' +
+      '<li><b>Create a service account and a key</b><br><span>IAM &amp; Admin → Service Accounts → Create. Then open it → Keys → Add key → JSON. A <code>.json</code> file downloads.</span></li>' +
+      '<li><b>Give it read access in Search Console</b><br><span>search.google.com/search-console → your property → Settings → Users and permissions → Add user → paste the service account e-mail' + (email ? ' (<code class="key">' + esc(email) + '</code>)' : ' (looks like name@project.iam.gserviceaccount.com)') + ' → permission <b>Restricted</b>.</span></li>' +
+      '<li><b>Store the key in the Worker</b> (run in the cloudflare-oauth-worker folder, using the downloaded file name)<br><pre class="cmd">Get-Content .\\key.json -Raw | npx wrangler@4 secret put GSC_SERVICE_ACCOUNT</pre><span>The key goes straight to Cloudflare and is never saved in the repository.</span></li>' +
+      '<li><b>Reload this page.</b> If your property is a URL-prefix property instead of a Domain property, tell Claude so it can set <code>GSC_SITE</code>.</li></ol></div>';
+  }
+  function pageSearch() {
+    var days = 28; try { days = parseInt(sessionStorage.getItem('lmh_days'), 10) || 28; } catch (e) { /* default */ }
+    loadingPage('search', crumb('Search Performance'));
+    function load(fresh) {
+      L.api('/gsc/overview?days=' + days + (fresh ? '&fresh=1' : '')).then(function (r) {
+        var bar = '<select id="sdays" style="width:auto"><option value="7">Last 7 days</option><option value="28">Last 28 days</option><option value="90">Last 3 months</option></select> <button class="btn ghost" id="sref">' + icon('refresh') + ' Refresh</button>';
+        if (!r.configured) { page('search', crumb('Search Performance'), head('Search Performance', 'Real clicks, rankings and keywords from Google.') + searchSetup()); return; }
+        if (r.error) { page('search', crumb('Search Performance'), head('Search Performance', 'Real clicks, rankings and keywords from Google.', bar) + searchSetup(r.message, r.email)); wireSearch(); return; }
+        var t = r.totals, p = r.prevTotals, win = L.fmtDate(r.range.startDate) + ' to ' + L.fmtDate(r.range.endDate);
+        var maxC = Math.max.apply(null, r.daily.map(function (d) { return d.clicks; }).concat([1])), maxI = Math.max.apply(null, r.daily.map(function (d) { return d.impressions; }).concat([1])), W = 640, H = 170, n = r.daily.length || 1, bw = Math.max(2, Math.floor(W / n) - 2);
+        var bars = r.daily.map(function (d, i) { var h2 = Math.round(d.clicks / maxC * (H - 24)); return '<rect x="' + Math.round(i * (W / n)) + '" y="' + (H - h2) + '" width="' + bw + '" height="' + h2 + '" rx="2" fill="#1a5fb0"><title>' + esc(d.date) + ': ' + d.clicks + ' clicks</title></rect>'; }).join('');
+        var line = r.daily.map(function (d, i) { return Math.round(i * (W / n) + bw / 2) + ',' + Math.round(H - 4 - d.impressions / maxI * (H - 30)); }).join(' ');
+        var wins = r.queries.filter(function (q) { return q.position >= 4 && q.position <= 20 && q.impressions >= 30; }).sort(function (a, b) { return b.impressions - a.impressions; }).slice(0, 8);
+        var devTot = r.devices.reduce(function (s, d) { return s + d.clicks; }, 0) || 1;
+        var html = head('Search Performance', 'Google Search Console · ' + esc(win) + ' vs the previous ' + r.days + ' days · property ' + esc(r.site), bar) +
+          '<div class="grid4">' +
+          '<div class="stat"><div class="ic">' + icon('chart') + '</div><div><b>' + nfmt(t.clicks) + '</b><span>Clicks ' + delta(t.clicks, p.clicks) + '</span></div></div>' +
+          '<div class="stat"><div class="ic g">' + icon('search') + '</div><div><b>' + nfmt(t.impressions) + '</b><span>Impressions ' + delta(t.impressions, p.impressions) + '</span></div></div>' +
+          '<div class="stat"><div class="ic y">' + icon('check') + '</div><div><b>' + (t.ctr * 100).toFixed(1) + '%</b><span>Click rate ' + delta(t.ctr, p.ctr) + '</span></div></div>' +
+          '<div class="stat"><div class="ic ' + (t.position && t.position <= 10 ? 'g' : 'r') + '">' + icon('trend') + '</div><div><b>' + t.position.toFixed(1) + '</b><span>Avg position ' + delta(t.position, p.position, true) + '</span></div></div></div>' +
+          '<div class="card"><h2>Clicks and impressions per day</h2><svg viewBox="0 0 ' + W + ' ' + H + '" class="chartsvg" role="img" aria-label="Daily clicks and impressions"><polyline fill="none" stroke="#f5b400" stroke-width="2.5" stroke-linejoin="round" points="' + line + '"/>' + bars + '</svg><p class="hint"><span class="lg b"></span> Clicks &nbsp; <span class="lg y"></span> Impressions. Google data is about 2 days behind.</p></div>' +
+          '<div class="cols"><div class="card flush"><div class="hd"><h2>Keyword tracker</h2><input type="text" id="qf" placeholder="Filter keywords…" style="width:180px"></div><div class="tw"><table class="t"><thead><tr><th>Keyword</th><th>Clicks</th><th>Impr.</th><th>Position</th><th>Change</th></tr></thead><tbody id="qrows"></tbody></table></div><div id="qmore" style="padding:.8rem;text-align:center"></div></div>' +
+          '<div><div class="card flush"><div class="hd"><h2>Quick wins</h2></div><p class="sub" style="padding:.8rem 1.2rem 0;margin:0">Already close to page 1. A little work (better title, more detail, internal links) can lift these.</p><ul class="feed">' +
+          (wins.map(function (q) { return '<li><div class="dot auto">' + icon('trend') + '</div><div><b>' + esc(q.q) + '</b><small>position ' + q.position.toFixed(1) + ' · ' + nfmt(q.impressions) + ' impressions · ' + nfmt(q.clicks) + ' clicks</small></div></li>'; }).join('') || '<li class="empty">No near-miss keywords yet.</li>') + '</ul></div>' +
+          '<div class="card"><h2>Devices</h2>' + r.devices.map(function (d) { var pc = Math.round(d.clicks / devTot * 100); return '<div class="cat"><div class="cl"><b>' + esc(d.device.charAt(0) + d.device.slice(1).toLowerCase()) + '</b><span>' + pc + '%</span></div><div class="meter"><i class="good" style="width:' + pc + '%"></i></div><small>' + nfmt(d.clicks) + ' clicks</small></div>'; }).join('') + '</div></div></div>' +
+          '<div class="card flush"><div class="hd"><h2>Top pages</h2></div><div class="tw"><table class="t"><thead><tr><th>Page</th><th>Clicks</th><th>Impr.</th><th>CTR</th><th>Position</th></tr></thead><tbody>' +
+          r.pages.slice(0, 15).map(function (g) { return '<tr><td class="ti"><b>' + esc(g.page.replace(/^https?:\/\/[^/]+/, '') || '/') + '</b></td><td>' + nfmt(g.clicks) + '</td><td>' + nfmt(g.impressions) + '</td><td>' + (g.ctr * 100).toFixed(1) + '%</td><td>' + g.position.toFixed(1) + '</td></tr>'; }).join('') + '</tbody></table></div></div>' +
+          '<p class="hint">Position is the average spot in Google results (1 = top, lower is better). A green arrow means a better position than the previous period.</p>';
+        page('search', crumb('Search Performance'), html);
+        var show = 15;
+        function drawQ() {
+          var f = (document.getElementById('qf').value || '').toLowerCase(), rows = r.queries.filter(function (q) { return !f || q.q.toLowerCase().indexOf(f) >= 0; });
+          document.getElementById('qrows').innerHTML = rows.slice(0, show).map(function (q) {
+            return '<tr><td class="ti"><b>' + esc(q.q) + '</b></td><td>' + nfmt(q.clicks) + '</td><td>' + nfmt(q.impressions) + '</td><td>' + q.position.toFixed(1) + '</td><td>' + (q.prevPosition == null ? '<span class="hint">new</span>' : delta(q.position, q.prevPosition, true)) + '</td></tr>';
+          }).join('') || '<tr><td colspan="5" class="empty">No keywords match.</td></tr>';
+          document.getElementById('qmore').innerHTML = rows.length > show ? '<button class="btn ghost" id="qm">Show more</button>' : '';
+          if (rows.length > show) document.getElementById('qm').onclick = function () { show += 20; drawQ(); };
+        }
+        document.getElementById('qf').oninput = function () { show = 15; drawQ(); }; drawQ(); wireSearch();
+      }).catch(function (e) { errPage('search', e); });
+    }
+    function wireSearch() {
+      var s = document.getElementById('sdays'); if (s) { s.value = String(days); s.onchange = function () { days = +s.value; try { sessionStorage.setItem('lmh_days', String(days)); } catch (e) { /* ignore */ } loadingPage('search', crumb('Search Performance')); load(false); }; }
+      var b = document.getElementById('sref'); if (b) b.onclick = function () { loadingPage('search', crumb('Search Performance')); load(true); };
+    }
+    load(false);
+  }
+
+  /* ======================= redirects (admin) ======================= */
+  var RFROM = /^\/[A-Za-z0-9\/._-]{1,150}$/, RTO = /^(\/(?!\/)[A-Za-z0-9\/._~%?=&#-]{0,300}|\/|https:\/\/(www\.)?lmshandling\.com(\/(?!\/)[A-Za-z0-9\/._~%?=&#-]{0,300})?)$/;
+  function pageRedirects() {
+    loadingPage('redirects', crumb('Redirects'));
+    if (me.role !== 'admin') { page('redirects', crumb('Redirects'), '<div class="alert warn">Only admins can manage redirects.</div>'); return; }
+    Promise.all([loadData(), L.getFile('_data/redirects.json', L.BRANCH)]).then(function (r) {
+      var list = []; try { list = JSON.parse(r[1] ? r[1].text : '[]'); } catch (e) { /* start empty */ }
+      var sha = r[1] ? r[1].sha : null;
+      var html = head('Redirects', 'Send an old address to a new one with a permanent (301) redirect, so visitors and Google follow it and keep the ranking.') +
+        '<div class="card"><h2>Add a redirect</h2><div class="row"><div><label class="f">Old address <small>(path on this site)</small></label><input type="text" id="rf" placeholder="/blog/old-post"></div>' +
+        '<div><label class="f">New address <small>(path or https://lmshandling.com/...)</small></label><input type="text" id="rt" placeholder="/blog/new-post"></div></div>' +
+        '<label class="f">Note <small>(optional)</small></label><input type="text" id="rn" placeholder="Why this redirect exists"><div id="rerr"></div><div style="margin-top:1rem"><button class="btn" id="radd">' + icon('plus') + ' Add redirect</button></div>' +
+        '<p class="hint">Takes effect after the next deploy (about a minute). Only addresses on lmshandling.com are allowed as targets.</p></div>' +
+        '<div class="card flush"><div class="hd"><h2>Active redirects</h2><span class="pill">' + list.length + '</span></div>' +
+        (list.length ? '<div class="tw"><table class="t"><thead><tr><th>Old address</th><th>New address</th><th>Note</th><th></th></tr></thead><tbody>' + list.map(function (x, i) {
+          return '<tr><td class="ti"><b>' + esc(x.from) + '</b></td><td>' + esc(x.to) + '</td><td>' + esc(x.note || '') + '</td><td class="act"><a class="iconbtn" target="_blank" rel="noopener" title="Test it" href="' + L.SITE + esc(x.from) + '">' + icon('ext') + '</a><button class="btn danger sm" data-rdel="' + i + '">' + icon('trash') + '</button></td></tr>';
+        }).join('') + '</tbody></table></div>' : '<p class="empty">No redirects yet.</p>') + '</div>';
+      var c = page('redirects', crumb('Redirects'), html);
+      function save(next, msg) {
+        return L.getFile('_data/redirects.json', L.BRANCH).then(function (g) {
+          return L.putFile('_data/redirects.json', L.BRANCH, L.b64enc(JSON.stringify(next, null, 2) + '\n'), '[manual] ' + msg + ' (by ' + me.name + ')', g && g.sha);
+        }).then(function () { L.toast('Saved. Live after the next deploy (about a minute).'); pageRedirects(); }).catch(function (e) { L.toast(e.message, true); });
+      }
+      document.getElementById('radd').onclick = function () {
+        var from = document.getElementById('rf').value.trim(), to = document.getElementById('rt').value.trim(), err = document.getElementById('rerr'), bad = '';
+        if (from && from.charAt(0) !== '/') from = '/' + from;
+        if (to && !/^https?:/.test(to) && to.charAt(0) !== '/') to = '/' + to;
+        if (!RFROM.test(from) || from.indexOf('..') >= 0 || from.indexOf('//') >= 0) bad = 'The old address must be a path like /blog/old-post (letters, numbers, - _ . /).';
+        else if (!RTO.test(to) || to.indexOf('..') >= 0) bad = 'The new address must be a path on this site or a https://lmshandling.com URL.';
+        else if (from.replace(/\/$/, '') === to.replace(/\/$/, '')) bad = 'The old and new address are the same.';
+        else if (from === '/' ) bad = 'The homepage cannot be redirected.';
+        else if (list.some(function (x) { return x.from.replace(/\/$/, '').toLowerCase() === from.replace(/\/$/, '').toLowerCase(); })) bad = 'There is already a redirect for that old address.';
+        if (bad) { err.innerHTML = '<div class="alert err">' + esc(bad) + '</div>'; return; }
+        var m = /^\/blog\/([a-z0-9-]+)\/?$/.exec(from), live = m && data.bySlug[m[1]];
+        if (live && !window.confirm('A live post already exists at ' + from + ' ("' + live.title + '"). After this redirect it can no longer be opened. Continue?')) return;
+        err.innerHTML = '';
+        save(list.concat([{ from: from, to: to, note: document.getElementById('rn').value.trim().slice(0, 140), by: me.name, date: L.today() }]), 'Add redirect ' + from);
+      };
+      c.onclick = function (e) {
+        var d = e.target.closest('[data-rdel]'); if (!d) return;
+        var i = +d.getAttribute('data-rdel');
+        if (window.confirm('Remove the redirect from ' + list[i].from + '?')) save(list.filter(function (x, j) { return j !== i; }), 'Remove redirect ' + list[i].from);
+      };
+    }).catch(function (e) { errPage('redirects', e); });
+  }
+
+  /* ======================= media ======================= */
+  function pageMedia() {
+    loadingPage('media', crumb('Media'));
+    L.listDir('assets/blog-images', L.BRANCH).then(function (items) {
+      var imgs = items.filter(function (i) { return /\.(png|jpe?g|webp)$/i.test(i.name); }).sort(function (a, b) { return b.size - a.size; });
+      var heavy = imgs.filter(function (i) { return i.size > 300 * 1024; }).length;
+      var html = head('Media', imgs.length + ' images used by blog covers and social previews', '<label class="btn" for="mup">' + icon('plus') + ' Upload images</label><input type="file" id="mup" accept="image/*" multiple style="display:none">') +
+        (heavy ? '<div class="alert warn">' + heavy + ' image(s) are over 300 KB. Heavy images slow pages down. New uploads are compressed automatically; older ones can be re-uploaded.</div>' : '') +
+        '<div class="mgrid">' + (imgs.map(function (i) {
+          var url = L.SITE + '/assets/blog-images/' + encodeURIComponent(i.name), kb = Math.round(i.size / 1024);
+          return '<div class="mcard"><a href="' + esc(url) + '" target="_blank" rel="noopener"><img src="' + esc(url) + '" alt="" loading="lazy"></a><div class="mi"><b title="' + esc(i.name) + '">' + esc(i.name) + '</b><span class="pill ' + (kb > 300 ? 'warn' : 'ok') + '">' + kb + ' KB</span><button type="button" class="btn ghost sm" data-copy="' + esc(url) + '">Copy URL</button></div></div>';
+        }).join('') || '<p class="empty">No images yet.</p>') + '</div>';
+      var c = page('media', crumb('Media'), html);
+      c.onclick = function (e) { var b = e.target.closest('[data-copy]'); if (b && navigator.clipboard) navigator.clipboard.writeText(b.getAttribute('data-copy')).then(function () { L.toast('URL copied'); }); };
+      document.getElementById('mup').onchange = function (e) {
+        var files = Array.prototype.slice.call(e.target.files); if (!files.length) return;
+        L.toast('Compressing and uploading ' + files.length + ' image(s)…');
+        L.pool(files, 2, function (f) {
+          return L.compressImage(f, 1600, 300 * 1024).then(function (c2) {
+            var base = f.name.replace(/\.[^.]+$/, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'image', name = base + '.' + c2.ext;
+            if (imgs.some(function (i) { return i.name === name; })) name = base + '-' + Date.now().toString(36) + '.' + c2.ext;
+            return L.putFile('assets/blog-images/' + name, L.BRANCH, c2.b64, '[manual] Upload image ' + name + ' (by ' + me.name + ')');
+          });
+        }).then(function () { L.toast('Uploaded. It is live after the next deploy (about a minute).'); pageMedia(); }).catch(function (er) { L.toast(er.message, true); });
+      };
+    }).catch(function (e) { errPage('media', e); });
+  }
+
   /* ======================= activity ======================= */
   var RUNCLS = { success: 'ok', failure: 'bad', cancelled: 'grey' };
   function pageActivity() {
@@ -655,8 +808,9 @@
       var html = head('Settings', 'Account, team and automation') +
         '<div class="cols"><div>' +
         '<div class="card"><h2>Change my password</h2>' + pwField('pc', 'Current password', 'current-password') + pwField('pn', 'New password', 'new-password', '(10+ characters)') + '<div style="margin-top:1rem"><button class="btn" id="pgo">Update password</button></div><p class="hint">Changing it signs you out on every other device.</p></div>' +
+        '<div class="card" id="tf"></div>' +
         (isAdmin ? '<div class="card flush"><div class="hd"><h2>Team</h2></div><div class="tw"><table class="t"><tbody>' + users.map(function (u) {
-          return '<tr><td class="ti"><b>' + esc(u.name) + '</b><small>' + esc(u.role) + ' · added ' + esc(L.fmtDate(u.created)) + '</small></td><td class="act"><button class="btn ghost sm" data-pw="' + esc(u.name) + '">Reset password</button>' + (u.name !== me.name ? '<button class="btn danger sm" data-del="' + esc(u.name) + '">' + icon('trash') + '</button>' : '') + '</td></tr>';
+          return '<tr><td class="ti"><b>' + esc(u.name) + (u.twofa ? ' <span class="pill ok">2FA</span>' : '') + '</b><small>' + esc(u.role) + ' · added ' + esc(L.fmtDate(u.created)) + '</small></td><td class="act">' + (u.twofa && u.name !== me.name ? '<button class="btn ghost sm" data-r2fa="' + esc(u.name) + '" title="They lost their phone">Reset 2FA</button>' : '') + '<button class="btn ghost sm" data-pw="' + esc(u.name) + '">Reset password</button>' + (u.name !== me.name ? '<button class="btn danger sm" data-del="' + esc(u.name) + '">' + icon('trash') + '</button>' : '') + '</td></tr>';
         }).join('') + '</tbody></table></div><div style="padding:1.1rem 1.2rem;border-top:1px solid var(--line)"><h2 style="font-size:.92rem">Add a team member</h2><div class="row"><div><label class="f">Username</label><input type="text" id="nu" autocapitalize="none"></div><div>' + pwField('np', 'Password', 'new-password', '(10+)') + '</div><div class="fit"><label class="f">Role</label><select id="nr"><option value="editor">Editor</option><option value="admin">Admin</option></select></div><div class="fit"><button class="btn" id="nadd">Add</button></div></div><p class="hint">Editors can write, edit and publish posts. Admins can also manage the team and settings.</p></div></div>' : '') +
         '</div><div>' +
         (isAdmin ? '<div class="card"><h2>Auto-update</h2><p class="sub">Claude refreshes old posts and leaves them for your review. It never publishes by itself.</p>' +
@@ -669,12 +823,14 @@
       document.getElementById('pgo').onclick = function () {
         L.api('/me/password', { method: 'POST', body: { current: document.getElementById('pc').value, password: document.getElementById('pn').value } }).then(function () { L.toast('Password updated'); document.getElementById('pc').value = ''; document.getElementById('pn').value = ''; }).catch(function (e) { L.toast(e.message, true); });
       };
+      draw2fa(!!(r[2].user && r[2].user.twofa));
       if (!isAdmin) return;
       document.getElementById('nadd').onclick = function () {
         L.api('/users', { method: 'POST', body: { username: document.getElementById('nu').value, password: document.getElementById('np').value, role: document.getElementById('nr').value } }).then(function () { L.toast('Member added'); pageSettings(); }).catch(function (e) { L.toast(e.message, true); });
       };
       c.onclick = function (e) {
-        var pw = e.target.closest('[data-pw]'), del = e.target.closest('[data-del]');
+        var pw = e.target.closest('[data-pw]'), del = e.target.closest('[data-del]'), r2 = e.target.closest('[data-r2fa]');
+        if (r2 && window.confirm('Turn off two-step login for ' + r2.getAttribute('data-r2fa') + '? They will be signed out everywhere and can set it up again.')) L.api('/users/' + encodeURIComponent(r2.getAttribute('data-r2fa')) + '/2fa/reset', { method: 'POST' }).then(function () { L.toast('Two-step login reset'); pageSettings(); }).catch(function (er) { L.toast(er.message, true); });
         if (pw) { var np = window.prompt('New password for ' + pw.getAttribute('data-pw') + ' (10+ characters):'); if (np) L.api('/users/' + encodeURIComponent(pw.getAttribute('data-pw')) + '/password', { method: 'POST', body: { password: np } }).then(function () { L.toast('Password reset'); }).catch(function (er) { L.toast(er.message, true); }); }
         if (del && window.confirm('Remove ' + del.getAttribute('data-del') + '? They will be signed out immediately.')) L.api('/users/' + encodeURIComponent(del.getAttribute('data-del')), { method: 'DELETE' }).then(function () { L.toast('Member removed'); pageSettings(); }).catch(function (er) { L.toast(er.message, true); });
       };
@@ -692,6 +848,40 @@
         connectGitHub(function (g) { L.api('/github/connect', { method: 'POST', body: { grant: g } }).then(function () { L.toast('GitHub reconnected'); pageSettings(); }).catch(function (e) { L.toast(e.message, true); }); });
       };
     }).catch(function (e) { errPage('settings', e); });
+  }
+
+  // Two-step login card (authenticator app + recovery codes) in Settings
+  function draw2fa(on) {
+    var box = document.getElementById('tf'); if (!box) return;
+    if (on) {
+      box.innerHTML = '<h2>' + icon('lock') + ' Two-step login <span class="pill ok">On</span></h2><p class="sub">Signing in needs your password and a code from your authenticator app.</p>' +
+        '<details><summary class="hint" style="cursor:pointer">Turn it off</summary>' + pwField('d2p', 'Your password', 'current-password') + '<label class="f">Current code or a recovery code</label><input type="text" id="d2c" inputmode="numeric" autocomplete="one-time-code">' +
+        '<div style="margin-top:.8rem"><button class="btn danger" id="d2go">Turn off two-step login</button></div></details>';
+      document.getElementById('d2go').onclick = function () {
+        L.api('/me/2fa/disable', { method: 'POST', body: { password: document.getElementById('d2p').value, code: document.getElementById('d2c').value } })
+          .then(function () { L.toast('Two-step login is off'); me.twofa = false; draw2fa(false); }).catch(function (e) { L.toast(e.message, true); });
+      };
+      return;
+    }
+    box.innerHTML = '<h2>' + icon('lock') + ' Two-step login <span class="pill grey">Off</span></h2><p class="sub">Adds a 6-digit code from an authenticator app (Google Authenticator, Microsoft Authenticator, Authy) so a stolen password alone is not enough. Strongly recommended for admins.</p><button class="btn" id="e2go">Turn on two-step login</button>';
+    document.getElementById('e2go').onclick = function () {
+      L.api('/me/2fa/start', { method: 'POST' }).then(function (r) {
+        var svg = ''; try { var qr = window.qrcode(0, 'M'); qr.addData(r.uri); qr.make(); svg = qr.createSvgTag(4, 0); } catch (e) { svg = ''; }
+        box.innerHTML = '<h2>' + icon('lock') + ' Set up two-step login</h2><ol class="steps2"><li><b>Scan this QR code</b> with your authenticator app.<div class="qrbox">' + svg + '</div><span>Cannot scan? Type this key instead: <code class="key">' + esc(r.secret.replace(/(.{4})/g, '$1 ').trim()) + '</code></span></li>' +
+          '<li><b>Enter the 6-digit code</b> the app shows now.<div style="margin-top:.5rem"><input type="text" id="e2c" inputmode="numeric" autocomplete="one-time-code" placeholder="123456" style="max-width:200px"></div></li></ol>' +
+          '<button class="btn" id="e2ok">Verify and turn on</button>';
+        document.getElementById('e2ok').onclick = function () {
+          L.api('/me/2fa/enable', { method: 'POST', body: { code: document.getElementById('e2c').value } }).then(function (res) {
+            me.twofa = true;
+            box.innerHTML = '<h2>' + icon('lock') + ' Save your recovery codes</h2><div class="alert warn">Each code works <b>once</b> if you lose your phone. They are shown only now. Store them somewhere safe (not in this browser).</div><pre class="rcodes" id="rcodes">' + res.recovery.map(esc).join('\n') + '</pre>' +
+              '<button class="btn ghost" id="rcopy">Copy</button> <button class="btn ghost" id="rdl">Download</button> <button class="btn" id="rdone">I saved them</button>';
+            document.getElementById('rcopy').onclick = function () { if (navigator.clipboard) navigator.clipboard.writeText(res.recovery.join('\n')).then(function () { L.toast('Copied'); }); };
+            document.getElementById('rdl').onclick = function () { var a = document.createElement('a'); a.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent('Blog Studio recovery codes for ' + me.name + '\n' + res.recovery.join('\n') + '\n'); a.download = 'blog-studio-recovery-codes.txt'; a.click(); };
+            document.getElementById('rdone').onclick = function () { draw2fa(true); };
+          }).catch(function (e) { L.toast(e.message, true); });
+        };
+      }).catch(function (e) { L.toast(e.message, true); });
+    };
   }
 
   /* ======================= preview ======================= */
@@ -767,10 +957,10 @@
         '<details class="step"><summary><span class="n">3</span><div><b>Page extras</b><span class="s">Cover card, image, dates</span></div></summary><div class="in">' +
         '<label class="f">Cover card line 1 (eyebrow)</label><input type="text" id="f-eb"><label class="f">Cover highlights <small>(2-3 short lines, one per line)</small></label><textarea id="f-hl" rows="3"></textarea>' +
         '<label class="f">Cover contact line</label><input type="text" id="f-cl"><label class="f">WhatsApp button text</label><input type="text" id="f-cta">' +
-        '<label class="f">Cover / share image <small>(1200x630, jpg or png, under 1.5 MB. Leave empty for the default.)</small></label><input type="file" id="f-img" accept="image/png,image/jpeg,image/webp">' +
+        '<label class="f">Cover / share image <small>(any image: it is resized and compressed to WebP automatically. Leave empty for the default.)</small></label><input type="file" id="f-img" accept="image/png,image/jpeg,image/webp">' +
         '<img class="imgprev" id="imgprev" alt="" src="' + L.SITE + '/assets/blog-images/' + esc(fm.ogImage || 'default-cover.png') + '">' +
         '<div class="row"><div><label class="f">Date published</label><input type="date" id="f-dp"></div><div><label class="f">Date modified</label><input type="date" id="f-dm"></div></div></div></details>' +
-        '</div><aside class="sidepanel card"><div class="score" id="score"></div><p class="sub" style="margin:.2rem 0 0">SEO score (live)</p><ul class="checks" id="checks"></ul></aside></div>' +
+        '</div><aside class="sidepanel card"><div class="score" id="score"></div><p class="sub" style="margin:.2rem 0 0">SEO score (live)</p><ul class="checks" id="checks"></ul><div id="linksugg"></div></aside></div>' +
         '<div class="bar"><span class="st" id="st">' + (cur.published ? 'Editing a live post' : (cur.kind === 'draft' ? 'Draft' : 'New post (not saved)')) + '</span><button class="btn ghost" id="save">Save draft</button><button class="btn ghost" id="prev">Preview</button><button class="btn gold" id="pub">' + (cur.published ? 'Update live post' : 'Publish') + '</button></div>';
       page('posts', crumb('Edit'), html);
       bindVal('f-title', function () { return fm.title || ''; }, function (v) { fm.title = v; if (!locked && !cur.slugEdited) { fm.canonicalSlug = L.slugify(v); document.getElementById('f-slug').value = fm.canonicalSlug; slugHint(); } });
@@ -841,10 +1031,26 @@
   }
   function pickImage(e) {
     var f = e.target.files[0]; if (!f) return;
-    if (f.size > 1.5 * 1024 * 1024) { L.toast('Image is over 1.5 MB. Compress it first.', true); e.target.value = ''; return; }
-    var ext = (f.name.split('.').pop() || 'jpg').toLowerCase().replace('jpeg', 'jpg'), rd = new FileReader();
-    rd.onload = function () { var name = (cur.fm.canonicalSlug || 'cover') + '-cover.' + ext; cur.image = { name: name, b64: String(rd.result).split(',')[1] }; cur.fm.ogImage = name; document.getElementById('imgprev').src = rd.result; };
-    rd.readAsDataURL(f);
+    if (f.size > 12 * 1024 * 1024) { L.toast('That image is over 12 MB. Pick a smaller one.', true); e.target.value = ''; return; }
+    L.toast('Compressing image…');
+    // resized to 1200 px wide and re-encoded as WebP (about 100-250 KB): faster pages, better SEO
+    L.compressImage(f, 1200, 260 * 1024).then(function (c) {
+      var name = (cur.fm.canonicalSlug || 'cover') + '-cover.' + c.ext;
+      cur.image = { name: name, b64: c.b64 }; cur.fm.ogImage = name; document.getElementById('imgprev').src = c.dataUrl;
+      L.toast('Image ready: ' + Math.round(f.size / 1024) + ' KB → ' + Math.round(c.size / 1024) + ' KB');
+    }).catch(function (er) { L.toast(er.message, true); e.target.value = ''; });
+  }
+  function drawLinkSugg() {
+    var box = document.getElementById('linksugg'); if (!box || !data) return;
+    var list = L.linkSuggestions(data.posts, cur.fm, cur.body, cur.fm.canonicalSlug);
+    box.innerHTML = '<h2 style="font-size:.9rem;margin:1rem 0 .4rem">' + icon('link') + ' Link suggestions</h2>' + (list.length ? '<ul class="lsug">' + list.map(function (x) {
+      return '<li><span><b>' + esc(x.title) + '</b><small>' + esc(L.catLabel(x.category)) + '</small></span><button type="button" class="btn ghost sm" data-ilink="' + esc(x.slug) + '" title="Insert at the cursor (selected text becomes the link text)">Insert</button></li>';
+    }).join('') + '</ul><p class="hint">Related posts you have not linked yet. Internal links help readers and Google.</p>' : '<p class="hint">No related posts found yet. Add a keyword and some body text.</p>');
+    box.onclick = function (e) {
+      var b = e.target.closest('[data-ilink]'); if (!b) return;
+      var slug = b.getAttribute('data-ilink'), p = data.bySlug[slug], ta = document.getElementById('f-body'), s = ta.selectionStart, en = ta.selectionEnd, sel = ta.value.slice(s, en);
+      ta.setRangeText('<a class="inline-link" href="/blog/' + slug + '">' + (sel || (p ? p.title : slug)) + '</a>', s, en, 'end'); cur.body = ta.value; ta.focus(); counts(); queueScore(); L.toast('Link inserted');
+    };
   }
   function queueScore() { clearTimeout(scoreTimer); scoreTimer = setTimeout(scoreNow, 200); }
   function scoreNow() {
@@ -852,6 +1058,7 @@
     var s = document.getElementById('score'), ul = document.getElementById('checks'); if (!s) return;
     s.className = 'score ' + (pct >= 85 ? 'good' : (pct >= 60 ? 'mid' : 'low')); s.innerHTML = '<b>' + pct + '</b><span>/ 100</span>';
     ul.innerHTML = C.map(function (c) { return '<li class="' + (c.ok ? 'ok' : (c.block ? 'no' : 'wa')) + '"><span class="i">' + (c.ok ? '✓' : (c.block ? '✕' : '!')) + '</span><span>' + esc(c.label) + '</span></li>'; }).join('');
+    drawLinkSugg();
   }
   function finalize(light) {
     var fm = cur.fm; fm.tocEntries = L.tocFromBody(cur.body); fm.keywords = (fm.keywords || []).filter(Boolean);
@@ -911,6 +1118,9 @@
     var h = location.hash.replace(/^#/, '') || '/', base = h.split('?')[0], m;
     if (base === '/') return pageDash();
     if (base === '/seo') return pageSeo();
+    if (base === '/search') return pageSearch();
+    if (base === '/media') return pageMedia();
+    if (base === '/redirects') return pageRedirects();
     if (base === '/posts') return pagePosts();
     if (base === '/new') return pageNew();
     if (base === '/review') return pageReview();

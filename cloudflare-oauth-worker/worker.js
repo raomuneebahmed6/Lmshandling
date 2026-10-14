@@ -39,6 +39,62 @@ const b64u = {
   },
 };
 
+/* ---------- TOTP (authenticator app) helpers ---------- */
+const B32 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+function b32enc(bytes) {
+  let bits = 0, val = 0, out = "";
+  for (const b of bytes) {
+    val = (val << 8) | b; bits += 8;
+    while (bits >= 5) { out += B32[(val >>> (bits - 5)) & 31]; bits -= 5; }
+  }
+  if (bits > 0) out += B32[(val << (5 - bits)) & 31];
+  return out;
+}
+function b32dec(s) {
+  let bits = 0, val = 0; const out = [];
+  for (const ch of String(s).toUpperCase().replace(/=+$/, "")) {
+    const i = B32.indexOf(ch); if (i < 0) continue;
+    val = (val << 5) | i; bits += 5;
+    if (bits >= 8) { out.push((val >>> (bits - 8)) & 255); bits -= 8; }
+  }
+  return new Uint8Array(out);
+}
+async function hotp(secret, counter) {
+  const key = await crypto.subtle.importKey("raw", secret, { name: "HMAC", hash: "SHA-1" }, false, ["sign"]);
+  const buf = new ArrayBuffer(8), dv = new DataView(buf);
+  dv.setUint32(0, Math.floor(counter / 4294967296)); dv.setUint32(4, counter >>> 0);
+  const h = new Uint8Array(await crypto.subtle.sign("HMAC", key, buf)), o = h[19] & 15;
+  const code = ((h[o] & 127) << 24) | (h[o + 1] << 16) | (h[o + 2] << 8) | h[o + 3];
+  return String(code % 1000000).padStart(6, "0");
+}
+function safeStrEq(a, b) {
+  if (a.length !== b.length) return false;
+  let r = 0; for (let i = 0; i < a.length; i++) r |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return r === 0;
+}
+// returns the matched 30-second step (> last used one, so a code cannot be replayed) or -1
+async function totpStep(secret, code, last) {
+  const now = Math.floor(Date.now() / 30000);
+  for (const d of [0, -1, 1]) {
+    const step = now + d;
+    if (step <= last) continue;
+    if (safeStrEq(await hotp(secret, step), code)) return step;
+  }
+  return -1;
+}
+async function sha256hex(s) {
+  return [...new Uint8Array(await crypto.subtle.digest("SHA-256", enc.encode(s)))].map((x) => x.toString(16).padStart(2, "0")).join("");
+}
+function newRecoveryCodes() {
+  const alpha = "abcdefghjkmnpqrstuvwxyz23456789", out = [];
+  for (let i = 0; i < 8; i++) {
+    const r = crypto.getRandomValues(new Uint8Array(10));
+    const s = [...r].map((x) => alpha[x % alpha.length]).join("");
+    out.push(s.slice(0, 5) + "-" + s.slice(5));
+  }
+  return out;
+}
+
 function json(data, status = 200, extra = {}) {
   return new Response(JSON.stringify(data), {
     status,
@@ -80,6 +136,41 @@ async function unseal(env, boxed) {
   return dec.decode(pt);
 }
 
+// Separate random key (kept in KV) for two-step secrets, so rotating the GitHub
+// OAuth client secret never breaks anyone's authenticator.
+async function boxKey(env) {
+  let k = await env.CMS.get("cfg:boxkey");
+  if (!k) { k = b64u.enc(crypto.getRandomValues(new Uint8Array(32))); await env.CMS.put("cfg:boxkey", k); }
+  return crypto.subtle.importKey("raw", b64u.dec(k), "AES-GCM", false, ["encrypt", "decrypt"]);
+}
+async function seal2(env, text) {
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const ct = new Uint8Array(await crypto.subtle.encrypt({ name: "AES-GCM", iv }, await boxKey(env), enc.encode(text)));
+  return b64u.enc(iv) + "." + b64u.enc(ct);
+}
+async function unseal2(env, boxed) {
+  const [iv, ct] = boxed.split(".");
+  return dec.decode(await crypto.subtle.decrypt({ name: "AES-GCM", iv: b64u.dec(iv) }, await boxKey(env), b64u.dec(ct)));
+}
+async function saveUser(env, u) { await env.CMS.put("user:" + u.name, JSON.stringify(u)); }
+
+// true if `code` is a valid authenticator code or an unused recovery code for user `u`
+async function check2fa(env, u, code) {
+  if (/^\d{6}$/.test(code)) {
+    let secret; try { secret = b32dec(await unseal2(env, u.totp.s)); } catch (e) { return false; }
+    const step = await totpStep(secret, code, u.totp.last || 0);
+    if (step < 0) return false;
+    u.totp.last = step; await saveUser(env, u); return true;
+  }
+  // recovery codes look like abcde-fghij; accept them with any case, spaces or no dash
+  const flat = code.toLowerCase().replace(/[^a-z0-9]/g, "");
+  if (flat.length !== 10) return false;
+  const h = await sha256hex(flat.slice(0, 5) + "-" + flat.slice(5));
+  const i = (u.totp.rc || []).indexOf(h);
+  if (i < 0) return false;
+  u.totp.rc.splice(i, 1); await saveUser(env, u); return true;
+}
+
 async function sessionSecret(env) {
   let s = await env.CMS.get("cfg:secret");
   if (!s) {
@@ -110,7 +201,7 @@ async function readSession(env, request) {
   if (!u) return null;
   // a password change or reset bumps `ver`, which signs out every older session
   if ((u.ver || 0) !== (data.v || 0)) return null;
-  return { name: u.name, role: u.role };
+  return { name: u.name, role: u.role, twofa: !!(u.totp && u.totp.on) };
 }
 
 function cookie(value, maxAge) {
@@ -131,7 +222,9 @@ async function createUser(env, name, password, role, prev) {
   const hash = await hashPassword(password, salt);
   const ver = prev ? (prev.ver || 0) + 1 : 0;
   const created = prev && prev.created ? prev.created : new Date().toISOString();
-  await env.CMS.put("user:" + name, JSON.stringify({ name, role, ver, salt: b64u.enc(salt), hash: b64u.enc(hash), created }));
+  const rec = { name, role, ver, salt: b64u.enc(salt), hash: b64u.enc(hash), created };
+  if (prev && prev.totp) rec.totp = prev.totp; // a password change keeps two-step login
+  await env.CMS.put("user:" + name, JSON.stringify(rec));
   return { name, role, ver };
 }
 
@@ -164,6 +257,31 @@ function readAllowed(method, path, repo) {
   return false;
 }
 
+// Redirect rules end up in the live .htaccess, so they are validated strictly:
+// the source must be a plain path, and the target may only be a path on this site
+// or a https://lmshandling.com URL (never another domain: that would be an open redirect).
+const REDIR_FROM = /^\/[A-Za-z0-9\/._-]{1,150}$/;
+// A bare path must not start with "//" (that is a protocol-relative URL to ANOTHER site).
+const REDIR_TO = /^(\/(?!\/)[A-Za-z0-9\/._~%?=&#-]{0,300}|\/|https:\/\/(www\.)?lmshandling\.com(\/(?!\/)[A-Za-z0-9\/._~%?=&#-]{0,300})?)$/;
+function redirectsError(text) {
+  let list;
+  try { list = JSON.parse(text); } catch (e) { return "Redirects file is not valid JSON"; }
+  if (!Array.isArray(list) || list.length > 500) return "Invalid redirects list";
+  const seen = new Set();
+  for (const r of list) {
+    if (!r || typeof r.from !== "string" || typeof r.to !== "string") return "Each redirect needs from and to";
+    if (!REDIR_FROM.test(r.from) || r.from.includes("..") || r.from.includes("//")) return "Invalid source path: " + String(r.from).slice(0, 60);
+    if (!REDIR_TO.test(r.to) || r.to.includes("..")) return "Invalid target (only paths on this site are allowed): " + String(r.to).slice(0, 60);
+    const f = r.from.replace(/\/$/, "") || "/";
+    if (f === "/" ) return "The homepage cannot be redirected";
+    if (seen.has(f.toLowerCase())) return "Duplicate source path: " + f;
+    seen.add(f.toLowerCase());
+    if (r.to.replace(/\/$/, "").toLowerCase() === f.toLowerCase()) return "A redirect cannot point to itself: " + f;
+    if (r.note && String(r.note).length > 140) return "Note is too long";
+  }
+  return null;
+}
+
 // Decide whether `role` may PUT/DELETE `file` on `branch`. Returns an error string or null.
 function writeError(env, role, method, file, branch, contentB64) {
   const deploy = env.BRANCH || "claude/website-blogs-seo-3jpp70";
@@ -186,6 +304,11 @@ function writeError(env, role, method, file, branch, contentB64) {
   }
   if (role === "admin" && method === "PUT" && /^blog\/[a-z0-9-]+\.html$/.test(file)) return null; // approved legacy page update
   if (method === "PUT" && /^blog\/[a-z0-9-]+\.html$/.test(file)) return "Only admins can publish updates to the older hand-built pages";
+  if (role === "admin" && method === "PUT" && file === "_data/redirects.json") {
+    let text = "";
+    try { text = dec.decode(b64u.dec(String(contentB64 || ""))); } catch (e) { return "Invalid redirects file"; }
+    return redirectsError(text);
+  }
   if (role === "admin" && method === "PUT" && file === ".github/cms-settings.json") {
     try { const j = JSON.parse(dec.decode(b64u.dec(String(contentB64 || "").replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "")))); if (!j.autoUpdate) return "Invalid settings"; } catch (e) { return "Invalid settings"; }
     return null;
@@ -258,6 +381,85 @@ async function recordFail(env, key) {
   await env.CMS.put("rl:" + key, String(n), { expirationTtl: 900 });
 }
 
+/* ---------- Google Search Console (read-only, via a service account) ---------- */
+// Optional. Needs the Worker secret GSC_SERVICE_ACCOUNT (the service-account JSON key) and
+// the service account's e-mail added as a (restricted) user in Search Console.
+async function gscToken(env) {
+  let sa; try { sa = JSON.parse(env.GSC_SERVICE_ACCOUNT); } catch (e) { return { error: "bad_config" }; }
+  if (!sa.client_email || !sa.private_key) return { error: "bad_config" };
+  const cached = await env.CMS.get("gsc:token", "json");
+  if (cached && cached.exp > Date.now() + 120000) return { token: cached.t, email: sa.client_email };
+  const now = Math.floor(Date.now() / 1000);
+  const head = b64u.enc(enc.encode(JSON.stringify({ alg: "RS256", typ: "JWT" })));
+  const claim = b64u.enc(enc.encode(JSON.stringify({ iss: sa.client_email, scope: "https://www.googleapis.com/auth/webmasters.readonly", aud: "https://oauth2.googleapis.com/token", exp: now + 3600, iat: now })));
+  let key;
+  try {
+    const der = Uint8Array.from(atob(sa.private_key.replace(/-----[^-]+-----/g, "").replace(/\s+/g, "")), (c) => c.charCodeAt(0));
+    key = await crypto.subtle.importKey("pkcs8", der, { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" }, false, ["sign"]);
+  } catch (e) { return { error: "bad_config" }; }
+  const sig = new Uint8Array(await crypto.subtle.sign("RSASSA-PKCS1-v1_5", key, enc.encode(head + "." + claim)));
+  const r = await fetch("https://oauth2.googleapis.com/token", {
+    method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: "grant_type=" + encodeURIComponent("urn:ietf:params:oauth:grant-type:jwt-bearer") + "&assertion=" + head + "." + claim + "." + b64u.enc(sig),
+  });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok || !j.access_token) return { error: "token", detail: j.error_description || j.error || "token request failed", email: sa.client_email };
+  await env.CMS.put("gsc:token", JSON.stringify({ t: j.access_token, exp: Date.now() + (j.expires_in || 3600) * 1000 }), { expirationTtl: 3000 });
+  return { token: j.access_token, email: sa.client_email };
+}
+
+const isoDay = (ms) => new Date(ms).toISOString().slice(0, 10);
+
+async function gscRows(env, tok, site, body) {
+  const r = await fetch("https://searchconsole.googleapis.com/webmasters/v3/sites/" + encodeURIComponent(site) + "/searchAnalytics/query", {
+    method: "POST", headers: { Authorization: "Bearer " + tok, "Content-Type": "application/json" }, body: JSON.stringify(body),
+  });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) { const e = new Error((j.error && j.error.message) || "Search Console error"); e.status = r.status; throw e; }
+  return j.rows || [];
+}
+
+async function handleGsc(env, url) {
+  if (!env.GSC_SERVICE_ACCOUNT) return json({ configured: false });
+  const days = [7, 28, 90].includes(+url.searchParams.get("days")) ? +url.searchParams.get("days") : 28;
+  const cacheKey = "gsc:ov:" + days;
+  const hit = !url.searchParams.get("fresh") && (await env.CMS.get(cacheKey, "json"));
+  if (hit) return json(hit);
+  const t = await gscToken(env);
+  if (t.error === "bad_config") return json({ configured: true, error: "bad_config", message: "The GSC_SERVICE_ACCOUNT secret is not a valid service-account JSON key." });
+  if (t.error) return json({ configured: true, error: "token", message: t.detail || "Could not sign in to Google", email: t.email });
+  const sites = [env.GSC_SITE, "sc-domain:lmshandling.com", "https://lmshandling.com/"].filter(Boolean);
+  const end = Date.now() - 2 * 86400000, start = end - (days - 1) * 86400000, pend = start - 86400000, pstart = pend - (days - 1) * 86400000;
+  const cur = { startDate: isoDay(start), endDate: isoDay(end) }, prev = { startDate: isoDay(pstart), endDate: isoDay(pend) };
+  let lastErr = null;
+  for (const site of sites) {
+    try {
+      const [tot, ptot, daily, queries, pqueries, pages, devices] = await Promise.all([
+        gscRows(env, t.token, site, { ...cur }), gscRows(env, t.token, site, { ...prev }),
+        gscRows(env, t.token, site, { ...cur, dimensions: ["date"], rowLimit: 200 }),
+        gscRows(env, t.token, site, { ...cur, dimensions: ["query"], rowLimit: 100 }),
+        gscRows(env, t.token, site, { ...prev, dimensions: ["query"], rowLimit: 250 }),
+        gscRows(env, t.token, site, { ...cur, dimensions: ["page"], rowLimit: 50 }),
+        gscRows(env, t.token, site, { ...cur, dimensions: ["device"], rowLimit: 5 }),
+      ]);
+      const pick = (r) => r ? { clicks: r.clicks, impressions: r.impressions, ctr: r.ctr, position: r.position } : { clicks: 0, impressions: 0, ctr: 0, position: 0 };
+      const pq = {}; pqueries.forEach((r) => { pq[r.keys[0]] = r; });
+      const out = {
+        configured: true, site, days, range: { ...cur, prevStart: prev.startDate, prevEnd: prev.endDate }, generatedAt: new Date().toISOString(),
+        totals: pick(tot[0]), prevTotals: pick(ptot[0]),
+        daily: daily.map((r) => ({ date: r.keys[0], clicks: r.clicks, impressions: r.impressions })).sort((a, b) => (a.date < b.date ? -1 : 1)),
+        queries: queries.map((r) => { const p = pq[r.keys[0]]; return { q: r.keys[0], clicks: r.clicks, impressions: r.impressions, ctr: r.ctr, position: r.position, prevPosition: p ? p.position : null, prevClicks: p ? p.clicks : 0 }; }),
+        pages: pages.map((r) => ({ page: r.keys[0], clicks: r.clicks, impressions: r.impressions, ctr: r.ctr, position: r.position })),
+        devices: devices.map((r) => ({ device: r.keys[0], clicks: r.clicks, impressions: r.impressions })),
+      };
+      await env.CMS.put(cacheKey, JSON.stringify(out), { expirationTtl: 10800 });
+      return json(out);
+    } catch (e) { lastErr = e; if (e.status !== 403 && e.status !== 404) break; }
+  }
+  if (lastErr && (lastErr.status === 403 || lastErr.status === 404)) return json({ configured: true, error: "permission", email: t.email, message: "Google says this account has no access to the Search Console property. Add the service-account e-mail as a user in Search Console." });
+  return json({ configured: true, error: "google", message: (lastErr && lastErr.message) || "Search Console request failed" });
+}
+
 /* ---------- API ---------- */
 async function handleApi(request, env, url) {
   const route = url.pathname.slice("/api".length);
@@ -285,6 +487,15 @@ async function handleApi(request, env, url) {
       await recordFail(env, "ip:" + ip);
       await recordFail(env, "u:" + name);
       return json({ message: "Wrong username or password" }, 401);
+    }
+    if (u.totp && u.totp.on) {
+      const code = String(body.code || "").replace(/[\s-]/g, "");
+      if (!code) return json({ need2fa: true }, 200);
+      if (!(await check2fa(env, u, code))) {
+        await recordFail(env, "ip:" + ip);
+        await recordFail(env, "u:" + name);
+        return json({ message: "Wrong code", need2fa: true }, 401);
+      }
     }
     return json({ user: { name: u.name, role: u.role } }, 200, { "Set-Cookie": cookie(await makeSession(env, u), SESSION_HOURS * 3600) });
   }
@@ -320,7 +531,10 @@ async function handleApi(request, env, url) {
     if (g.error) { await recordFail(env, "rec:" + ip); return json({ message: g.error }, g.status); }
     const u = await env.CMS.get("user:" + name, "json");
     if (!u) return json({ message: "No account with that username" }, 404);
-    await createUser(env, u.name, body.password, u.role, u);
+    // Owning the repository is the root of trust, so recovery also clears two-step login
+    // (otherwise a lost phone would lock the owner out for good).
+    const prev = Object.assign({}, u); delete prev.totp;
+    await createUser(env, u.name, body.password, u.role, prev);
     await env.CMS.delete("grant:" + body.grant);
     return json({ ok: true });
   }
@@ -344,6 +558,47 @@ async function handleApi(request, env, url) {
     return json({ ok: true }, 200, { "Set-Cookie": cookie(await makeSession(env, nu), SESSION_HOURS * 3600) });
   }
 
+  // ---- two-step login (authenticator app), for the signed-in user's own account
+  if (route === "/me/2fa/start" && method === "POST") {
+    const u = await env.CMS.get("user:" + session.name, "json");
+    if (!u) return json({ message: "Account not found" }, 404);
+    if (u.totp && u.totp.on) return json({ message: "Two-step login is already on" }, 400);
+    const secret = b32enc(crypto.getRandomValues(new Uint8Array(20)));
+    u.totp = { on: false, pending: await seal2(env, secret) };
+    await saveUser(env, u);
+    const label = encodeURIComponent("Blog Studio:" + u.name);
+    return json({ secret, uri: `otpauth://totp/${label}?secret=${secret}&issuer=Blog%20Studio&digits=6&period=30` });
+  }
+  if (route === "/me/2fa/enable" && method === "POST") {
+    const body = await request.json().catch(() => ({}));
+    const u = await env.CMS.get("user:" + session.name, "json");
+    if (!u || !u.totp || !u.totp.pending) return json({ message: "Start the setup first" }, 400);
+    const ip = request.headers.get("CF-Connecting-IP") || "unknown";
+    if (await throttled(env, "u:" + u.name)) return json({ message: "Too many attempts. Try again in 15 minutes." }, 429);
+    let secret; try { secret = b32dec(await unseal2(env, u.totp.pending)); } catch (e) { return json({ message: "Start the setup again" }, 400); }
+    const step = await totpStep(secret, String(body.code || "").replace(/\s/g, ""), 0);
+    if (step < 0) { await recordFail(env, "ip:" + ip); await recordFail(env, "u:" + u.name); return json({ message: "That code is not right. Check the time on your phone and try the next code." }, 400); }
+    const codes = newRecoveryCodes();
+    u.totp = { on: true, s: u.totp.pending, last: step, rc: await Promise.all(codes.map((c) => sha256hex(c))) };
+    u.ver = (u.ver || 0) + 1; // other devices are signed out; this one gets a fresh session below
+    await saveUser(env, u);
+    return json({ ok: true, recovery: codes }, 200, { "Set-Cookie": cookie(await makeSession(env, u), SESSION_HOURS * 3600) });
+  }
+  if (route === "/me/2fa/disable" && method === "POST") {
+    const body = await request.json().catch(() => ({}));
+    const u = await env.CMS.get("user:" + session.name, "json");
+    if (!u || !u.totp || !u.totp.on) return json({ message: "Two-step login is not on" }, 400);
+    const ip = request.headers.get("CF-Connecting-IP") || "unknown";
+    if (await throttled(env, "u:" + u.name)) return json({ message: "Too many attempts. Try again in 15 minutes." }, 429);
+    const pw = await hashPassword(String(body.password || ""), b64u.dec(u.salt));
+    const code = String(body.code || "").replace(/[\s-]/g, "");
+    if (!timingSafeEqual(pw, b64u.dec(u.hash)) || !(await check2fa(env, u, code))) { await recordFail(env, "ip:" + ip); await recordFail(env, "u:" + u.name); return json({ message: "Password or code is wrong" }, 400); }
+    delete u.totp; await saveUser(env, u);
+    return json({ ok: true });
+  }
+
+  if (route === "/gsc/overview" && method === "GET") return handleGsc(env, url);
+
   if (route.startsWith("/gh/")) return proxyGitHub(env, request, url, session);
 
   // ---- admin-only: users and GitHub connection
@@ -354,7 +609,7 @@ async function handleApi(request, env, url) {
     const users = [];
     for (const k of l.keys) {
       const u = await env.CMS.get(k.name, "json");
-      if (u) users.push({ name: u.name, role: u.role, created: u.created });
+      if (u) users.push({ name: u.name, role: u.role, created: u.created, twofa: !!(u.totp && u.totp.on) });
     }
     return json({ users });
   }
@@ -380,6 +635,14 @@ async function handleApi(request, env, url) {
     if (!u) return json({ message: "No such user" }, 404);
     if (!validPass(body.password)) return json({ message: PASS_MSG }, 400);
     await createUser(env, u.name, body.password, u.role, u); // bumps the version: that user is signed out everywhere
+    return json({ ok: true });
+  }
+  m = /^\/users\/([a-z0-9._-]+)\/2fa\/reset$/.exec(route);
+  if (m && method === "POST") {
+    const u = await env.CMS.get("user:" + m[1], "json");
+    if (!u) return json({ message: "No such user" }, 404);
+    delete u.totp; u.ver = (u.ver || 0) + 1; // lost phone: clear it and sign that user out everywhere
+    await saveUser(env, u);
     return json({ ok: true });
   }
   if (route === "/github/connect" && method === "POST") {

@@ -227,5 +227,22 @@ details.iss .ib{padding:0 1.2rem 1rem;font-size:.84rem}
 details.iss .ib p{margin:.3rem 0}
 ul.plain{margin:.4rem 0;padding-left:1.1rem;font-size:.84rem}ul.plain li{margin:.15rem 0;word-break:break-all}
 ol.steps2{margin:.5rem 0 0;padding-left:1.2rem}ol.steps2 li{margin:.55rem 0;font-size:.86rem}ol.steps2 li span{color:var(--mute)}
+.dl{font-weight:700;font-size:.74rem}.dl.up{color:var(--ok)}.dl.down{color:var(--bad)}
+.chartsvg{display:block;width:100%;height:auto;max-height:190px}
+.lg{display:inline-block;width:10px;height:10px;border-radius:3px;vertical-align:middle}.lg.b{background:#1a5fb0}.lg.y{background:#f5b400}
+pre.cmd{background:#0b2b57;color:#e8f0fb;border-radius:10px;padding:.7rem .9rem;overflow:auto;font-size:.8rem;margin:.4rem 0}
+.qrbox{background:#fff;border:1px solid var(--line);border-radius:12px;padding:.8rem;display:inline-block;margin:.6rem 0}
+.qrbox svg{display:block;width:180px;height:180px}
+code.key{background:var(--soft);border-radius:6px;padding:.1rem .4rem;font-size:.82rem;word-break:break-all}
+pre.rcodes{background:#0b2b57;color:#fff;border-radius:12px;padding:1rem;font-size:1rem;line-height:1.8;letter-spacing:.04em;overflow:auto}
+.mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:1rem}
+.mcard{background:#fff;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)}
+.mcard img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;background:#eef2f8}
+.mcard .mi{padding:.6rem .7rem;display:flex;flex-direction:column;gap:.35rem;align-items:flex-start}
+.mcard .mi b{font-size:.78rem;font-weight:600;color:var(--ink);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+ul.lsug{list-style:none;margin:0;padding:0}
+ul.lsug li{display:flex;gap:.5rem;align-items:center;justify-content:space-between;padding:.45rem 0;border-top:1px solid var(--line);font-size:.8rem}
+ul.lsug li:first-child{border-top:0}
+ul.lsug b{display:block;font-weight:600;color:var(--ink);line-height:1.3}ul.lsug small{color:var(--mute);font-size:.7rem}
 .cols.seo{grid-template-columns:minmax(0,1fr) minmax(0,1.3fr)}
 @media(max-width:1000px){.cols.seo{grid-template-columns:1fr}}

@@ -101,10 +101,13 @@ const BOOK = {
   T_SLOW: ["technical", "low", "Slow server response (over 2.5 s from the audit server)", "Slow pages lose visitors and rankings.", "Check hosting, caching and image weight for these pages."],
   T_SLOW_MOBILE: ["technical", "medium", "Mobile PageSpeed score is low (under 50)", "Most visitors are on phones.", "Compress images, defer scripts, reduce page weight."],
   T_COMPRESS: ["technical", "medium", "HTML is not compressed (gzip/brotli)", "Larger downloads, slower on mobile data.", "Enable compression for HTML, CSS and JS."],
-  T_HEAVY: ["technical", "low", "Very large HTML pages (over 500 KB)", "Heavy pages are slow on mobile.", "Move inline CSS/JS to cached files and lazy-load images."],
+  T_HEAVY: ["technical", "low", "Very large HTML pages (over 800 KB before compression)", "Heavy pages are slow on mobile.", "Move inline CSS/JS to cached files and lazy-load images."],
+  T_TBT: ["technical", "medium", "Pages where scripts block the main thread (Total Blocking Time over 600 ms)", "The page feels frozen while it loads, which hurts Core Web Vitals.", "Delay third-party scripts (analytics, chat, bot checks) until after the page is interactive."],
+  T_LCP: ["technical", "medium", "Slow Largest Contentful Paint (over 4 s on mobile)", "The main content appears late. LCP is a Core Web Vital used by Google.", "Remove render-blocking work and make sure above-the-fold content shows at once."],
+  C_CLS: ["content", "medium", "Layout shifts while loading (CLS over 0.1)", "Content jumps around, which hurts Core Web Vitals.", "Give images and embeds a fixed width/height or aspect-ratio."],
   T_LLMS: ["aeo", "low", "llms.txt is missing", "It helps AI assistants understand the site.", "Publish /llms.txt summarising services and key guides."],
   O_TITLE_MISSING: ["onpage", "high", "Pages without a title", "The title is the biggest on-page ranking signal.", "Add a unique descriptive <title>."],
-  O_TITLE_LONG: ["onpage", "medium", "Titles over 60 characters", "They get cut off in Google results.", "Shorten to 60 characters or fewer."],
+  O_TITLE_LONG: ["onpage", "medium", "Titles over 65 characters", "Google cuts titles by pixel width (about 60-65 characters), so the end may be hidden.", "Shorten the title, keeping the main keyword at the start."],
   O_TITLE_SHORT: ["onpage", "low", "Very short titles (under 25 characters)", "Missed chance to include the keyword.", "Describe the page in 30-60 characters."],
   O_TITLE_DUP: ["onpage", "medium", "Duplicate titles", "Pages compete with each other.", "Give every page its own title."],
   O_DESC_MISSING: ["onpage", "high", "Pages without a meta description", "Google invents a snippet instead.", "Write a 70-160 character description."],
@@ -118,7 +121,6 @@ const BOOK = {
   O_TWITTER: ["onpage", "low", "Missing Twitter card tag", "Weak previews on X.", "Add twitter:card."],
   C_THIN: ["content", "medium", "Thin pages (under 300 words)", "Little for search engines to rank.", "Expand with genuinely useful detail, or merge/noindex."],
   C_ALT: ["content", "medium", "Images without alt text", "Missed image search and accessibility.", "Add a short descriptive alt to every meaningful image."],
-  C_IMGDIM: ["content", "low", "Images without width/height", "Layout shifts while loading (CLS).", "Set width and height on images."],
   C_H2: ["content", "low", "Long pages without H2 sections", "Hard to scan; no answer-box structure.", "Break the page into H2 sections."],
   S_NONE: ["structured", "medium", "Pages with no structured data", "No rich-result eligibility.", "Add JSON-LD (Organization, BreadcrumbList, and page type)."],
   S_INVALID: ["structured", "high", "Invalid JSON-LD", "Broken markup is ignored by Google.", "Fix the JSON syntax."],
@@ -193,8 +195,8 @@ const BOOK = {
     if (pg.noindex) flag("T_NOINDEX");
     if (!pg.canonical) flag("T_CANON_MISSING"); else if (norm(pg.canonical) !== p) { flag("T_CANON_DIFF"); issues.T_CANON_DIFF.extra.push(p + " -> " + pg.canonical); }
     if (r.ms > 2500) flag("T_SLOW");
-    if (r.bytes > 500000) flag("T_HEAVY");
-    if (!pg.title) flag("O_TITLE_MISSING"); else { if (pg.title.length > 60) flag("O_TITLE_LONG"); else if (pg.title.length < 25) flag("O_TITLE_SHORT"); (titles[pg.title] = titles[pg.title] || []).push(x.url); }
+    if (r.bytes > 800000) flag("T_HEAVY");
+    if (!pg.title) flag("O_TITLE_MISSING"); else { if (pg.title.length > 65) flag("O_TITLE_LONG"); else if (pg.title.length < 25) flag("O_TITLE_SHORT"); (titles[pg.title] = titles[pg.title] || []).push(x.url); }
     const d = pg.metas["description"];
     if (!d) flag("O_DESC_MISSING"); else { if (d.length < 70 || d.length > 160) flag("O_DESC_LEN"); (descs[d] = descs[d] || []).push(x.url); }
     if (!pg.h1s.length) flag("O_H1_MISSING"); else if (pg.h1s.length > 1) flag("O_H1_MULTI");
@@ -205,7 +207,6 @@ const BOOK = {
     const listing = /^\/(blog|blog\/category\/.+|services|degrees|results|reviews|contact|scheme|cgpa-calculator|vu-notes|vu-admission-portal)?$/.test(p);
     if (pg.words < 300 && !listing && p !== "/") flag("C_THIN");
     if (pg.imgs.some((i) => !i.hasAlt)) flag("C_ALT");
-    if (pg.imgs.length && pg.imgs.filter((i) => !i.dims).length > pg.imgs.length / 2) flag("C_IMGDIM");
     if (pg.words > 600 && !pg.h2count) flag("C_H2");
     if (!pg.ldCount) flag("S_NONE");
     if (pg.invalid) flag("S_INVALID");
@@ -268,7 +269,7 @@ const BOOK = {
       try {
         const j = JSON.parse(fs.readFileSync(path.join(lhDir, f), "utf8")), c = j.categories, a = j.audits;
         if (!c || !c.performance || c.performance.score == null) continue;
-        perf.pages.push({ path: norm(j.finalDisplayedUrl || j.finalUrl || j.requestedUrl), performance: Math.round(c.performance.score * 100), seo: Math.round((c.seo.score || 0) * 100), accessibility: Math.round((c.accessibility.score || 0) * 100), bestPractices: Math.round((c["best-practices"].score || 0) * 100), lcp: a["largest-contentful-paint"].displayValue, cls: a["cumulative-layout-shift"].displayValue, tbt: a["total-blocking-time"].displayValue, fcp: a["first-contentful-paint"].displayValue, si: a["speed-index"].displayValue });
+        perf.pages.push({ path: norm(j.finalDisplayedUrl || j.finalUrl || j.requestedUrl), performance: Math.round(c.performance.score * 100), seo: Math.round(((c.seo || {}).score || 0) * 100), accessibility: Math.round(((c.accessibility || {}).score || 0) * 100), bestPractices: Math.round(((c["best-practices"] || {}).score || 0) * 100), lcp: a["largest-contentful-paint"].displayValue, cls: a["cumulative-layout-shift"].displayValue, tbt: a["total-blocking-time"].displayValue, fcp: a["first-contentful-paint"].displayValue, si: a["speed-index"].displayValue });
         perf.measured = true;
       } catch (e) { /* skip unreadable file */ }
     }
@@ -277,6 +278,12 @@ const BOOK = {
   if (perf.measured) {
     perf.score = Math.round(perf.pages.reduce((x, p) => x + p.performance, 0) / perf.pages.length);
     if (perf.score < 50) add("T_SLOW_MOBILE", "Mobile performance score " + perf.score);
+    const num = (s) => parseFloat(String(s || "0").replace(/,/g, "")) || 0;
+    perf.pages.forEach((p) => {
+      if (num(p.tbt) > 600) add("T_TBT", p.path, "Total Blocking Time " + p.tbt);
+      if (num(p.lcp) > 4) add("T_LCP", p.path, "Largest Contentful Paint " + p.lcp);
+      if (num(p.cls) > 0.1) add("C_CLS", p.path, "CLS " + p.cls);
+    });
     perf.lighthouseSeo = Math.round(perf.pages.reduce((x, p) => x + p.seo, 0) / perf.pages.length);
     perf.accessibility = Math.round(perf.pages.reduce((x, p) => x + p.accessibility, 0) / perf.pages.length);
   }

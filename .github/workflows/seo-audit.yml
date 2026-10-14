@@ -16,6 +16,7 @@ on:
 
 permissions:
   contents: write
+  issues: write
 
 concurrency:
   group: seo-audit
@@ -65,6 +66,25 @@ jobs:
         run: |
           git fetch -q origin blog-drafts 2>/dev/null && git show origin/blog-drafts:reports/seo.json > "$RUNNER_TEMP/prev.json" 2>/dev/null || echo '{}' > "$RUNNER_TEMP/prev.json"
           LH_DIR=lh node scripts/seo-audit.js reports/seo.json "$RUNNER_TEMP/prev.json"
+
+      - name: Alert (GitHub issue, which emails the repo owner) on a drop or a high-priority issue
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set +e
+          node scripts/seo-alert.js reports/seo.json > "$RUNNER_TEMP/alert.md"
+          rc=$?
+          if [ "$rc" -eq 10 ]; then
+            gh label create seo-alert --color d93f0b --description "Automatic SEO alert" 2>/dev/null
+            existing=$(gh issue list --label seo-alert --state open --json number -q '.[0].number')
+            if [ -n "$existing" ]; then
+              gh issue comment "$existing" --body-file "$RUNNER_TEMP/alert.md"
+            else
+              gh issue create --title "SEO alert: score dropped or high-priority issue found" --label seo-alert --body-file "$RUNNER_TEMP/alert.md"
+            fi
+          fi
+          exit 0
 
       - name: Push the report to the blog-drafts branch
         env:

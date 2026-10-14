@@ -97,7 +97,12 @@
     eyeoff: '<path d="M17.9 17.9A10.9 10.9 0 0 1 12 20C5 20 1 12 1 12a19.8 19.8 0 0 1 5.1-5.9M9.9 4.2A10.7 10.7 0 0 1 12 4c7 0 11 8 11 8a19.7 19.7 0 0 1-3.2 4.2M14.1 14.1a3 3 0 1 1-4.2-4.2M1 1l22 22"/>',
     trend: '<path d="M23 6l-9.5 9.5-5-5L1 18M17 6h6v6"/>',
     shield: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/>',
-    search: '<circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/>'
+    search: '<circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/>',
+    image: '<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/>',
+    link: '<path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/>',
+    redirect: '<path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/>',
+    lock: '<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+    chart: '<path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/>'
   };
   function icon(n) { return '<svg class="i" viewBox="0 0 24 24" aria-hidden="true">' + (ICONS[n] || '') + '</svg>'; }
 
@@ -213,6 +218,46 @@
     return { source: 'manual', kind: 'Update', title: first.slice(0, 90), by: verified || (c.commit && c.commit.author && c.commit.author.name) || '', verified: !!verified, slug: '', date: date, url: c.html_url, sha: c.sha, known: false };
   }
 
+  /* ---------- images: compress in the browser before upload ---------- */
+  // Resizes to maxW wide and re-encodes as WebP, lowering quality until it fits targetBytes.
+  function compressImage(file, maxW, targetBytes) {
+    return new Promise(function (resolve, reject) {
+      var img = new Image(), url = URL.createObjectURL(file);
+      img.onload = function () {
+        URL.revokeObjectURL(url);
+        var w = img.naturalWidth, h = img.naturalHeight, s = Math.min(1, maxW / w), cw = Math.round(w * s), ch = Math.round(h * s);
+        var cv = document.createElement('canvas'); cv.width = cw; cv.height = ch; cv.getContext('2d').drawImage(img, 0, 0, cw, ch);
+        var q = 0.86, tries = 0;
+        (function encode() {
+          cv.toBlob(function (b) {
+            if (!b) { reject(new Error('This browser could not compress the image')); return; }
+            if (b.size > targetBytes && q > 0.4 && tries < 6) { q -= 0.1; tries++; encode(); return; }
+            var rd = new FileReader();
+            rd.onload = function () { resolve({ b64: String(rd.result).split(',')[1], dataUrl: rd.result, size: b.size, w: cw, h: ch, ext: b.type === 'image/webp' ? 'webp' : (b.type === 'image/jpeg' ? 'jpg' : 'png') }); };
+            rd.readAsDataURL(b);
+          }, 'image/webp', q);
+        })();
+      };
+      img.onerror = function () { URL.revokeObjectURL(url); reject(new Error('That file is not a readable image')); };
+      img.src = url;
+    });
+  }
+
+  /* ---------- internal link suggestions for the editor ---------- */
+  var STOP = {};
+  ('the and for vu guide how to of in a on with your you is are 2026 2025 what why vulms virtual university from this that about into out can will not get new all').split(' ').forEach(function (w) { STOP[w] = 1; });
+  function toks(s) { return String(s || '').toLowerCase().replace(/[^a-z0-9 ]+/g, ' ').split(/\s+/).filter(function (w) { return w.length > 2 && !STOP[w]; }); }
+  function linkSuggestions(posts, fm, body, selfSlug) {
+    var mine = {}; toks((fm.title || '') + ' ' + (fm.h1 || '') + ' ' + (fm.keywords || []).join(' ') + ' ' + String(body || '').replace(/<[^>]+>/g, ' ').slice(0, 1500)).forEach(function (w) { mine[w] = (mine[w] || 0) + 1; });
+    var linked = {}; (String(body || '').match(/href="\/blog\/([a-z0-9-]+)/g) || []).forEach(function (m) { linked[m.replace('href="/blog/', '')] = 1; });
+    return posts.filter(function (p) { return p.kind !== 'draft' && p.slug !== selfSlug && !linked[p.slug]; }).map(function (p) {
+      var seen = {}, sc = 0;
+      toks(p.title + ' ' + p.slug.replace(/-/g, ' ')).forEach(function (w) { if (!seen[w] && mine[w]) { seen[w] = 1; sc += 2 + Math.min(2, mine[w] - 1) * 0.5; } });
+      if (sc > 0 && fm.category && p.category === fm.category) sc += 1.5;
+      return { slug: p.slug, title: p.title, category: p.category, score: sc };
+    }).filter(function (x) { return x.score >= 2; }).sort(function (a, b) { return b.score - a.score; }).slice(0, 6);
+  }
+
   /* ---------- text diff for update proposals ---------- */
   function textBlocks(html) {
     var t = String(html)
@@ -246,6 +291,7 @@
     fmtDate: fmtDate, rel: rel, toast: toast, b64enc: b64enc, b64dec: b64dec, pool: pool, icon: icon,
     api: api, gh: gh, getFile: getFile, putFile: putFile, delFile: delFile, listDir: listDir, dispatch: dispatch,
     parsePost: parsePost, serializePost: serializePost, blankPost: blankPost, tocFromBody: tocFromBody,
+    compressImage: compressImage, linkSuggestions: linkSuggestions,
     seoChecks: seoChecks, commitMsg: commitMsg, parseCommit: parseCommit, textBlocks: textBlocks, diffBlocks: diffBlocks
   };
 })();
