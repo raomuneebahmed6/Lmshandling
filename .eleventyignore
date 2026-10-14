@@ -5,3 +5,7 @@
 # .claude/agents/seo-agent.md publicly at /.claude/agents/seo-agent/.
 .claude/
 node_modules/
+
+# Blog Studio drafts/scripts are not site pages
+drafts/
+scripts/

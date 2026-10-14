@@ -1,14 +1,8 @@
-# Overrides for the CMS admin panel only. The site-wide CSP in the root
-# .htaccess blocks 'unsafe-eval', which Decap CMS needs (its ajv-based
-# JSON-schema validator compiles validator functions via new Function()
-# at runtime). Scoping the relaxed policy to this directory keeps the
-# rest of the site under the stricter policy.
+# Blog Studio (admin) only. No inline or eval'd script is allowed: every
+# script is a same-origin file, so a malicious draft cannot run code here and
+# steal the GitHub token. Styles may be inline (preview iframe uses them).
 <IfModule mod_headers.c>
-  Header set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob: https:; connect-src 'self' https://api.github.com https://github.com https://cloudflareinsights.com; frame-ancestors 'self'; base-uri 'self'; object-src 'none'"
-</IfModule>
-
-# Hostinger/Apache serves .yml as text/plain by default, which Decap CMS's
-# config fetcher warns about (though it still parses it).
-<IfModule mod_mime.c>
-  AddType text/yaml .yml
+  Header set Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob: https:; connect-src 'self' https://api.github.com; frame-ancestors 'none'; base-uri 'self'; object-src 'none'; form-action 'self'"
+  Header set X-Frame-Options "DENY"
+  Header set Cache-Control "no-store"
 </IfModule>

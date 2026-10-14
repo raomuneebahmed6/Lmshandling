@@ -67,19 +67,15 @@ function buildBlogPosts(collectionApi) {
 }
 
 module.exports = function (eleventyConfig) {
-  // ---- CMS admin bundle: copied from node_modules at build time rather
-  // than committed to git, so the 5MB+ decap-cms.js file never bloats the
-  // repo and always matches the version pinned in package.json. Requires
-  // `npm install` to have run first (true for both local builds and the
-  // deploy workflow).
+  // ---- Blog Studio (admin/): js-yaml and marked are copied from node_modules
+  // at build time so the admin page loads them from its own origin and runs
+  // under the strict /admin/ Content-Security-Policy. Requires `npm ci` first
+  // (true for both local builds and the deploy workflow).
   eleventyConfig.on("eleventy.before", () => {
     const fs = require("fs");
-    const path = require("path");
     fs.mkdirSync("admin/vendor", { recursive: true });
-    fs.copyFileSync(
-      "node_modules/decap-cms/dist/decap-cms.js",
-      "admin/vendor/decap-cms.js"
-    );
+    fs.copyFileSync("node_modules/js-yaml/dist/js-yaml.min.js", "admin/vendor/js-yaml.min.js");
+    fs.copyFileSync("node_modules/marked/lib/marked.umd.js", "admin/vendor/marked.umd.js");
   });
 
   // ---- Existing static content: copied through untouched, byte-identical ----
@@ -109,7 +105,7 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("favicon.ico");
   eleventyConfig.addPassthroughCopy(".htaccess");
 
-  // ---- CMS admin panel (self-hosted, no CDN dependency) ----
+  // ---- Blog Studio admin panel (self-hosted, no CDN dependency) ----
   eleventyConfig.addPassthroughCopy("admin");
 
   // sitemap.xml and llms.txt are intentionally NOT passed through here —
