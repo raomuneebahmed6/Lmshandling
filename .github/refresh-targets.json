@@ -1,0 +1,347 @@
+{
+  "source": "Google Search Console, 2026-07-15 to 2026-10-12",
+  "note": "Real queries that already show this page in Google. Use them to write the title, meta description, H2s and FAQ answers. Position is the average rank (1 = top).",
+  "pages": {
+    "vu-summer-semester-registration-guide": {
+      "impressions": 3752,
+      "clicks": 19,
+      "ctrPercent": 0.51,
+      "topQueries": [
+        {
+          "query": "vu summer semester 2026",
+          "impressions": 1716,
+          "clicks": 5,
+          "position": 8.5
+        },
+        {
+          "query": "summer semester vu 2026",
+          "impressions": 543,
+          "clicks": 0,
+          "position": 8.9
+        },
+        {
+          "query": "summer semester vu",
+          "impressions": 392,
+          "clicks": 0,
+          "position": 7.6
+        },
+        {
+          "query": "vu summer semester",
+          "impressions": 186,
+          "clicks": 2,
+          "position": 8.2
+        },
+        {
+          "query": "vu summer semester schedule",
+          "impressions": 132,
+          "clicks": 0,
+          "position": 9.1
+        },
+        {
+          "query": "what is summer semester in vu",
+          "impressions": 98,
+          "clicks": 0,
+          "position": 7.6
+        },
+        {
+          "query": "how to apply for summer semester in vu",
+          "impressions": 95,
+          "clicks": 3,
+          "position": 4.7
+        },
+        {
+          "query": "how to enroll in summer semester in vu",
+          "impressions": 69,
+          "clicks": 2,
+          "position": 5.8
+        },
+        {
+          "query": "summer semester 2026 vu",
+          "impressions": 67,
+          "clicks": 0,
+          "position": 9.2
+        },
+        {
+          "query": "vulms summer semester",
+          "impressions": 55,
+          "clicks": 1,
+          "position": 8.1
+        },
+        {
+          "query": "vu summer semester 2026 fee",
+          "impressions": 47,
+          "clicks": 1,
+          "position": 7.9
+        },
+        {
+          "query": "virtual university summer semester 2026",
+          "impressions": 47,
+          "clicks": 0,
+          "position": 9.2
+        }
+      ]
+    },
+    "vu-result-guide": {
+      "impressions": 122,
+      "clicks": 1,
+      "ctrPercent": 0.82,
+      "topQueries": [
+        {
+          "query": "vu result",
+          "impressions": 35,
+          "clicks": 0,
+          "position": 5.5
+        },
+        {
+          "query": "vulms result",
+          "impressions": 18,
+          "clicks": 0,
+          "position": 5.8
+        },
+        {
+          "query": "vulms login result",
+          "impressions": 17,
+          "clicks": 0,
+          "position": 7.4
+        },
+        {
+          "query": "virtual university result",
+          "impressions": 10,
+          "clicks": 0,
+          "position": 2.9
+        },
+        {
+          "query": "vu results",
+          "impressions": 6,
+          "clicks": 0,
+          "position": 6.2
+        },
+        {
+          "query": "vulms grade book",
+          "impressions": 5,
+          "clicks": 0,
+          "position": 7.2
+        },
+        {
+          "query": "vu result check",
+          "impressions": 4,
+          "clicks": 0,
+          "position": 3.5
+        },
+        {
+          "query": "vu score",
+          "impressions": 4,
+          "clicks": 0,
+          "position": 8.3
+        },
+        {
+          "query": "lms vu result",
+          "impressions": 2,
+          "clicks": 0,
+          "position": 7
+        },
+        {
+          "query": "vu grades",
+          "impressions": 2,
+          "clicks": 0,
+          "position": 6
+        },
+        {
+          "query": "vu lms result",
+          "impressions": 2,
+          "clicks": 0,
+          "position": 5.5
+        },
+        {
+          "query": "vu result portal",
+          "impressions": 2,
+          "clicks": 0,
+          "position": 9
+        }
+      ]
+    },
+    "vu-attendance-guide": {
+      "impressions": 91,
+      "clicks": 0,
+      "ctrPercent": 0,
+      "topQueries": [
+        {
+          "query": "vu attendance",
+          "impressions": 49,
+          "clicks": 0,
+          "position": 8.9
+        },
+        {
+          "query": "attendance vu",
+          "impressions": 25,
+          "clicks": 0,
+          "position": 7.7
+        },
+        {
+          "query": "academy attendance vu",
+          "impressions": 6,
+          "clicks": 0,
+          "position": 5.8
+        },
+        {
+          "query": "vu attendance policy",
+          "impressions": 5,
+          "clicks": 0,
+          "position": 6.2
+        },
+        {
+          "query": "vu academy attendance",
+          "impressions": 2,
+          "clicks": 0,
+          "position": 8.5
+        },
+        {
+          "query": "vulms",
+          "impressions": 2,
+          "clicks": 0,
+          "position": 50
+        },
+        {
+          "query": "vulms help",
+          "impressions": 1,
+          "clicks": 0,
+          "position": 51
+        },
+        {
+          "query": "vulms login",
+          "impressions": 1,
+          "clicks": 0,
+          "position": 33
+        }
+      ]
+    },
+    "eco401-economics-notes": {
+      "impressions": 63,
+      "clicks": 0,
+      "ctrPercent": 0,
+      "topQueries": [
+        {
+          "query": "eco401 economics",
+          "impressions": 23,
+          "clicks": 0,
+          "position": 9.3
+        },
+        {
+          "query": "eco401",
+          "impressions": 20,
+          "clicks": 0,
+          "position": 6.5
+        },
+        {
+          "query": "eco 401",
+          "impressions": 8,
+          "clicks": 0,
+          "position": 6.4
+        },
+        {
+          "query": "econ 4010 class notes",
+          "impressions": 7,
+          "clicks": 0,
+          "position": 17.3
+        },
+        {
+          "query": "econ 3801 class notes",
+          "impressions": 2,
+          "clicks": 0,
+          "position": 12
+        },
+        {
+          "query": "econ 4010 textbook notes",
+          "impressions": 2,
+          "clicks": 0,
+          "position": 13.5
+        },
+        {
+          "query": "vu finalterm",
+          "impressions": 1,
+          "clicks": 0,
+          "position": 36
+        }
+      ]
+    },
+    "virtual-university-admission-guide": {
+      "impressions": 61,
+      "clicks": 0,
+      "ctrPercent": 0,
+      "topQueries": [
+        {
+          "query": "virtual university mba admission 2026",
+          "impressions": 9,
+          "clicks": 0,
+          "position": 7.6
+        },
+        {
+          "query": "virtual university admissions",
+          "impressions": 4,
+          "clicks": 0,
+          "position": 16
+        },
+        {
+          "query": "yes",
+          "impressions": 3,
+          "clicks": 0,
+          "position": 2.3
+        },
+        {
+          "query": "admission open in virtual university",
+          "impressions": 2,
+          "clicks": 0,
+          "position": 15.5
+        },
+        {
+          "query": "mba virtual university admission 2026",
+          "impressions": 2,
+          "clicks": 0,
+          "position": 9
+        },
+        {
+          "query": "virtual university admission",
+          "impressions": 2,
+          "clicks": 0,
+          "position": 36.5
+        },
+        {
+          "query": "virtual university admission 2024",
+          "impressions": 2,
+          "clicks": 0,
+          "position": 27
+        },
+        {
+          "query": "virtual university admission 2026",
+          "impressions": 2,
+          "clicks": 0,
+          "position": 28
+        },
+        {
+          "query": "virtual university admission open",
+          "impressions": 2,
+          "clicks": 0,
+          "position": 15.5
+        },
+        {
+          "query": "virtual university apply online",
+          "impressions": 2,
+          "clicks": 0,
+          "position": 35.5
+        },
+        {
+          "query": "virtual university of pakistan admission",
+          "impressions": 2,
+          "clicks": 0,
+          "position": 31.5
+        },
+        {
+          "query": "2 option",
+          "impressions": 1,
+          "clicks": 0,
+          "position": 3
+        }
+      ]
+    }
+  }
+}

@@ -21,14 +21,19 @@ First read, and follow as the source of truth:
    - `cp content/blog/<slug>.md drafts/refresh/<slug>.md`  (or)
    - `cp blog/<slug>.html drafts/refresh/<slug>.html`
    Create the folder first if needed (`drafts/refresh/`). Use Edit on the copy; do not rewrite the whole file from scratch.
-3. Research: use WebSearch/WebFetch only for facts that change (dates, fees, rules, procedures, semester names, deadlines). Prefer official VU sources (vu.edu.pk). If you cannot verify a fact, rewrite it as general guidance ("confirm the exact date on VULMS") instead of stating a number. Never invent statistics, dates, fees, quotes or results.
-4. Refresh the content:
+3. Real search data: read `.github/refresh-targets.json`. If the slug is listed, those are the exact queries people typed in Google when this page was shown, with impressions, clicks and average position. These pages already rank on page 1 but get few clicks, so the goal is a higher click-through rate and a better position WITHOUT losing what already ranks:
+   - Rewrite `<title>` and the meta description so the main real query appears naturally near the start, the promise is specific (what the reader gets, the year, a number or a step count) and it reads like a human wrote it. Never clickbait, never a guarantee.
+   - Make sure the page answers each top query directly under its own H2 or FAQ question (40-70 word answer first), using the searcher's wording.
+   - Keep every heading, section and fact that already works. Add and sharpen; do not remove ranking content.
+   - If a slug is not listed, improve the title/description and FAQs from the page's own topic using the same rules.
+4. Research: use WebSearch/WebFetch only for facts that change (dates, fees, rules, procedures, semester names, deadlines). Prefer official VU sources (vu.edu.pk). If you cannot verify a fact, rewrite it as general guidance ("confirm the exact date on VULMS") instead of stating a number. Never invent statistics, dates, fees, quotes or results.
+5. Refresh the content:
    - Update anything outdated (years, semesters, "this year", old dates) and fix anything inaccurate.
    - Make the first screen answer-first: a clear Quick Answer / opening answer (40-70 words) that stands alone.
    - Strengthen thin sections with concrete, specific, student-useful detail; add 1-2 genuinely useful FAQs if the topic needs them (visible FAQ and FAQPage JSON-LD must stay in sync, same count and text).
    - Fix weak internal linking: add 2-4 links to relevant existing pages (`/blog/<slug>` that really exist, services, `/vu-notes`, `/cgpa-calculator`).
    - Remove filler and keyword stuffing. Keep the voice and structure of the existing page.
-5. Set the modified date to `TODAY` everywhere it appears:
+6. Set the modified date to `TODAY` everywhere it appears:
    - Markdown post: frontmatter `dateModified: "TODAY"`.
    - Legacy HTML: JSON-LD `"dateModified"`, `article:modified_time` meta, and any visible "Updated" label.
    (Never change `datePublished`.)
