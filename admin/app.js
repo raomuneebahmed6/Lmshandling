@@ -667,14 +667,27 @@
       c.onclick = function (e) { var b = e.target.closest('[data-copy]'); if (b && navigator.clipboard) navigator.clipboard.writeText(b.getAttribute('data-copy')).then(function () { L.toast('URL copied'); }); };
       document.getElementById('mup').onchange = function (e) {
         var files = Array.prototype.slice.call(e.target.files); if (!files.length) return;
-        L.toast('Compressing and uploading ' + files.length + ' image(s)…');
+        L.toast('Compressing ' + files.length + ' image(s)…');
+        // 1) compress, 2) show a preview of exactly what will be uploaded, 3) upload only after "Upload"
         L.pool(files, 2, function (f) {
           return L.compressImage(f, 1600, 300 * 1024).then(function (c2) {
             var base = f.name.replace(/\.[^.]+$/, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'image', name = base + '.' + c2.ext;
             if (imgs.some(function (i) { return i.name === name; })) name = base + '-' + Date.now().toString(36) + '.' + c2.ext;
-            return L.putFile('assets/blog-images/' + name, L.BRANCH, c2.b64, '[manual] Upload image ' + name + ' (by ' + me.name + ')');
+            return { name: name, c: c2, before: f.size };
           });
-        }).then(function () { L.toast('Uploaded. It is live after the next deploy (about a minute).'); pageMedia(); }).catch(function (er) { L.toast(er.message, true); });
+        }).then(function (items) {
+          var m = document.createElement('div'); m.className = 'modal';
+          m.innerHTML = '<div class="box" style="max-width:900px"><div class="hd"><b>Preview before upload (' + items.length + ')</b><button class="btn sm" id="mpx">Cancel</button></div><div style="padding:1.2rem;overflow:auto"><div class="mgrid">' +
+            items.map(function (it) { return '<div class="mcard"><img src="' + it.c.dataUrl + '" alt=""><div class="mi"><b title="' + esc(it.name) + '">' + esc(it.name) + '</b><span class="pill ok">' + Math.round(it.before / 1024) + ' → ' + Math.round(it.c.size / 1024) + ' KB</span></div></div>'; }).join('') +
+            '</div><div style="margin-top:1rem"><button class="btn gold" id="mpok">Upload ' + items.length + ' image(s)</button></div></div></div>';
+          document.body.appendChild(m);
+          m.querySelector('#mpx').onclick = function () { m.remove(); document.getElementById('mup').value = ''; };
+          m.querySelector('#mpok').onclick = function () {
+            this.disabled = true; this.textContent = 'Uploading…';
+            L.pool(items, 2, function (it) { return L.putFile('assets/blog-images/' + it.name, L.BRANCH, it.c.b64, '[manual] Upload image ' + it.name + ' (by ' + me.name + ')'); })
+              .then(function () { m.remove(); L.toast('Uploaded. It is live after the next deploy (about a minute).'); pageMedia(); }).catch(function (er) { m.remove(); L.toast(er.message, true); });
+          };
+        }).catch(function (er) { L.toast(er.message, true); });
       };
     }).catch(function (e) { errPage('media', e); });
   }
@@ -1062,12 +1075,22 @@
     render();
   }
   // Publishing without a cover picks the default image; make a branded one instead.
+  // The generated cover is shown first; nothing is uploaded until the user confirms.
   function ensureCover() {
     var fm = cur.fm;
     if (cur.image || (fm.ogImage && fm.ogImage !== 'default-cover.png')) return Promise.resolve();
     return L.makeCover({ title: fm.h1 || fm.title, label: L.catLabel(fm.category), highlights: fm.coverHighlights, variant: 'navy' }).then(function (c) {
-      cur.image = { name: (fm.canonicalSlug || 'cover') + '-cover.' + c.ext, b64: c.b64 }; fm.ogImage = cur.image.name;
-    }).catch(function () { /* keep the default image if the browser cannot draw */ });
+      return new Promise(function (resolve, reject) {
+        var m = document.createElement('div'); m.className = 'modal';
+        m.innerHTML = '<div class="box" style="max-width:760px"><div class="hd"><b>Cover for this post</b><button class="btn sm" id="cpx">Cancel</button></div><div style="padding:1.2rem;overflow:auto"><img src="' + c.dataUrl + '" alt="Cover preview" width="1200" height="630" style="display:block;width:100%;height:auto;border-radius:12px;border:1px solid var(--line)">' +
+          '<p class="hint">You did not choose an image, so this branded cover was made from the title (' + Math.round(c.size / 1024) + ' KB). It is uploaded together with the post.</p>' +
+          '<div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.8rem"><button class="btn gold" id="cpok">Publish with this cover</button><button class="btn ghost" id="cpdes">Design another</button></div></div></div>';
+        document.body.appendChild(m);
+        m.querySelector('#cpx').onclick = function () { m.remove(); reject(new Error('cancelled')); };
+        m.querySelector('#cpdes').onclick = function () { m.remove(); reject(new Error('cancelled')); openCoverDesigner(); };
+        m.querySelector('#cpok').onclick = function () { cur.image = { name: (fm.canonicalSlug || 'cover') + '-cover.' + c.ext, b64: c.b64 }; fm.ogImage = cur.image.name; m.remove(); resolve(); };
+      });
+    }, function () { /* the browser cannot draw covers: keep the default image */ });
   }
   function pickImage(e) {
     var f = e.target.files[0]; if (!f) return;
@@ -1124,15 +1147,19 @@
     L.getFile(path, L.BRANCH).then(function (existing) {
       if (existing && !cur.published) throw new Error('A live post already uses the slug "' + fm.canonicalSlug + '". Change the slug.');
       if (!window.confirm((cur.published ? 'Update the live post' : 'Publish this post') + ' on lmshandling.com now?\n\n' + fm.title)) { btn.disabled = false; return null; }
-      var chain = ensureCover();
-      if (cur.image) chain = chain.then(function () { return L.getFile('assets/blog-images/' + cur.image.name, L.BRANCH); }).then(function (img) { return L.putFile('assets/blog-images/' + cur.image.name, L.BRANCH, cur.image.b64, 'Blog image ' + cur.image.name, img && img.sha); });
+      // the cover (chosen, designed, or auto-made after a preview) must be uploaded BEFORE the post that points to it;
+      // cur.image is only known once ensureCover() has finished, so it is checked inside the chain
+      var chain = ensureCover().then(function () {
+        if (!cur.image) return null;
+        return L.getFile('assets/blog-images/' + cur.image.name, L.BRANCH).then(function (img) { return L.putFile('assets/blog-images/' + cur.image.name, L.BRANCH, cur.image.b64, '[manual] Blog image ' + cur.image.name + ' (by ' + me.name + ')', img && img.sha); });
+      });
       return chain.then(function () { return L.putFile(path, L.BRANCH, L.b64enc(L.serializePost(fm, cur.body)), L.commitMsg('manual', cur.published ? 'Update' : 'Publish', fm.title, fm.canonicalSlug, me.name), existing && existing.sha); })
         .then(function (res) {
           var after = Promise.resolve();
           if (cur.kind === 'draft') after = L.getFile('drafts/' + cur.name, L.DRAFTS).then(function (d) { return d ? L.delFile('drafts/' + cur.name, L.DRAFTS, d.sha, 'Published ' + fm.canonicalSlug) : null; }).catch(function () { /* cleanup is best effort */ });
           return after.then(function () { data = null; showDeploy(res.commit.sha, fm.canonicalSlug); });
         });
-    }).catch(function (e) { L.toast(e.message, true); btn.disabled = false; });
+    }).catch(function (e) { if (e.message !== 'cancelled') L.toast(e.message, true); btn.disabled = false; });
   }
   function showDeploy(sha, slug) {
     var url = L.SITE + '/blog/' + slug;
