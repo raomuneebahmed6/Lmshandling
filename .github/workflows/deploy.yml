@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - claude/website-blogs-seo-3jpp70
+    # Saving Blog Studio settings must not trigger a site rebuild.
+    paths-ignore:
+      - ".github/cms-settings.json"
 
 permissions:
   contents: read

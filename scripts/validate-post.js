@@ -163,4 +163,4 @@ if (require.main === module) {
   console.log(`OK: ${r.words} words, ${r.warnings.length} warning(s).`);
 }
 
-module.exports = { validate, CATEGORIES };
+module.exports = { validate, CATEGORIES, knownUrls, decodeLen };

@@ -1,0 +1,242 @@
+/* Blog Studio helpers: API access, post parsing, SEO checks, activity log, diff.
+ * No DOM here except toast(); everything is exposed on window.L.
+ */
+(function () {
+  'use strict';
+
+  var REPO = 'raomuneebahmed6/Lmshandling';
+  var BRANCH = 'claude/website-blogs-seo-3jpp70'; // the deployed branch
+  var DRAFTS = 'blog-drafts';                      // never deployed
+  var SITE = 'https://lmshandling.com';
+  var CATS = [
+    ['course-code-guides', 'Course Code Guides'], ['exam-preparation', 'Exam Preparation'],
+    ['lms-handling', 'LMS Handling'], ['admissions', 'Admissions'],
+    ['final-year-project', 'Final Year Project'], ['registration', 'Registration']
+  ];
+  var FM_ORDER = ['layout', 'permalink', 'title', 'metaDescription', 'keywords', 'canonicalSlug', 'category', 'ogImage',
+    'datePublished', 'dateModified', 'readTime', 'h1', 'leadParagraph', 'quickAnswer', 'tocEntries', 'keyTakeaways',
+    'faq', 'tags', 'relatedGuides', 'coverEyebrow', 'coverHighlights', 'coverContactLine', 'coverCtaText'];
+
+  /* ---------- tiny utils ---------- */
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function words(s) { return String(s || '').replace(/<[^>]+>/g, ' ').split(/\s+/).filter(Boolean).length; }
+  function plainLen(s) { return String(s || '').length; }
+  function today() { return new Date().toISOString().slice(0, 10); }
+  function slugify(s) { return String(s).toLowerCase().replace(/&/g, ' and ').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').split('-').slice(0, 9).join('-'); }
+  function catLabel(slug) { var c = CATS.filter(function (x) { return x[0] === slug; })[0]; return c ? c[1] : (slug || 'Uncategorised'); }
+  function daysSince(d) {
+    if (!d) return 9999;
+    var t = Date.parse(String(d).slice(0, 10) + 'T00:00:00Z');
+    return isNaN(t) ? 9999 : Math.floor((Date.now() - t) / 86400000);
+  }
+  var MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  function fmtDate(d) {
+    if (!d) return '';
+    var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(d));
+    if (m) return parseInt(m[3], 10) + ' ' + MON[parseInt(m[2], 10) - 1] + ' ' + m[1];
+    var x = new Date(d); return isNaN(x) ? '' : x.getDate() + ' ' + MON[x.getMonth()] + ' ' + x.getFullYear();
+  }
+  function rel(d) {
+    if (!d) return '';
+    var t = /^\d{4}-\d{2}-\d{2}$/.test(String(d)) ? Date.parse(d + 'T00:00:00Z') : Date.parse(d);
+    if (isNaN(t)) return '';
+    var days = Math.floor((Date.now() - t) / 86400000);
+    if (days < 1) { var h = Math.floor((Date.now() - t) / 3600000); return h < 1 ? 'just now' : (h < 24 && !/^\d{4}-\d{2}-\d{2}$/.test(String(d)) ? h + 'h ago' : 'today'); }
+    if (days === 1) return 'yesterday';
+    if (days < 30) return days + ' days ago';
+    if (days < 365) return Math.floor(days / 30) + ' mo ago';
+    return Math.floor(days / 365) + ' yr ago';
+  }
+  function toast(msg, isErr) {
+    var t = document.getElementById('toast'); if (!t) return;
+    t.textContent = msg; t.className = 'show' + (isErr ? ' err' : '');
+    clearTimeout(toast._t); toast._t = setTimeout(function () { t.className = ''; }, isErr ? 6500 : 2600);
+  }
+  function b64dec(b64) {
+    var bin = atob(String(b64).replace(/\s/g, '')), bytes = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return new TextDecoder().decode(bytes);
+  }
+  function b64enc(str) {
+    var bytes = new TextEncoder().encode(str), bin = '';
+    for (var i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+    return btoa(bin);
+  }
+  function pool(items, n, fn) {
+    var out = new Array(items.length), i = 0;
+    function worker() {
+      if (i >= items.length) return Promise.resolve();
+      var k = i++;
+      return Promise.resolve(fn(items[k], k)).then(function (r) { out[k] = r; }).then(worker);
+    }
+    var w = []; for (var j = 0; j < Math.min(n, items.length); j++) w.push(worker());
+    return Promise.all(w).then(function () { return out; });
+  }
+
+  /* ---------- icons ---------- */
+  var ICONS = {
+    home: '<path d="M3 11l9-8 9 8v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z"/>',
+    file: '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/>',
+    plus: '<path d="M12 5v14M5 12h14"/>',
+    pen: '<path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
+    inbox: '<path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.5 5h13L22 12v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-6z"/>',
+    folder: '<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
+    tag: '<path d="M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/>',
+    activity: '<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>',
+    users: '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/>',
+    logout: '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>',
+    ext: '<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/>',
+    refresh: '<path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.5 9a9 9 0 0 1 14.9-3.4L23 10M1 14l4.6 4.4A9 9 0 0 0 20.5 15"/>',
+    check: '<path d="M20 6L9 17l-5-5"/>',
+    clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+    menu: '<path d="M3 6h18M3 12h18M3 18h18"/>',
+    trash: '<path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>',
+    edit: '<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4z"/>',
+    alert: '<path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0zM12 9v4M12 17h.01"/>'
+  };
+  function icon(n) { return '<svg class="i" viewBox="0 0 24 24" aria-hidden="true">' + (ICONS[n] || '') + '</svg>'; }
+
+  /* ---------- API (everything goes through the Worker) ---------- */
+  function api(path, opts) {
+    opts = opts || {};
+    var headers = { 'X-Studio': '1' };
+    if (opts.body) headers['Content-Type'] = 'application/json';
+    return fetch('/api' + path, { method: opts.method || 'GET', credentials: 'same-origin', headers: headers, body: opts.body ? JSON.stringify(opts.body) : undefined })
+      .then(function (r) {
+        if (r.status === 404 && opts.soft404) return null;
+        return (r.status === 204 ? Promise.resolve(null) : r.json().catch(function () { return null; })).then(function (data) {
+          if (r.status === 401 && !opts.noAuthRedirect) { window.dispatchEvent(new Event('studio:unauth')); }
+          if (!r.ok) { var e = new Error((data && data.message) || ('Error ' + r.status)); e.status = r.status; throw e; }
+          return data;
+        });
+      });
+  }
+  function gh(path, opts) { return api('/gh/' + path.replace(/^\//, ''), opts); }
+  function getFile(path, ref) {
+    return gh('repos/' + REPO + '/contents/' + path + '?ref=' + encodeURIComponent(ref), { soft404: true }).then(function (d) {
+      if (!d || Array.isArray(d)) return null;
+      return { text: d.content ? b64dec(d.content) : '', sha: d.sha };
+    });
+  }
+  function putFile(path, branch, contentB64, message, sha) {
+    var body = { message: message, content: contentB64, branch: branch }; if (sha) body.sha = sha;
+    return gh('repos/' + REPO + '/contents/' + path, { method: 'PUT', body: body });
+  }
+  function delFile(path, branch, sha, message) {
+    return gh('repos/' + REPO + '/contents/' + path, { method: 'DELETE', body: { message: message, sha: sha, branch: branch } });
+  }
+  function listDir(path, ref) {
+    return gh('repos/' + REPO + '/contents/' + path + '?ref=' + encodeURIComponent(ref), { soft404: true }).then(function (d) { return Array.isArray(d) ? d : []; });
+  }
+  function dispatch(workflow, inputs) {
+    return gh('repos/' + REPO + '/actions/workflows/' + workflow + '/dispatches', { method: 'POST', body: { ref: BRANCH, inputs: inputs } });
+  }
+
+  /* ---------- post files ---------- */
+  function parsePost(text) {
+    var m = /^﻿?---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/.exec(text);
+    if (!m) throw new Error('File has no frontmatter');
+    var fm = window.jsyaml.load(m[1]) || {};
+    ['datePublished', 'dateModified'].forEach(function (k) { if (fm[k] instanceof Date) fm[k] = fm[k].toISOString().slice(0, 10); });
+    return { fm: fm, body: m[2].replace(/^\r?\n/, '') };
+  }
+  function serializePost(fm, body) {
+    var ordered = {};
+    FM_ORDER.forEach(function (k) { if (fm[k] !== undefined) ordered[k] = fm[k]; });
+    Object.keys(fm).forEach(function (k) { if (ordered[k] === undefined) ordered[k] = fm[k]; });
+    return '---\n' + window.jsyaml.dump(ordered, { lineWidth: -1, noRefs: true }) + '---\n' + body.replace(/\s+$/, '') + '\n';
+  }
+  function blankPost() {
+    return {
+      layout: 'layouts/blog-post.njk', permalink: '/blog/{{ canonicalSlug }}.html', title: '', metaDescription: '', keywords: [],
+      canonicalSlug: '', category: 'exam-preparation', ogImage: 'default-cover.png', datePublished: today(), dateModified: today(), readTime: 5,
+      h1: '', leadParagraph: '', quickAnswer: '', tocEntries: [], keyTakeaways: [], faq: [], tags: [], relatedGuides: [],
+      coverEyebrow: 'NIBAHA HAQ 0329 5209868', coverHighlights: [], coverContactLine: 'FOR VULMS SUPPORT, CONTACT 03295209868', coverCtaText: 'Get Help'
+    };
+  }
+  function tocFromBody(body) {
+    var out = [], re = /<h2[^>]*\sid="([^"]+)"[^>]*>([\s\S]*?)<\/h2>/g, m;
+    while ((m = re.exec(body))) out.push({ anchor: m[1], label: m[2].replace(/<[^>]+>/g, '').trim() });
+    return out;
+  }
+
+  /* ---------- SEO checks ---------- */
+  function seoChecks(fm, body) {
+    var kw = String((fm.keywords && fm.keywords[0]) || '').toLowerCase().trim();
+    var has = function (s) { return kw && String(s || '').toLowerCase().indexOf(kw) !== -1; };
+    var first100 = String(body).replace(/<[^>]+>/g, ' ').split(/\s+/).slice(0, 100).join(' ');
+    var toc = tocFromBody(body), wc = words(body), faq = (fm.faq || []).filter(function (f) { return f.question && f.answer; });
+    var links = (String(body).match(/href="\/[^"]*"/g) || []).length;
+    var qa = words(fm.quickAnswer), md = plainLen(fm.metaDescription), tl = plainLen(fm.title) + 14;
+    var forbidden = /<\s*(script|iframe|style|object|embed|form|link|meta|base)\b/i.test(body) || /\son[a-z]+\s*=/i.test(String(body).replace(/data-[a-z-]+="[^"]*"/g, '')) || /javascript:|data:text\/html/i.test(body);
+    var C = [];
+    function add(label, ok, block) { C.push({ ok: !!ok, label: label, block: !!block && !ok }); }
+    add('Primary keyword set (first keyword)', kw, true);
+    add('Title + " | Nibaha Haq" is 30-60 chars (now ' + tl + ')', tl >= 30 && tl <= 60, true);
+    add('Keyword in title', has(fm.title));
+    add('Meta description 70-160 chars (now ' + md + ')', md >= 70 && md <= 160, true);
+    add('Keyword in meta description', has(fm.metaDescription));
+    add('Slug is clean lowercase-hyphen', /^[a-z0-9]+(-[a-z0-9]+)*$/.test(fm.canonicalSlug || ''), true);
+    add('Keyword in slug', kw && String(fm.canonicalSlug || '').indexOf(slugify(kw).split('-')[0]) !== -1);
+    add('H1 present and contains keyword', !!fm.h1 && has(fm.h1), !fm.h1);
+    add('Keyword in first 100 words', has(first100) || has(fm.leadParagraph));
+    add('Quick answer 40-70 words (now ' + qa + ')', qa >= 40 && qa <= 70);
+    add('Body length 800+ words (now ' + wc + ')', wc >= 800, wc < 350);
+    add('5+ sections (<h2 id="..."> )', toc.length >= 5, toc.length < 2);
+    add('3+ internal links in body (now ' + links + ')', links >= 3);
+    add('4+ FAQ questions (now ' + faq.length + ')', faq.length >= 4, faq.length < 3);
+    add('3+ key takeaways', (fm.keyTakeaways || []).filter(Boolean).length >= 3);
+    add('2+ related guides', (fm.relatedGuides || []).filter(function (r) { return r.url; }).length >= 2);
+    add('No unsafe HTML (script, iframe, onclick ...)', !forbidden, true);
+    add('No guarantee wording ("guaranteed", "leaked paper")', !/\b(guaranteed?|100% (pass|success)|surely pass|leaked? paper)\b/i.test(body + ' ' + (fm.quickAnswer || '')), true);
+    return C;
+  }
+
+  /* ---------- activity log (from git commit messages) ---------- */
+  function commitMsg(source, kind, title, slug, who, verb) {
+    return '[' + source + '] ' + kind + ' post: ' + title + ' (' + (verb || 'by') + ' ' + who + ') [slug:' + slug + ']';
+  }
+  function parseCommit(c) {
+    var first = String((c.commit && c.commit.message) || '').split('\n')[0];
+    var m = /^\[(manual|auto)\]\s+(Publish|Update)\s+post:\s+(.*?)\s+\((?:by|approved by)\s+([^)]+)\)(?:\s+\[slug:([^\]]+)\])?\s*$/.exec(first);
+    var date = c.commit && c.commit.author && c.commit.author.date;
+    if (m) return { source: m[1], kind: m[2], title: m[3], by: m[4], slug: m[5] || '', date: date, url: c.html_url, sha: c.sha, known: true };
+    return { source: 'manual', kind: 'Update', title: first.slice(0, 90), by: (c.commit && c.commit.author && c.commit.author.name) || '', slug: '', date: date, url: c.html_url, sha: c.sha, known: false };
+  }
+
+  /* ---------- text diff for update proposals ---------- */
+  function textBlocks(html) {
+    var t = String(html)
+      .replace(/<(script|style|noscript)[\s\S]*?<\/\1>/gi, ' ')
+      .replace(/<!--[\s\S]*?-->/g, ' ');
+    var mm = /<main[\s\S]*?<\/main>/i.exec(t) || /<article[\s\S]*?<\/article>/i.exec(t) || /<body[\s\S]*?<\/body>/i.exec(t);
+    if (mm) t = mm[0];
+    t = t.replace(/<\/(p|li|h[1-6]|tr|div|section|summary|details|blockquote)>|<br\s*\/?>/gi, '\n');
+    t = t.replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+    return t.split('\n').map(function (s) { return s.replace(/\s+/g, ' ').trim(); }).filter(function (s) { return s.length > 1; });
+  }
+  function diffBlocks(a, b) {
+    var n = a.length, m = b.length, i, j;
+    if (n * m > 4000000) { return [{ t: 'del', s: '(page too large to diff block by block)' }]; }
+    var L = []; for (i = 0; i <= n; i++) { L.push(new Uint16Array(m + 1)); }
+    for (i = n - 1; i >= 0; i--) for (j = m - 1; j >= 0; j--) L[i][j] = a[i] === b[j] ? L[i + 1][j + 1] + 1 : Math.max(L[i + 1][j], L[i][j + 1]);
+    var ops = []; i = 0; j = 0;
+    while (i < n && j < m) {
+      if (a[i] === b[j]) { ops.push({ t: 'same', s: a[i] }); i++; j++; }
+      else if (L[i + 1][j] >= L[i][j + 1]) { ops.push({ t: 'del', s: a[i] }); i++; }
+      else { ops.push({ t: 'add', s: b[j] }); j++; }
+    }
+    while (i < n) ops.push({ t: 'del', s: a[i++] });
+    while (j < m) ops.push({ t: 'add', s: b[j++] });
+    return ops;
+  }
+
+  window.L = {
+    REPO: REPO, BRANCH: BRANCH, DRAFTS: DRAFTS, SITE: SITE, CATS: CATS,
+    esc: esc, words: words, plainLen: plainLen, today: today, slugify: slugify, catLabel: catLabel, daysSince: daysSince,
+    fmtDate: fmtDate, rel: rel, toast: toast, b64enc: b64enc, b64dec: b64dec, pool: pool, icon: icon,
+    api: api, gh: gh, getFile: getFile, putFile: putFile, delFile: delFile, listDir: listDir, dispatch: dispatch,
+    parsePost: parsePost, serializePost: serializePost, blankPost: blankPost, tocFromBody: tocFromBody,
+    seoChecks: seoChecks, commitMsg: commitMsg, parseCommit: parseCommit, textBlocks: textBlocks, diffBlocks: diffBlocks
+  };
+})();

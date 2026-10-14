@@ -10,15 +10,16 @@
 </head>
 <body>
 <!--
-  Blog Studio: keyword -> Write -> Preview -> Publish.
-  Plain JS, no inline script, so it runs under the strict /admin/ CSP.
-  Auth is GitHub OAuth through the Cloudflare Worker (/auth, /callback);
-  GitHub itself decides who may write (repo collaborators only).
+  Blog Studio: sign in with a Blog Studio username, write from a keyword,
+  review, publish, and track every update. Plain JS, no inline script, so it
+  runs under the strict /admin/ CSP. Accounts and the GitHub connection live in
+  the Cloudflare Worker (/api/*), so nobody needs GitHub to sign in.
 -->
 <div id="app"><p class="boot">Loading Blog Studio…</p></div>
 <div id="toast" role="status" aria-live="polite"></div>
 <script src="/admin/vendor/js-yaml.min.js"></script>
 <script src="/admin/vendor/marked.umd.js"></script>
+<script src="/admin/lib.js"></script>
 <script src="/admin/app.js"></script>
 </body>
 </html>
