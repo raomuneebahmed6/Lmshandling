@@ -1,7 +1,12 @@
+@font-face{font-family:"Poppins";font-style:normal;font-weight:400;font-display:swap;src:url(/admin/vendor/fonts/poppins-400.woff2) format("woff2")}
+@font-face{font-family:"Poppins";font-style:normal;font-weight:500;font-display:swap;src:url(/admin/vendor/fonts/poppins-500.woff2) format("woff2")}
+@font-face{font-family:"Poppins";font-style:normal;font-weight:600;font-display:swap;src:url(/admin/vendor/fonts/poppins-600.woff2) format("woff2")}
+@font-face{font-family:"Poppins";font-style:normal;font-weight:700;font-display:swap;src:url(/admin/vendor/fonts/poppins-700.woff2) format("woff2")}
+@font-face{font-family:"Poppins";font-style:normal;font-weight:800;font-display:swap;src:url(/admin/vendor/fonts/poppins-800.woff2) format("woff2")}
 :root{--ink:#0b2b57;--ink2:#00448b;--gold:#f5b400;--bg:#f4f8fd;--card:#fff;--line:#dbe5f1;--text:#1d2b3f;--mute:#5d6f87;--ok:#14803c;--warn:#b26a00;--bad:#c62828;--r:14px}
 *{box-sizing:border-box}
 html,body{margin:0}
-body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.5;-webkit-font-smoothing:antialiased}
+body{font-family:"Poppins",system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased}
 .boot{padding:2rem;color:var(--mute)}
 a{color:var(--ink2)}
 button,input,select,textarea{font:inherit;color:inherit}
@@ -31,7 +36,7 @@ label.f small{font-weight:400;color:var(--mute)}
 input[type=text],input[type=password],input[type=number],input[type=date],select,textarea{width:100%;border:1px solid var(--line);border-radius:10px;padding:.6rem .75rem;background:#fff}
 input:focus,select:focus,textarea:focus{outline:2px solid var(--ink2);outline-offset:0;border-color:var(--ink2)}
 textarea{resize:vertical;min-height:80px}
-textarea.body{min-height:420px;font-family:ui-monospace,Consolas,monospace;font-size:.88rem;line-height:1.55}
+textarea.body{min-height:420px;font-family:ui-monospace,Consolas,monospace;font-size:.86rem;line-height:1.55}
 .hint{font-size:.78rem;color:var(--mute);margin-top:.25rem}
 .hint.bad{color:var(--bad)} .hint.ok{color:var(--ok)}
 .write{background:linear-gradient(135deg,var(--ink),var(--ink2));color:#fff;border:0}
@@ -89,3 +94,16 @@ details.step .in{padding:0 1.2rem 1.2rem}
 .alert.ok{background:#e8f7ee;color:#0f5c2c;border:1px solid #b8e5c8}
 .alert.info{background:#e9f2fd;color:#123e73;border:1px solid #bcd6f3}
 .imgprev{max-width:260px;border-radius:10px;border:1px solid var(--line);display:block;margin-top:.5rem}
+.top h1{white-space:nowrap}
+@media(max-width:640px){
+  .top{padding:.55rem .8rem;gap:.5rem}
+  .top h1{font-size:.95rem}
+  .top h1 span{display:none}
+  .top a,.top button{padding:.3rem .6rem;font-size:.78rem}
+  .wrap{padding:.8rem}
+  .card{padding:1rem}
+  .bar{padding:.6rem .8rem}
+  .bar .st{flex-basis:100%}
+  .bar .btn{flex:1;padding:.55rem .6rem}
+  .modal{padding:.4rem}
+}

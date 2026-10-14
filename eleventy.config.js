@@ -76,6 +76,14 @@ module.exports = function (eleventyConfig) {
     fs.mkdirSync("admin/vendor", { recursive: true });
     fs.copyFileSync("node_modules/js-yaml/dist/js-yaml.min.js", "admin/vendor/js-yaml.min.js");
     fs.copyFileSync("node_modules/marked/lib/marked.umd.js", "admin/vendor/marked.umd.js");
+    // Poppins (the site's font), self-hosted so the strict admin CSP needs no CDN.
+    fs.mkdirSync("admin/vendor/fonts", { recursive: true });
+    [400, 500, 600, 700, 800].forEach((w) => {
+      fs.copyFileSync(
+        "node_modules/@fontsource/poppins/files/poppins-latin-" + w + "-normal.woff2",
+        "admin/vendor/fonts/poppins-" + w + ".woff2"
+      );
+    });
   });
 
   // ---- Existing static content: copied through untouched, byte-identical ----

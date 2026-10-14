@@ -450,15 +450,24 @@
   }
 
   /* ---------- preview (sandboxed iframe: no scripts can run) ---------- */
+  var FONT_CSS = '';
+  function loadPreviewFonts() {
+    if (FONT_CSS) return Promise.resolve();
+    return Promise.all([400, 600, 700, 800].map(function (w) {
+      return fetch('/admin/vendor/fonts/poppins-' + w + '.woff2').then(function (r) { return r.blob(); }).then(function (b) {
+        return new Promise(function (res) { var rd = new FileReader(); rd.onload = function () { res('@font-face{font-family:"Poppins";font-weight:' + w + ';src:url(' + rd.result + ') format("woff2")}'); }; rd.readAsDataURL(b); });
+      });
+    })).then(function (parts) { FONT_CSS = parts.join(''); }).catch(function () { FONT_CSS = ''; });
+  }
   function previewHtml() {
     var fm = cur.fm, cat = (CATS.filter(function (c) { return c[0] === fm.category; })[0] || ['', ''])[1];
     var toc = tocFromBody(cur.body);
-    var css = 'body{font-family:Georgia,"Times New Roman",serif;color:#1d2b3f;line-height:1.75;margin:0;background:#f4f8fd}main{max-width:760px;margin:0 auto;padding:1.4rem 1.1rem 3rem;background:#fff}' +
-      'h1{font-family:system-ui,sans-serif;color:#0b2b57;font-size:2rem;line-height:1.2;margin:.3rem 0 .8rem}h2{font-family:system-ui,sans-serif;color:#0b2b57;margin-top:2.2rem}h3{font-family:system-ui,sans-serif;color:#00448b}' +
-      '.eyebrow{font-family:system-ui,sans-serif;font-size:.78rem;font-weight:800;letter-spacing:.08em;color:#00448b;text-transform:uppercase}.lead{font-size:1.15rem;color:#40526b}' +
-      '.qa{background:#fff8e1;border-left:5px solid #f5b400;padding:.8rem 1.1rem;border-radius:8px;margin:1.2rem 0;font-family:system-ui,sans-serif}.qa b{display:block;color:#7a5a00;font-size:.8rem;letter-spacing:.06em;text-transform:uppercase}' +
-      '.toc{background:#eef4fb;border-radius:10px;padding:.8rem 1.2rem;font-family:system-ui,sans-serif}.highlight-box{background:#e9f2fd;border-left:5px solid #00448b;padding:.8rem 1.1rem;border-radius:8px}' +
-      'a{color:#00448b}details{border:1px solid #dbe5f1;border-radius:10px;padding:.6rem 1rem;margin:.6rem 0}summary{font-weight:700;cursor:pointer;font-family:system-ui,sans-serif}img{max-width:100%}table{border-collapse:collapse}td,th{border:1px solid #dbe5f1;padding:.4rem .6rem}';
+    var css = FONT_CSS + 'body{font-family:"Poppins",system-ui,sans-serif;color:#1d2b3f;line-height:1.75;margin:0;background:#f4f8fd}main{max-width:760px;margin:0 auto;padding:1.4rem 1.1rem 3rem;background:#fff}' +
+      'h1,h2,h3{font-family:"Poppins",system-ui,sans-serif}h1{color:#0b2b57;font-size:2rem;line-height:1.15;letter-spacing:-.02em;font-weight:800;margin:.3rem 0 .8rem}h2{color:#0b2b57;margin-top:2.2rem;font-weight:700;letter-spacing:-.01em}h3{color:#00448b;font-weight:600}' +
+      '.eyebrow{font-size:.74rem;font-weight:700;letter-spacing:.14em;color:#00448b;text-transform:uppercase}.lead{font-size:1.1rem;color:#40526b}' +
+      '.qa{background:#fff8e1;border-left:5px solid #f5b400;padding:.8rem 1.1rem;border-radius:8px;margin:1.2rem 0}.qa b{display:block;color:#7a5a00;font-size:.75rem;letter-spacing:.1em;text-transform:uppercase}' +
+      '.toc{background:#eef4fb;border-radius:10px;padding:.8rem 1.2rem}.highlight-box{background:#e9f2fd;border-left:5px solid #00448b;padding:.8rem 1.1rem;border-radius:8px}' +
+      'a{color:#00448b}details{border:1px solid #dbe5f1;border-radius:10px;padding:.6rem 1rem;margin:.6rem 0}summary{font-weight:600;cursor:pointer}img{max-width:100%}table{border-collapse:collapse}td,th{border:1px solid #dbe5f1;padding:.4rem .6rem}';
     var html = '<p class="eyebrow">' + esc(cat) + ' · ' + esc(fm.readTime || '') + ' min read</p><h1>' + esc(fm.h1 || fm.title) + '</h1><p class="lead">' + esc(fm.leadParagraph) + '</p>' +
       '<div class="qa"><b>Quick answer</b>' + esc(fm.quickAnswer) + '</div>' +
       (toc.length ? '<div class="toc"><b>In this guide</b><ol>' + toc.map(function (t) { return '<li>' + esc(t.label) + '</li>'; }).join('') + '</ol></div>' : '') +
@@ -472,7 +481,7 @@
     var m = document.createElement('div'); m.className = 'modal';
     m.innerHTML = '<div class="box"><div class="hd"><b>Preview (approximate; the live page uses the full site design)</b><span class="dev"><button class="btn ghost sm" data-d="d">Desktop</button><button class="btn ghost sm" data-d="m">Mobile</button></span><button class="btn sm" id="pclose">Close</button></div><iframe sandbox="" title="Preview"></iframe></div>';
     document.body.appendChild(m);
-    m.querySelector('iframe').srcdoc = previewHtml();
+    loadPreviewFonts().then(function () { m.querySelector('iframe').srcdoc = previewHtml(); });
     m.querySelector('#pclose').onclick = function () { m.remove(); };
     m.addEventListener('click', function (e) { var d = e.target.getAttribute('data-d'); if (d) m.classList.toggle('mob', d === 'm'); });
   }
