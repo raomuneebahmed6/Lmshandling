@@ -1,0 +1,7 @@
+{
+  "autoUpdate": {
+    "enabled": true,
+    "staleDays": 90,
+    "perRun": 2
+  }
+}

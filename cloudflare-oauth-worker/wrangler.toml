@@ -1,0 +1,23 @@
+name = "lmshandling-cms-oauth"
+main = "worker.js"
+compatibility_date = "2024-01-01"
+
+# Blog Studio backend, served from the site's own domain. Cloudflare proxies
+# lmshandling.com, so these paths are answered by this Worker and everything
+# else still goes to Hostinger. (Wildcards matter: without "*" a URL that has
+# a query string, like /callback?code=..., is NOT matched.)
+routes = [
+  { pattern = "lmshandling.com/auth*", zone_name = "lmshandling.com" },
+  { pattern = "lmshandling.com/callback*", zone_name = "lmshandling.com" },
+  { pattern = "lmshandling.com/api/*", zone_name = "lmshandling.com" }
+]
+
+# Accounts (password hashes), sessions secret and the encrypted GitHub token.
+[[kv_namespaces]]
+binding = "CMS"
+id = "e579eefac64b4acdacc2d4b0bf60f814"
+
+[vars]
+REPO = "raomuneebahmed6/Lmshandling"
+BRANCH = "claude/website-blogs-seo-3jpp70"
+ALLOWED_ORIGIN = "https://lmshandling.com"

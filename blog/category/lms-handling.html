@@ -4,18 +4,26 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
-<!-- Google tag (gtag.js), deferred until after load to keep it off the critical rendering path -->
+<!-- Google tag (gtag.js): loaded on first interaction or 3.5 s after load, so it never competes with the first paint. Queued events are replayed. -->
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
   gtag('config', 'G-RL2VZFJM2L');
-  window.addEventListener('load', function(){
-    var s = document.createElement('script');
-    s.async = true;
-    s.src = 'https://www.googletagmanager.com/gtag/js?id=G-RL2VZFJM2L';
-    document.head.appendChild(s);
-  });
+  (function(){
+    var started = false, evs = ['scroll', 'pointerdown', 'keydown', 'touchstart'];
+    function start(){
+      if (started) return;
+      started = true;
+      evs.forEach(function(e){ removeEventListener(e, start); });
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=G-RL2VZFJM2L';
+      document.head.appendChild(s);
+    }
+    evs.forEach(function(e){ addEventListener(e, start, { passive: true }); });
+    addEventListener('load', function(){ setTimeout(start, 3500); });
+  })();
 </script>
 
 <!-- ===================== PRIMARY SEO ===================== -->
@@ -698,11 +706,31 @@ img { max-width:100%; height:auto; }
   <div class="section-head reveal"><p class="section-label">All Guides</p><h2 id="posts-heading">All LMS Handling guides.</h2></div>
   <div class="blog-grid">
     <article class="blog-card reveal">
-      <img src="/assets/blog-images/vu-help-guide.png" alt="Virtual University Help: What We Do" width="1200" height="630" loading="lazy" class="blog-card-img">
+      <img src="/assets/blog-images/vu-gdb-graded-discussion-board-guide.png" alt="VU GDB Submission Format: How to Structure a Graded Discussion Board Post" width="1200" height="630" loading="lazy" class="blog-card-img">
+      <a href="/blog/category/lms-handling" class="blog-card-tag-link"><span class="blog-card-tag">LMS Handling</span></a>
+      <a href="/blog/vu-gdb-submission-format" class="blog-card-link">
+        <h3>VU GDB Submission Format: How to Structure a Graded Discussion Board Post</h3>
+        <p>How to structure a VU GDB post on VULMS: opening stance, supporting points, a closing line, and the plagiarism and deadline rules to avoid a zero.</p>
+        <span class="blog-card-meta">2026 &nbsp;·&nbsp; 5 min read</span>
+        <span class="read-more">Read the guide</span>
+      </a>
+    </article>
+    <article class="blog-card reveal">
+      <img src="/assets/blog-images/vu-help-guide.png" alt="Virtual University Help: What Nibaha Haq Actually Does For You" width="1200" height="630" loading="lazy" class="blog-card-img">
       <a href="/blog/category/lms-handling" class="blog-card-tag-link"><span class="blog-card-tag">LMS Handling</span></a>
       <a href="/blog/vu-help-guide" class="blog-card-link">
         <h3>Virtual University Help: What Nibaha Haq Actually Does For You</h3>
-        <p>LMS Handling, code-wise Midterm and Finalterm exam files, and Final Year Project guidance, covering 606+ VU course codes. Here's what each one includes.</p>
+        <p>LMS Handling, code-wise Midterm and Finalterm exam files, and Final Year Project guidance, covering 606+ VU course codes. Here&#39;s what each one includes.</p>
+        <span class="blog-card-meta">2026 &nbsp;·&nbsp; 5 min read</span>
+        <span class="read-more">Read the guide</span>
+      </a>
+    </article>
+    <article class="blog-card reveal">
+      <img src="/assets/blog-images/vu-summer-semester-final-result-2026.png" alt="VU Summer Semester 2026 Final Result" width="1200" height="630" loading="lazy" class="blog-card-img">
+      <a href="/blog/category/lms-handling" class="blog-card-tag-link"><span class="blog-card-tag">Results</span></a>
+      <a href="/blog/vu-summer-semester-final-result-2026" class="blog-card-link">
+        <h3>VU Summer Semester 2026 Final Result</h3>
+        <p>Final Result lands 7 October. How your grade combines Quiz, Assignment, GDB, Midterm and Finalterm marks, where to check it, and what to do if it&#39;s missing.</p>
         <span class="blog-card-meta">2026 &nbsp;·&nbsp; 5 min read</span>
         <span class="read-more">Read the guide</span>
       </a>
@@ -712,13 +740,23 @@ img { max-width:100%; height:auto; }
       <a href="/blog/category/lms-handling" class="blog-card-tag-link"><span class="blog-card-tag">Results</span></a>
       <a href="/blog/vu-summer-semester-midterm-result-2026" class="blog-card-link">
         <h3>VU Summer Semester Midterm Result 2026</h3>
-        <p>Your Midterm result doesn't come out separately: it lands with Finalterm on 7 October. Full timeline: datesheet, papers, and results.</p>
+        <p>Your Midterm result doesn&#39;t come out separately: it lands with Finalterm on 7 October. Full timeline: datesheet, papers, and results.</p>
         <span class="blog-card-meta">2026 &nbsp;·&nbsp; 5 min read</span>
         <span class="read-more">Read the guide</span>
       </a>
     </article>
     <article class="blog-card reveal">
-      <img src="/assets/blog-images/vulms-login-guide.png" alt="VULMS Login Guide: How to Log In & Fix Common Problems" width="1200" height="630" loading="lazy" class="blog-card-img">
+      <img src="/assets/blog-images/vu-cgpa-1-to-3-timeline.png" alt="VU CGPA 1.0 to 3.0: How Many Semesters Does It Take?" width="1200" height="630" loading="lazy" class="blog-card-img">
+      <a href="/blog/category/lms-handling" class="blog-card-tag-link"><span class="blog-card-tag">LMS Handling</span></a>
+      <a href="/blog/vu-cgpa-1-to-3-timeline" class="blog-card-link">
+        <h3>VU CGPA 1.0 to 3.0: How Many Semesters Does It Take?</h3>
+        <p>The real math behind raising a low VU CGPA toward 3.0: why early semesters carry more leverage, and what a realistic timeline looks like.</p>
+        <span class="blog-card-meta">2026 &nbsp;·&nbsp; 7 min read</span>
+        <span class="read-more">Read the guide</span>
+      </a>
+    </article>
+    <article class="blog-card reveal">
+      <img src="/assets/blog-images/vulms-login-guide.png" alt="VULMS Login Guide: How to Log In &amp; Fix Common Problems" width="1200" height="630" loading="lazy" class="blog-card-img">
       <a href="/blog/category/lms-handling" class="blog-card-tag-link"><span class="blog-card-tag">LMS Handling</span></a>
       <a href="/blog/vulms-login-guide" class="blog-card-link">
         <h3>VULMS Login Guide: How to Log In &amp; Fix Common Problems</h3>
@@ -738,30 +776,20 @@ img { max-width:100%; height:auto; }
       </a>
     </article>
     <article class="blog-card reveal">
-      <img src="/assets/blog-images/vu-cgpa-1-to-3-timeline.png" alt="VU CGPA 1.0 to 3.0: How Many Semesters Does It Take?" width="1200" height="630" loading="lazy" class="blog-card-img">
-      <a href="/blog/category/lms-handling" class="blog-card-tag-link"><span class="blog-card-tag">LMS Handling</span></a>
-      <a href="/blog/vu-cgpa-1-to-3-timeline" class="blog-card-link">
-        <h3>VU CGPA 1.0 to 3.0: How Many Semesters Does It Take?</h3>
-        <p>The real math behind raising a low VU CGPA toward 3.0: why early semesters carry more leverage, and what a realistic timeline looks like.</p>
-        <span class="blog-card-meta">2026 &nbsp;·&nbsp; 7 min read</span>
-        <span class="read-more">Read the guide</span>
-      </a>
-    </article>
-    <article class="blog-card reveal">
-      <img src="/assets/blog-images/vu-gpa-vs-cgpa-guide.png" alt="VU GPA vs CGPA: What's the Difference and How Each Is Calculated" width="1200" height="630" loading="lazy" class="blog-card-img">
+      <img src="/assets/blog-images/vu-gpa-vs-cgpa-guide.png" alt="VU GPA vs CGPA: What&#39;s the Difference and How Each Is Calculated" width="1200" height="630" loading="lazy" class="blog-card-img">
       <a href="/blog/category/lms-handling" class="blog-card-tag-link"><span class="blog-card-tag">LMS Handling</span></a>
       <a href="/blog/vu-gpa-vs-cgpa-guide" class="blog-card-link">
-        <h3>VU GPA vs CGPA: What's the Difference and How Each Is Calculated</h3>
+        <h3>VU GPA vs CGPA: What&#39;s the Difference and How Each Is Calculated</h3>
         <p>What GPA and CGPA each measure, why they can look different on the same result, and where to check both correctly on VULMS.</p>
         <span class="blog-card-meta">2026 &nbsp;·&nbsp; 6 min read</span>
         <span class="read-more">Read the guide</span>
       </a>
     </article>
     <article class="blog-card reveal">
-      <img src="/assets/blog-images/vu-failed-subject-guide.png" alt="Failed a Subject in Your VU Result? Here's What to Do Next" width="1200" height="630" loading="lazy" class="blog-card-img">
+      <img src="/assets/blog-images/vu-failed-subject-guide.png" alt="Failed a Subject in Your VU Result? Here&#39;s What to Do Next" width="1200" height="630" loading="lazy" class="blog-card-img">
       <a href="/blog/category/lms-handling" class="blog-card-tag-link"><span class="blog-card-tag">LMS Handling</span></a>
       <a href="/blog/vu-failed-subject-guide" class="blog-card-link">
-        <h3>Failed a Subject in Your VU Result? Here's What to Do Next</h3>
+        <h3>Failed a Subject in Your VU Result? Here&#39;s What to Do Next</h3>
         <p>What an F grade means for your CGPA, repeating vs an improvement attempt, how academic probation works, and what to do this week.</p>
         <span class="blog-card-meta">2026 &nbsp;·&nbsp; 6 min read</span>
         <span class="read-more">Read the guide</span>
@@ -772,42 +800,12 @@ img { max-width:100%; height:auto; }
       <a href="/blog/category/lms-handling" class="blog-card-tag-link"><span class="blog-card-tag">LMS Handling</span></a>
       <a href="/blog/vu-result-guide" class="blog-card-link">
         <h3>How to Check Your VU Result: Step-by-Step VULMS Guide</h3>
-        <p>Where your result actually shows up on VULMS, how to read your course marks, grades and GPA, and what to do if your CGPA isn't showing.</p>
+        <p>Where your result actually shows up on VULMS, how to read your course marks, grades and GPA, and what to do if your CGPA isn&#39;t showing.</p>
         <span class="blog-card-meta">2026 &nbsp;·&nbsp; 6 min read</span>
-        <span class="read-more">Read the guide</span>
-      </a>
-    </article>
-    <article class="blog-card reveal" data-delay="1">
-      <img src="/assets/blog-images/vu-gdb-graded-discussion-board-guide.png" alt="VU GDB (Graded Discussion Board): How It Works & How to Score Well on VULMS" width="1200" height="630" loading="lazy" class="blog-card-img">
-      <a href="/blog/category/lms-handling" class="blog-card-tag-link"><span class="blog-card-tag">LMS Handling</span></a>
-      <a href="/blog/vu-gdb-graded-discussion-board-guide" class="blog-card-link">
-        <h3>VU GDB (Graded Discussion Board): How It Works &amp; How to Score Well on VULMS</h3>
-        <p>What a GDB is, where to find it on VULMS, how to write a post that scores well, and the plagiarism and deadline rules that catch most students off guard.</p>
-        <span class="blog-card-meta">2026 &nbsp;·&nbsp; 7 min read</span>
         <span class="read-more">Read the guide</span>
       </a>
     </article>
     <article class="blog-card reveal">
-      <img src="/assets/blog-images/vu-assignment-guide.png" alt="VU Assignment Guide: Format, Plagiarism & Deadline Rules on VULMS" width="1200" height="630" loading="lazy" class="blog-card-img">
-      <a href="/blog/category/lms-handling" class="blog-card-tag-link"><span class="blog-card-tag">LMS Handling</span></a>
-      <a href="/blog/vu-assignment-guide" class="blog-card-link">
-        <h3>VU Assignment Guide: Format, Plagiarism &amp; Deadline Rules on VULMS</h3>
-        <p>Where to find and submit your assignment on VULMS, the formatting rules to follow, the similarity/plagiarism check, and how to write one that scores well.</p>
-        <span class="blog-card-meta">2026 &nbsp;·&nbsp; 7 min read</span>
-        <span class="read-more">Read the guide</span>
-      </a>
-    </article>
-    <article class="blog-card reveal" data-delay="1">
-      <img src="/assets/blog-images/vu-quiz-guide.png" alt="VU Quiz Guide: How VULMS Quizzes Work & How to Prepare" width="1200" height="630" loading="lazy" class="blog-card-img">
-      <a href="/blog/category/lms-handling" class="blog-card-tag-link"><span class="blog-card-tag">LMS Handling</span></a>
-      <a href="/blog/vu-quiz-guide" class="blog-card-link">
-        <h3>VU Quiz Guide: How VULMS Quizzes Work &amp; How to Prepare</h3>
-        <p>Where to find your quiz on VULMS, the activation window, how to prepare for the timed MCQ format efficiently, and the mistakes that cost students marks.</p>
-        <span class="blog-card-meta">2026 &nbsp;·&nbsp; 6 min read</span>
-        <span class="read-more">Read the guide</span>
-      </a>
-    </article>
-    <article class="blog-card reveal" data-delay="1">
       <img src="/assets/blog-images/vu-attendance-guide.png" alt="VU Attendance Guide: How VULMS Tracks Lecture Attendance" width="1200" height="630" loading="lazy" class="blog-card-img">
       <a href="/blog/category/lms-handling" class="blog-card-tag-link"><span class="blog-card-tag">LMS Handling</span></a>
       <a href="/blog/vu-attendance-guide" class="blog-card-link">
@@ -817,6 +815,37 @@ img { max-width:100%; height:auto; }
         <span class="read-more">Read the guide</span>
       </a>
     </article>
+    <article class="blog-card reveal">
+      <img src="/assets/blog-images/vu-quiz-guide.png" alt="VU Quiz Guide: How VULMS Quizzes Work &amp; How to Prepare" width="1200" height="630" loading="lazy" class="blog-card-img">
+      <a href="/blog/category/lms-handling" class="blog-card-tag-link"><span class="blog-card-tag">LMS Handling</span></a>
+      <a href="/blog/vu-quiz-guide" class="blog-card-link">
+        <h3>VU Quiz Guide: How VULMS Quizzes Work &amp; How to Prepare</h3>
+        <p>Where to find your quiz on VULMS, the activation window, how to prepare for the timed MCQ format efficiently, and the mistakes that cost students marks.</p>
+        <span class="blog-card-meta">2026 &nbsp;·&nbsp; 6 min read</span>
+        <span class="read-more">Read the guide</span>
+      </a>
+    </article>
+    <article class="blog-card reveal">
+      <img src="/assets/blog-images/vu-assignment-guide.png" alt="VU Assignment Guide: Format, Plagiarism &amp; Deadline Rules on VULMS" width="1200" height="630" loading="lazy" class="blog-card-img">
+      <a href="/blog/category/lms-handling" class="blog-card-tag-link"><span class="blog-card-tag">LMS Handling</span></a>
+      <a href="/blog/vu-assignment-guide" class="blog-card-link">
+        <h3>VU Assignment Guide: Format, Plagiarism &amp; Deadline Rules on VULMS</h3>
+        <p>Where to find and submit your assignment on VULMS, the formatting rules to follow, the similarity/plagiarism check, and how to write one that scores well.</p>
+        <span class="blog-card-meta">2026 &nbsp;·&nbsp; 7 min read</span>
+        <span class="read-more">Read the guide</span>
+      </a>
+    </article>
+    <article class="blog-card reveal">
+      <img src="/assets/blog-images/vu-gdb-graded-discussion-board-guide.png" alt="VU GDB (Graded Discussion Board): How It Works &amp; How to Score Well on VULMS" width="1200" height="630" loading="lazy" class="blog-card-img">
+      <a href="/blog/category/lms-handling" class="blog-card-tag-link"><span class="blog-card-tag">LMS Handling</span></a>
+      <a href="/blog/vu-gdb-graded-discussion-board-guide" class="blog-card-link">
+        <h3>VU GDB (Graded Discussion Board): How It Works &amp; How to Score Well on VULMS</h3>
+        <p>What a GDB is, where to find it on VULMS, how to write a post that scores well, and the plagiarism and deadline rules that catch most students off guard.</p>
+        <span class="blog-card-meta">2026 &nbsp;·&nbsp; 7 min read</span>
+        <span class="read-more">Read the guide</span>
+      </a>
+    </article>
+    
   </div>
 </section>
 
@@ -949,8 +978,16 @@ safe("reveals", () => {
   if (!("IntersectionObserver" in window)) { els.forEach(el => el.classList.add("in")); return; }
   const io = new IntersectionObserver(entries => {
     entries.forEach(e => { if (e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); } });
-  }, { threshold:.15, rootMargin:"0px 0px -40px 0px" });
-  els.forEach(el => io.observe(el));
+  }, { threshold:.05, rootMargin:"0px 0px 140px 0px" });
+  const vh = window.innerHeight || 800;
+  const list = Array.prototype.slice.call(els);
+  // read phase (one layout), then write phase: no forced reflow per element
+  const tops = list.map(el => el.getBoundingClientRect().top);
+  list.forEach((el, i) => {
+    // already on screen: show at once (an entrance animation here only delays the Largest Contentful Paint)
+    if (tops[i] < vh * .95){ el.style.transition = "none"; el.classList.add("in"); }
+    else io.observe(el);
+  });
 });
 
 /* ---------- animated counters ---------- */

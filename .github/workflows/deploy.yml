@@ -1,0 +1,46 @@
+name: Build and deploy to Hostinger
+
+on:
+  push:
+    branches:
+      - claude/website-blogs-seo-3jpp70
+    # Saving Blog Studio settings must not trigger a site rebuild.
+    paths-ignore:
+      - ".github/cms-settings.json"
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build site
+        run: npm run build
+
+      # Uploads only the built _site/ output, so source files
+      # (eleventy.config.js, content/*.md, package.json, etc.) never
+      # land on the live server.
+      - name: Deploy to Hostinger via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./_site/
+          server-dir: ./
+          exclude: |
+            **/.git*
+            **/.git*/**

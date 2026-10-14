@@ -4,18 +4,26 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
-<!-- Google tag (gtag.js), deferred until after load to keep it off the critical rendering path -->
+<!-- Google tag (gtag.js): loaded on first interaction or 3.5 s after load, so it never competes with the first paint. Queued events are replayed. -->
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
   gtag('config', 'G-RL2VZFJM2L');
-  window.addEventListener('load', function(){
-    var s = document.createElement('script');
-    s.async = true;
-    s.src = 'https://www.googletagmanager.com/gtag/js?id=G-RL2VZFJM2L';
-    document.head.appendChild(s);
-  });
+  (function(){
+    var started = false, evs = ['scroll', 'pointerdown', 'keydown', 'touchstart'];
+    function start(){
+      if (started) return;
+      started = true;
+      evs.forEach(function(e){ removeEventListener(e, start); });
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=G-RL2VZFJM2L';
+      document.head.appendChild(s);
+    }
+    evs.forEach(function(e){ addEventListener(e, start, { passive: true }); });
+    addEventListener('load', function(){ setTimeout(start, 3500); });
+  })();
 </script>
 
 <!-- ===================== PRIMARY SEO ===================== -->
@@ -734,7 +742,7 @@ img { max-width:100%; height:auto; }
     <p class="section-label"><a href="/blog/category/exam-preparation">Exam Preparation</a></p>
     <h1>VU Midterm &amp; Finalterm Exam Preparation Guide: How to Score Better at Virtual University</h1>
     <p class="lead">How VU midterm and finalterm exams actually work, a step-by-step preparation strategy, and how code-wise exam files help raise your CGPA: the approach behind the results on this site.</p>
-    <div class="highlight-box" role="note"><p><strong>Quick answer:</strong> VU midterm and finalterm exams are prepared for most effectively with code-wise study material matched to the exact course code, since past-paper patterns differ significantly between subjects like CS201 and MGT503. The most effective strategy separates Objective (MCQ) prep, which rewards fast recall, from Subjective prep, which rewards explaining concepts in the student's own words, and includes at least one full timed run-through before the actual exam. Because the finalterm typically carries more content and more weight, the final six weeks before it matter more than any single week of the midterm cycle.</p></div>
+    <div class="highlight-box" role="note"><p><strong>Quick answer:</strong> VU midterm and finalterm exams are prepared most effectively with code-wise study material matched to your exact course code, since question patterns differ between subjects like CS201 and MGT503. The best strategy separates Objective (MCQ) prep, which rewards fast recall, from Subjective prep, which rewards explaining concepts in your own words, plus one full timed run-through beforehand. The finalterm carries more content and weight, so its final six weeks matter most.</p></div>
     <div class="post-meta-row reveal" data-delay="1">
       <span class="chip">✍️ Nibaha Haq</span>
       <span class="chip">📅 2026</span>
@@ -964,8 +972,16 @@ safe("reveals", () => {
   if (!("IntersectionObserver" in window)) { els.forEach(el => el.classList.add("in")); return; }
   const io = new IntersectionObserver(entries => {
     entries.forEach(e => { if (e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); } });
-  }, { threshold:.15, rootMargin:"0px 0px -40px 0px" });
-  els.forEach(el => io.observe(el));
+  }, { threshold:.05, rootMargin:"0px 0px 140px 0px" });
+  const vh = window.innerHeight || 800;
+  const list = Array.prototype.slice.call(els);
+  // read phase (one layout), then write phase: no forced reflow per element
+  const tops = list.map(el => el.getBoundingClientRect().top);
+  list.forEach((el, i) => {
+    // already on screen: show at once (an entrance animation here only delays the Largest Contentful Paint)
+    if (tops[i] < vh * .95){ el.style.transition = "none"; el.classList.add("in"); }
+    else io.observe(el);
+  });
 });
 
 /* ---------- animated counters ---------- */

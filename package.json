@@ -1,0 +1,28 @@
+{
+  "name": "lmshandling",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "eleventy && node scripts/apply-redirects.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/raomuneebahmed6/Lmshandling.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/raomuneebahmed6/Lmshandling/issues"
+  },
+  "homepage": "https://github.com/raomuneebahmed6/Lmshandling#readme",
+  "devDependencies": {
+    "@11ty/eleventy": "^3.1.6",
+    "@fontsource/poppins": "^5.1.0",
+    "js-yaml": "^4.1.0",
+    "marked": "^12.0.2",
+    "qrcode-generator": "^1.4.4"
+  }
+}

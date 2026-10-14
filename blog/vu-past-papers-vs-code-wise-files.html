@@ -4,18 +4,26 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
-<!-- Google tag (gtag.js), deferred until after load to keep it off the critical rendering path -->
+<!-- Google tag (gtag.js): loaded on first interaction or 3.5 s after load, so it never competes with the first paint. Queued events are replayed. -->
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
   gtag('config', 'G-RL2VZFJM2L');
-  window.addEventListener('load', function(){
-    var s = document.createElement('script');
-    s.async = true;
-    s.src = 'https://www.googletagmanager.com/gtag/js?id=G-RL2VZFJM2L';
-    document.head.appendChild(s);
-  });
+  (function(){
+    var started = false, evs = ['scroll', 'pointerdown', 'keydown', 'touchstart'];
+    function start(){
+      if (started) return;
+      started = true;
+      evs.forEach(function(e){ removeEventListener(e, start); });
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=G-RL2VZFJM2L';
+      document.head.appendChild(s);
+    }
+    evs.forEach(function(e){ addEventListener(e, start, { passive: true }); });
+    addEventListener('load', function(){ setTimeout(start, 3500); });
+  })();
 </script>
 
 <!-- ===================== PRIMARY SEO ===================== -->
@@ -705,7 +713,7 @@ img { max-width:100%; height:auto; }
     <p class="section-label"><a href="/blog/category/exam-preparation">Exam Preparation</a></p>
     <h1>VU Past Papers vs Code-Wise Exam Files: What Actually Helps at Exam Time</h1>
     <p class="lead">Free VU past papers and paid code-wise Midterm/Finalterm files both have a place in exam prep. Here's what each is actually good for, and where their limits are.</p>
-    <div class="highlight-box" role="note"><p><strong>Quick answer:</strong> VU past papers are genuinely useful for getting a feel of question style and difficulty, and they're free, but they aren't organized by course code and lecture range, and they don't reflect the exact handout wording VU is currently using for your semester. Code-wise Objective and Subjective files are built around one specific course code and matched to VU's own current lecture content, which is what makes them the more reliable primary revision material, while past papers still work well as a secondary reference for question style.</p></div>
+    <div class="highlight-box" role="note"><p><strong>Quick answer:</strong> VU past papers are genuinely useful for a feel of question style and difficulty, and they're free, but they aren't organized by course code or lecture range, and don't reflect the exact handout wording VU currently uses. Code-wise Objective and Subjective files are built around one specific course code, matched to VU's current lecture content, making them the more reliable primary revision material, with past papers as a secondary reference.</p></div>
     <div class="post-meta-row reveal" data-delay="1">
       <span class="chip">✍️ Nibaha Haq</span>
       <span class="chip">📅 2026</span>
@@ -918,8 +926,16 @@ safe("reveals", () => {
   if (!("IntersectionObserver" in window)) { els.forEach(el => el.classList.add("in")); return; }
   const io = new IntersectionObserver(entries => {
     entries.forEach(e => { if (e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); } });
-  }, { threshold:.15, rootMargin:"0px 0px -40px 0px" });
-  els.forEach(el => io.observe(el));
+  }, { threshold:.05, rootMargin:"0px 0px 140px 0px" });
+  const vh = window.innerHeight || 800;
+  const list = Array.prototype.slice.call(els);
+  // read phase (one layout), then write phase: no forced reflow per element
+  const tops = list.map(el => el.getBoundingClientRect().top);
+  list.forEach((el, i) => {
+    // already on screen: show at once (an entrance animation here only delays the Largest Contentful Paint)
+    if (tops[i] < vh * .95){ el.style.transition = "none"; el.classList.add("in"); }
+    else io.observe(el);
+  });
 });
 
 /* ---------- animated counters ---------- */

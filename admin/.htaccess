@@ -1,0 +1,8 @@
+# Blog Studio (admin) only. No inline or eval'd script is allowed: every
+# script is a same-origin file, so a malicious draft cannot run code here and
+# steal the GitHub token. Styles may be inline (preview iframe uses them).
+<IfModule mod_headers.c>
+  Header set Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob: https:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; object-src 'none'; form-action 'self'"
+  Header set X-Frame-Options "DENY"
+  Header set Cache-Control "no-store"
+</IfModule>

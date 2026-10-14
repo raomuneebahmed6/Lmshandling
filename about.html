@@ -4,18 +4,26 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
-<!-- Google tag (gtag.js), deferred until after load to keep it off the critical rendering path -->
+<!-- Google tag (gtag.js): loaded on first interaction or 3.5 s after load, so it never competes with the first paint. Queued events are replayed. -->
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
   gtag('config', 'G-RL2VZFJM2L');
-  window.addEventListener('load', function(){
-    var s = document.createElement('script');
-    s.async = true;
-    s.src = 'https://www.googletagmanager.com/gtag/js?id=G-RL2VZFJM2L';
-    document.head.appendChild(s);
-  });
+  (function(){
+    var started = false, evs = ['scroll', 'pointerdown', 'keydown', 'touchstart'];
+    function start(){
+      if (started) return;
+      started = true;
+      evs.forEach(function(e){ removeEventListener(e, start); });
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=G-RL2VZFJM2L';
+      document.head.appendChild(s);
+    }
+    evs.forEach(function(e){ addEventListener(e, start, { passive: true }); });
+    addEventListener('load', function(){ setTimeout(start, 3500); });
+  })();
 </script>
 
 <!-- ===================== PRIMARY SEO ===================== -->
@@ -549,6 +557,19 @@ h3{font-size:1.12rem;font-weight:700}
   </div>
 </section>
 
+<!-- ================= EDUCATION ================= -->
+<section class="section" aria-labelledby="education-heading">
+  <div class="section-head reveal">
+    <p class="section-label">Education</p>
+    <h2 id="education-heading">A Virtual University graduate supporting VU students.</h2>
+    <p>Nibaha Haq studied at Beaconhouse School System and then Queen Mary College before completing her Bachelor of Science in Computer Science (BSCS) at Virtual University of Pakistan. She has personally gone through the same VULMS portal, exam process, and course selection that VU students bring to her today.</p>
+  </div>
+  <div class="grid-2" style="max-width:760px">
+    <article class="info-card reveal"><div class="icon" aria-hidden="true">BS</div><h3>BSCS, Virtual University of Pakistan</h3><p>Completed her Bachelor of Science in Computer Science at VU, the same university whose students she now supports.</p></article>
+    <article class="info-card reveal" data-delay="1"><div class="icon" aria-hidden="true">MS</div><h3>MS Artificial Intelligence, NUML Islamabad</h3><p>Currently pursuing a Master's degree in Artificial Intelligence at the National University of Modern Languages (NUML), Islamabad.</p></article>
+  </div>
+</section>
+
 <!-- ================= VALUES ================= -->
 <section class="section" aria-labelledby="values-heading">
   <div class="section-head reveal">
@@ -680,8 +701,16 @@ safe("reveals", () => {
   if (!("IntersectionObserver" in window)) { els.forEach(el => el.classList.add("in")); return; }
   const io = new IntersectionObserver(entries => {
     entries.forEach(e => { if (e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); } });
-  }, { threshold:.15, rootMargin:"0px 0px -40px 0px" });
-  els.forEach(el => io.observe(el));
+  }, { threshold:.05, rootMargin:"0px 0px 140px 0px" });
+  const vh = window.innerHeight || 800;
+  const list = Array.prototype.slice.call(els);
+  // read phase (one layout), then write phase: no forced reflow per element
+  const tops = list.map(el => el.getBoundingClientRect().top);
+  list.forEach((el, i) => {
+    // already on screen: show at once (an entrance animation here only delays the Largest Contentful Paint)
+    if (tops[i] < vh * .95){ el.style.transition = "none"; el.classList.add("in"); }
+    else io.observe(el);
+  });
 });
 
 /* ---------- animated counters ---------- */

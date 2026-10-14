@@ -1,0 +1,12 @@
+# .claude/ holds internal agent configuration (.md files), not site content.
+# Without this, Eleventy's markdown template engine sweeps up any .md file
+# it finds under the input directory (which is "." — the whole repo) and
+# renders it as a page, which would otherwise publish
+# .claude/agents/seo-agent.md publicly at /.claude/agents/seo-agent/.
+.claude/
+node_modules/
+
+# Blog Studio drafts/scripts are not site pages
+drafts/
+scripts/
+reports/

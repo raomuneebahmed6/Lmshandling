@@ -1,0 +1,84 @@
+name: Clean up legacy source files on Hostinger
+
+# Manual, one-off cleanup: removes CMS source files (eleventy.config.js,
+# package.json, content/**/*.md, etc.) that were left on the live server
+# by Hostinger's old raw git-pull deploy, from before deploy.yml switched
+# to uploading only the built _site/ output. Safe to re-run; FTP DELE/RMD
+# on an already-missing path just fails that one quote command.
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete legacy files and directories via FTP
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+        run: |
+          FTP_SERVER="$(printf '%s' "$FTP_SERVER" | tr -d '\r\n ')"
+          curl -sS -u "$FTP_USERNAME:$FTP_PASSWORD" "ftp://$FTP_SERVER/" \
+            -Q "-DELE _includes/layouts/service-page.njk" \
+            -Q "-DELE _includes/layouts/faculty-page.njk" \
+            -Q "-DELE _includes/layouts/degree-page.njk" \
+            -Q "-DELE _includes/layouts/blog-post.njk" \
+            -Q "-DELE .claude/agents/seo-agent.md" \
+            -Q "-RMD _includes/layouts" \
+            -Q "-RMD _includes" \
+            -Q "-RMD .claude/agents" \
+            -Q "-RMD .claude" \
+            || true
+          echo "--- pass 2 ---"
+          curl -sS -u "$FTP_USERNAME:$FTP_PASSWORD" "ftp://$FTP_SERVER/" \
+            -Q "-DELE eleventy.config.js" \
+            -Q "-DELE package.json" \
+            -Q "-DELE package-lock.json" \
+            -Q "-DELE .eleventyignore" \
+            -Q "-DELE _data/existingPosts.json" \
+            -Q "-DELE _data/categoryLabels.json" \
+            -Q "-DELE content/blog/test-cms-post.md" \
+            -Q "-DELE content/services/lms-services.md" \
+            -Q "-DELE content/services/final-year-project.md" \
+            -Q "-DELE content/services/midterm-files.md" \
+            -Q "-DELE content/services/finalterm-files.md" \
+            -Q "-DELE content/degrees/public-administration.md" \
+            -Q "-DELE content/degrees/bioinformatics.md" \
+            -Q "-DELE content/degrees/statistics.md" \
+            -Q "-DELE content/degrees/faculty-management.md" \
+            -Q "-DELE content/degrees/business-administration.md" \
+            -Q "-DELE content/degrees/information-technology.md" \
+            -Q "-DELE content/degrees/software-engineering.md" \
+            -Q "-DELE content/degrees/computer-science.md" \
+            -Q "-DELE content/degrees/faculty-arts.md" \
+            -Q "-DELE content/degrees/commerce.md" \
+            -Q "-DELE content/degrees/zoology.md" \
+            -Q "-DELE content/degrees/economics.md" \
+            || true
+          echo "--- pass 3 ---"
+          curl -sS -u "$FTP_USERNAME:$FTP_PASSWORD" "ftp://$FTP_SERVER/" \
+            -Q "-DELE content/degrees/faculty-education.md" \
+            -Q "-DELE content/degrees/psychology.md" \
+            -Q "-DELE content/degrees/mathematics.md" \
+            -Q "-DELE content/degrees/bed-hons-elementary.md" \
+            -Q "-DELE content/degrees/english-applied-linguistics.md" \
+            -Q "-DELE content/degrees/faculty-csit.md" \
+            -Q "-DELE content/degrees/data-science.md" \
+            -Q "-DELE content/degrees/islamic-studies.md" \
+            -Q "-DELE content/degrees/accounting-finance.md" \
+            -Q "-DELE content/degrees/faculty-science.md" \
+            -Q "-DELE content/degrees/mass-communication.md" \
+            -Q "-DELE content/degrees/sociology.md" \
+            -Q "-DELE content/degrees/biotechnology.md" \
+            -Q "-DELE content/degrees/bed-hons-early-childhood.md" \
+            -Q "-RMD content/blog" \
+            -Q "-RMD content/services" \
+            -Q "-RMD content/degrees" \
+            -Q "-RMD content" \
+            -Q "-RMD _data" \
+            || true
+          echo "Cleanup commands sent (individual failures for already-missing paths are expected and ignored)."

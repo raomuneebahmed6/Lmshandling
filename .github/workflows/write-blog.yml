@@ -1,0 +1,97 @@
+name: Write blog draft (Claude)
+
+# Triggered from the /admin/ panel's "Write" button (GitHub API workflow_dispatch).
+# Claude writes ONE draft, the validator must pass, and the draft is pushed to
+# the separate `blog-drafts` branch. That branch is not deployed, so nothing
+# goes live until someone presses Publish in the admin panel.
+
+run-name: "Write blog ${{ inputs.request_id }}"
+
+on:
+  workflow_dispatch:
+    inputs:
+      request_id:
+        description: "Unique id from the admin panel (becomes the draft file name)"
+        required: true
+      keyword:
+        description: "Primary keyword / topic"
+        required: true
+      category:
+        description: "Category slug or auto"
+        required: false
+        default: "auto"
+      notes:
+        description: "Optional extra instructions"
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+  id-token: write
+
+concurrency:
+  group: write-blog
+  cancel-in-progress: false
+
+jobs:
+  write:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout site
+        uses: actions/checkout@v4
+        with:
+          ref: claude/website-blogs-seo-3jpp70
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Set today's date
+        run: echo "TODAY=$(date -u +%F)" >> "$GITHUB_ENV"
+
+      - name: Write the draft with Claude
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          show_full_output: true
+          claude_args: >-
+            --max-turns 60
+            --allowedTools "Read,Write,Edit,Glob,Grep,WebSearch,WebFetch,Bash(node scripts/validate-post.js:*)"
+          prompt: |
+            Follow `.github/blog-writer-prompt.md` exactly.
+
+            KEYWORD: ${{ inputs.keyword }}
+            CATEGORY: ${{ inputs.category }}
+            NOTES: ${{ inputs.notes }}
+            OUTPUT_FILE: drafts/${{ inputs.request_id }}.md
+            TODAY: ${{ env.TODAY }}
+
+      - name: Final validation gate
+        run: |
+          test -f "drafts/${{ inputs.request_id }}.md" || { echo "Claude did not produce a draft"; exit 1; }
+          node scripts/validate-post.js "drafts/${{ inputs.request_id }}.md"
+
+      - name: Push draft to the blog-drafts branch
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REQ: ${{ inputs.request_id }}
+        run: |
+          set -e
+          cp "drafts/$REQ.md" "$RUNNER_TEMP/draft.md"
+          rm -rf "$RUNNER_TEMP/d" && mkdir "$RUNNER_TEMP/d" && cd "$RUNNER_TEMP/d"
+          git init -q
+          git config user.name "blog-writer"
+          git config user.email "blog-writer@users.noreply.github.com"
+          git remote add origin "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          if git fetch -q origin blog-drafts; then git checkout -q -B blog-drafts FETCH_HEAD; else git checkout -q --orphan blog-drafts; fi
+          mkdir -p drafts && cp "$RUNNER_TEMP/draft.md" "drafts/$REQ.md"
+          git add drafts
+          git commit -q -m "Draft $REQ"
+          git push -q origin blog-drafts

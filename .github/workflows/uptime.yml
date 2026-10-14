@@ -1,0 +1,53 @@
+name: Uptime check
+
+# Every 30 minutes: is the site up? If not, open a GitHub issue (GitHub emails the
+# repo owner). When the site is back, the issue is commented on and closed.
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+
+permissions:
+  issues: write
+
+concurrency:
+  group: uptime
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check the site
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set +e
+          bad=""
+          for path in / /sitemap.xml /blog/; do
+            code=000
+            for try in 1 2 3; do
+              code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 25 "https://lmshandling.com$path")
+              [ "$code" = "200" ] && break
+              sleep 10
+            done
+            [ "$code" = "200" ] || bad="$bad $path=$code"
+          done
+          existing=$(gh issue list --label site-down --state open --json number -q '.[0].number')
+          if [ -n "$bad" ]; then
+            echo "DOWN:$bad"
+            if [ -z "$existing" ]; then
+              gh label create site-down --color b60205 --description "Automatic uptime alert" 2>/dev/null
+              gh issue create --title "Site problem: lmshandling.com is not answering normally" --label site-down \
+                --body "The uptime check failed at $(date -u +%FT%TZ). Failing paths:${bad}. Check Hostinger and Cloudflare. This issue closes itself when the site is back."
+            fi
+          else
+            echo "UP"
+            if [ -n "$existing" ]; then
+              gh issue comment "$existing" --body "The site is answering normally again ($(date -u +%FT%TZ))."
+              gh issue close "$existing"
+            fi
+          fi
+          exit 0
