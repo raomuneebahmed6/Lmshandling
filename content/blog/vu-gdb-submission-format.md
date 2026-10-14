@@ -10,7 +10,7 @@ keywords:
   - "VULMS GDB"
   - "VU GDB how to write"
   - "Nibaha Haq"
-canonicalSlug: "test-cms-post"
+canonicalSlug: "vu-gdb-submission-format"
 category: "lms-handling"
 ogImage: "vu-gdb-graded-discussion-board-guide.png"
 datePublished: "2026-10-10"

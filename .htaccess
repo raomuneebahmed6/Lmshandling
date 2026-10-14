@@ -15,6 +15,9 @@ RewriteRule ^(.*)$ https://lmshandling.com/$1 [L,R=301]
 # Redirect renamed PDF Store page to its new VU Notes URL
 RewriteRule ^store/?$ /vu-notes [R=301,L,NC]
 
+# Redirect the placeholder CMS slug to the GDB guide's real URL
+RewriteRule ^blog/test-cms-post(\.html)?/?$ /blog/vu-gdb-submission-format [R=301,L,NC]
+
 # Remove .html extension from URLs
 # If file exists with .html, serve it without showing .html
 RewriteCond %{REQUEST_FILENAME} !-d
