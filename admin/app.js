@@ -957,7 +957,7 @@
         '<details class="step"><summary><span class="n">3</span><div><b>Page extras</b><span class="s">Cover card, image, dates</span></div></summary><div class="in">' +
         '<label class="f">Cover card line 1 (eyebrow)</label><input type="text" id="f-eb"><label class="f">Cover highlights <small>(2-3 short lines, one per line)</small></label><textarea id="f-hl" rows="3"></textarea>' +
         '<label class="f">Cover contact line</label><input type="text" id="f-cl"><label class="f">WhatsApp button text</label><input type="text" id="f-cta">' +
-        '<label class="f">Cover / share image <small>(any image: it is resized and compressed to WebP automatically. Leave empty for the default.)</small></label><input type="file" id="f-img" accept="image/png,image/jpeg,image/webp">' +
+        '<label class="f">Cover / share image <small>(any image: it is resized and compressed to WebP automatically. Leave empty for the default.)</small></label><input type="file" id="f-img" accept="image/png,image/jpeg,image/webp"> <button type="button" class="btn ghost sm" id="covgen" style="margin-top:.5rem">' + icon('image') + ' Design a cover from the title</button><p class="hint">No image chosen? A branded cover is made automatically when you publish.</p>' +
         '<img class="imgprev" id="imgprev" alt="" src="' + L.SITE + '/assets/blog-images/' + esc(fm.ogImage || 'default-cover.png') + '">' +
         '<div class="row"><div><label class="f">Date published</label><input type="date" id="f-dp"></div><div><label class="f">Date modified</label><input type="date" id="f-dm"></div></div></div></details>' +
         '</div><aside class="sidepanel card"><div class="score" id="score"></div><p class="sub" style="margin:.2rem 0 0">SEO score (live)</p><ul class="checks" id="checks"></ul><div id="linksugg"></div></aside></div>' +
@@ -981,6 +981,7 @@
       bindVal('f-dp', function () { return fm.datePublished || ''; }, function (v) { fm.datePublished = v; });
       bindVal('f-dm', function () { return fm.dateModified || ''; }, function (v) { fm.dateModified = v; });
       document.getElementById('f-img').onchange = pickImage;
+      document.getElementById('covgen').onclick = openCoverDesigner;
       document.querySelectorAll('[data-ins]').forEach(function (b) { b.onclick = function () { insertTool(b.getAttribute('data-ins')); }; });
       document.getElementById('addfaq').onclick = function () { fm.faq.push({ question: '', answer: '' }); drawReps(); };
       document.getElementById('addrel').onclick = function () { fm.relatedGuides.push({ url: '', label: '' }); drawReps(); };
@@ -1028,6 +1029,45 @@
     else if (kind === 'a') { var u = window.prompt('Link to (e.g. /blog/vu-help-guide):', '/blog/'); if (!u) return; ins = '<a class="inline-link" href="' + u.replace(/"/g, '') + '">' + (sel || 'link text') + '</a>'; }
     else ins = '\n<div class="highlight-box"><p>Need help with this? <a class="inline-link" data-whatsapp="Hello Nibaha Haq, I need help with: " target="_blank" rel="noopener" href="https://wa.me/923295209868?text=Hello%20Nibaha%20Haq%2C%20I%20need%20help%20with%3A%20">Message us on WhatsApp</a> and get a clear direction.</p></div>\n\n';
     ta.setRangeText(ins, s, e, 'end'); ta.focus(); cur.body = ta.value; counts(); queueScore();
+  }
+  // Cover designer: branded 1200x630 thumbnail made in the browser from the title (no Canva needed)
+  function openCoverDesigner() {
+    var fm = cur.fm, variant = 'navy', timer = null, last = null;
+    var m = document.createElement('div'); m.className = 'modal';
+    m.innerHTML = '<div class="box" style="max-width:980px"><div class="hd"><b>Design a cover</b><button class="btn sm" id="cvx">Close</button></div><div class="cvwrap"><div class="cvprev"><img id="cvimg" alt="Cover preview" width="1200" height="630"><p class="hint" id="cvinfo">Making preview…</p></div>' +
+      '<div class="cvctl"><label class="f" style="margin-top:0">Style</label><div class="cvvars" id="cvvars">' + Object.keys(L.COVER_VARIANTS).map(function (k) { return '<button type="button" class="btn ghost sm' + (k === variant ? ' on' : '') + '" data-v="' + k + '">' + L.COVER_VARIANTS[k].name + '</button>'; }).join('') + '</div>' +
+      '<label class="f">Title on the cover</label><textarea id="cvt" rows="3">' + esc(fm.h1 || fm.title || '') + '</textarea>' +
+      '<label class="f">Category label</label><input type="text" id="cvl" value="' + esc(L.catLabel(fm.category)) + '">' +
+      '<label class="f">Highlights <small>(up to 3, one per line)</small></label><textarea id="cvh" rows="3">' + esc((fm.coverHighlights || []).join('\n')) + '</textarea>' +
+      '<div style="margin-top:1rem"><button class="btn gold" id="cvuse">Use this cover</button></div></div></div></div>';
+    document.body.appendChild(m);
+    function render() {
+      document.getElementById('cvinfo').textContent = 'Making preview…';
+      L.makeCover({ title: document.getElementById('cvt').value.trim(), label: document.getElementById('cvl').value.trim(), highlights: document.getElementById('cvh').value.split('\n'), variant: variant }).then(function (c) {
+        last = c; document.getElementById('cvimg').src = c.dataUrl; document.getElementById('cvinfo').textContent = '1200 x 630, ' + Math.round(c.size / 1024) + ' KB (' + c.ext.toUpperCase() + ')';
+      }).catch(function (e) { document.getElementById('cvinfo').textContent = e.message; });
+    }
+    function later() { clearTimeout(timer); timer = setTimeout(render, 250); }
+    m.querySelector('#cvx').onclick = function () { m.remove(); };
+    ['cvt', 'cvl', 'cvh'].forEach(function (id) { document.getElementById(id).addEventListener('input', later); });
+    m.querySelector('#cvvars').onclick = function (e) {
+      var b = e.target.closest('[data-v]'); if (!b) return; variant = b.getAttribute('data-v');
+      Array.prototype.forEach.call(m.querySelectorAll('#cvvars .btn'), function (x) { x.classList.toggle('on', x === b); }); render();
+    };
+    m.querySelector('#cvuse').onclick = function () {
+      if (!last) return;
+      var name = (cur.fm.canonicalSlug || 'cover') + '-cover.' + last.ext;
+      cur.image = { name: name, b64: last.b64 }; cur.fm.ogImage = name; document.getElementById('imgprev').src = last.dataUrl; m.remove(); L.toast('Cover ready. It is uploaded when you publish.');
+    };
+    render();
+  }
+  // Publishing without a cover picks the default image; make a branded one instead.
+  function ensureCover() {
+    var fm = cur.fm;
+    if (cur.image || (fm.ogImage && fm.ogImage !== 'default-cover.png')) return Promise.resolve();
+    return L.makeCover({ title: fm.h1 || fm.title, label: L.catLabel(fm.category), highlights: fm.coverHighlights, variant: 'navy' }).then(function (c) {
+      cur.image = { name: (fm.canonicalSlug || 'cover') + '-cover.' + c.ext, b64: c.b64 }; fm.ogImage = cur.image.name;
+    }).catch(function () { /* keep the default image if the browser cannot draw */ });
   }
   function pickImage(e) {
     var f = e.target.files[0]; if (!f) return;
@@ -1084,7 +1124,7 @@
     L.getFile(path, L.BRANCH).then(function (existing) {
       if (existing && !cur.published) throw new Error('A live post already uses the slug "' + fm.canonicalSlug + '". Change the slug.');
       if (!window.confirm((cur.published ? 'Update the live post' : 'Publish this post') + ' on lmshandling.com now?\n\n' + fm.title)) { btn.disabled = false; return null; }
-      var chain = Promise.resolve();
+      var chain = ensureCover();
       if (cur.image) chain = chain.then(function () { return L.getFile('assets/blog-images/' + cur.image.name, L.BRANCH); }).then(function (img) { return L.putFile('assets/blog-images/' + cur.image.name, L.BRANCH, cur.image.b64, 'Blog image ' + cur.image.name, img && img.sha); });
       return chain.then(function () { return L.putFile(path, L.BRANCH, L.b64enc(L.serializePost(fm, cur.body)), L.commitMsg('manual', cur.published ? 'Update' : 'Publish', fm.title, fm.canonicalSlug, me.name), existing && existing.sha); })
         .then(function (res) {

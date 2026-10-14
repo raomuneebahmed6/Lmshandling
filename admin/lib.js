@@ -243,6 +243,71 @@
     });
   }
 
+  /* ---------- cover / thumbnail generator (canvas, 1200x630) ---------- */
+  var COVER_VARIANTS = {
+    navy: { name: 'Navy', bg: ['#0b2b57', '#16539f'], fg: '#ffffff', sub: '#c9dbf3', accent: '#f5b400', chip: 'rgba(255,255,255,.14)', chipFg: '#ffffff', shape: 'rgba(255,255,255,.06)' },
+    gold: { name: 'Gold', bg: ['#f5b400', '#ffd24d'], fg: '#0b2b57', sub: '#5b4300', accent: '#0b2b57', chip: 'rgba(11,43,87,.12)', chipFg: '#0b2b57', shape: 'rgba(255,255,255,.28)' },
+    light: { name: 'Light', bg: ['#f3f6fb', '#dce8f7'], fg: '#0b2b57', sub: '#54698a', accent: '#00448b', chip: '#d3e2f5', chipFg: '#0b2b57', shape: 'rgba(0,68,139,.07)' }
+  };
+  function rrect(ctx, x, y, w, h, r) {
+    ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath();
+  }
+  function wrapText(ctx, text, maxW) {
+    var words = String(text).split(/\s+/).filter(Boolean), lines = [], cur = '';
+    words.forEach(function (w) { var t = cur ? cur + ' ' + w : w; if (ctx.measureText(t).width > maxW && cur) { lines.push(cur); cur = w; } else cur = t; });
+    if (cur) lines.push(cur);
+    return lines;
+  }
+  // opts: {title, label, highlights[], variant}. Resolves like compressImage: {b64, dataUrl, size, w, h, ext, canvas}
+  function makeCover(opts) {
+    var V = COVER_VARIANTS[opts.variant] || COVER_VARIANTS.navy, W = 1200, H = 630;
+    var logo = new Image();
+    var logoP = new Promise(function (res) { logo.onload = function () { res(true); }; logo.onerror = function () { res(false); }; logo.src = '/assets/logo.png'; });
+    var fontsP = Promise.all(['800 60px Poppins', '700 30px Poppins', '600 26px Poppins', '500 24px Poppins'].map(function (f) { return document.fonts.load(f); })).catch(function () { /* fall back to system font */ });
+    return Promise.all([logoP, fontsP]).then(function (r) {
+      var cv = document.createElement('canvas'); cv.width = W; cv.height = H; var ctx = cv.getContext('2d'), F = 'Poppins, "Segoe UI", Arial, sans-serif';
+      var g = ctx.createLinearGradient(0, 0, W, H); g.addColorStop(0, V.bg[0]); g.addColorStop(1, V.bg[1]); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+      // soft decorative shapes + dot grid (the site's look)
+      ctx.fillStyle = V.shape; ctx.beginPath(); ctx.arc(W - 120, -40, 330, 0, 7); ctx.fill(); ctx.beginPath(); ctx.arc(W + 40, H - 10, 230, 0, 7); ctx.fill(); ctx.beginPath(); ctx.arc(-60, H + 40, 210, 0, 7); ctx.fill();
+      ctx.fillStyle = V.shape; for (var gx = 40; gx < W; gx += 34) for (var gy = 30; gy < H; gy += 34) { ctx.fillRect(gx, gy, 2, 2); }
+      // brand row
+      var bx = 72, by = 56;
+      if (r[0]) { ctx.save(); ctx.beginPath(); ctx.arc(bx + 34, by + 34, 34, 0, 7); ctx.closePath(); ctx.fillStyle = '#fff'; ctx.fill(); ctx.clip(); ctx.drawImage(logo, bx, by, 68, 68); ctx.restore(); }
+      ctx.fillStyle = V.fg; ctx.font = '800 30px ' + F; ctx.textBaseline = 'alphabetic'; ctx.fillText('Nibaha Haq', bx + (r[0] ? 86 : 0), by + 32);
+      ctx.fillStyle = V.sub; ctx.font = '600 17px ' + F; ctx.fillText('VU ACADEMIC SUPPORT', bx + (r[0] ? 86 : 0), by + 58);
+      // category pill (top right)
+      if (opts.label) {
+        ctx.font = '700 22px ' + F; var lw = ctx.measureText(String(opts.label).toUpperCase()).width + 44, lx = W - 72 - lw, ly = 62;
+        rrect(ctx, lx, ly, lw, 44, 22); ctx.fillStyle = V.chip; ctx.fill(); ctx.fillStyle = V.chipFg; ctx.fillText(String(opts.label).toUpperCase(), lx + 22, ly + 30);
+      }
+      // title: biggest size that fits in at most 4 lines
+      var maxW = 1000, size = 84, lines;
+      for (; size >= 46; size -= 4) { ctx.font = '800 ' + size + 'px ' + F; lines = wrapText(ctx, opts.title || 'Your title here', maxW); if (lines.length <= (size > 64 ? 3 : 4)) break; }
+      var lh = Math.round(size * 1.14), blockH = lines.length * lh, top = 200 + Math.max(0, (270 - blockH) / 2);
+      ctx.fillStyle = V.accent; rrect(ctx, 72, top - 8, 10, blockH + 4, 5); ctx.fill();
+      ctx.fillStyle = V.fg; ctx.font = '800 ' + size + 'px ' + F; lines.forEach(function (l, i) { ctx.fillText(l, 104, top + size * 0.86 + i * lh); });
+      // highlight chips
+      var chips = (opts.highlights || []).filter(Boolean).slice(0, 3), cx = 104, cy = Math.min(top + blockH + 34, 480);
+      ctx.font = '700 22px ' + F;
+      chips.forEach(function (c) { var t = String(c).toUpperCase().slice(0, 28), w = ctx.measureText(t).width + 36; if (cx + w > W - 60) return; rrect(ctx, cx, cy, w, 42, 21); ctx.fillStyle = V.chip; ctx.fill(); ctx.fillStyle = V.chipFg; ctx.fillText(t, cx + 18, cy + 29); cx += w + 14; });
+      // bottom strip
+      ctx.fillStyle = V.accent; ctx.fillRect(0, H - 12, W, 12);
+      ctx.fillStyle = V.sub; ctx.font = '600 22px ' + F; ctx.textAlign = 'right'; ctx.fillText('lmshandling.com', W - 72, H - 42); ctx.textAlign = 'left';
+      return new Promise(function (resolve, reject) {
+        var q = 0.9;
+        (function enc() {
+          cv.toBlob(function (b) {
+            if (!b) { reject(new Error('This browser could not create the image')); return; }
+            if (b.size > 220 * 1024 && q > 0.5) { q -= 0.1; enc(); return; }
+            var rd = new FileReader();
+            rd.onload = function () { resolve({ b64: String(rd.result).split(',')[1], dataUrl: rd.result, size: b.size, w: W, h: H, ext: b.type === 'image/webp' ? 'webp' : 'png', canvas: cv }); };
+            rd.readAsDataURL(b);
+          }, 'image/webp', q);
+        })();
+      });
+    });
+  }
+
   /* ---------- internal link suggestions for the editor ---------- */
   var STOP = {};
   ('the and for vu guide how to of in a on with your you is are 2026 2025 what why vulms virtual university from this that about into out can will not get new all').split(' ').forEach(function (w) { STOP[w] = 1; });
@@ -291,7 +356,7 @@
     fmtDate: fmtDate, rel: rel, toast: toast, b64enc: b64enc, b64dec: b64dec, pool: pool, icon: icon,
     api: api, gh: gh, getFile: getFile, putFile: putFile, delFile: delFile, listDir: listDir, dispatch: dispatch,
     parsePost: parsePost, serializePost: serializePost, blankPost: blankPost, tocFromBody: tocFromBody,
-    compressImage: compressImage, linkSuggestions: linkSuggestions,
+    compressImage: compressImage, makeCover: makeCover, COVER_VARIANTS: COVER_VARIANTS, linkSuggestions: linkSuggestions,
     seoChecks: seoChecks, commitMsg: commitMsg, parseCommit: parseCommit, textBlocks: textBlocks, diffBlocks: diffBlocks
   };
 })();
