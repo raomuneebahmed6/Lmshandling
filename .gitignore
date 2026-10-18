@@ -1,8 +1,1 @@
 .claude/worktrees/
-node_modules/
-_site/
-.cache/
-admin/vendor/
-
-.dev.vars
-.wrangler/
