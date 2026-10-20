@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (($do === 'paid' || $do === 'completed') && $oid) {
         if ($do === 'paid') {
-            $pdo->prepare("UPDATE orders SET payment_status='paid' WHERE id=?")->execute([$oid]);
+            $pdo->prepare("UPDATE orders SET payment_status='paid', paid_amount=COALESCE(amount,0) WHERE id=?")->execute([$oid]);
         } else {
             $pdo->prepare("UPDATE orders SET status='completed' WHERE id=?")->execute([$oid]);
         }
@@ -38,7 +38,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $fileType = trim($_POST['file_type'] ?? '');
     $fileCount = max(0, (int)($_POST['file_count'] ?? 0));
     $amount = ($_POST['amount'] ?? '') !== '' ? max(0, (float)$_POST['amount']) : null;
-    $pay = array_key_exists($_POST['payment_status'] ?? '', $PAY) ? $_POST['payment_status'] : 'unpaid';
+    $paidAmt = ($_POST['paid_amount'] ?? '') !== '' ? max(0, (float)$_POST['paid_amount']) : 0.0;
+    $pay = pay_status($amount, $paidAmt);
     $st = array_key_exists($_POST['status'] ?? '', $STAT) ? $_POST['status'] : 'pending';
     $notes = trim($_POST['notes'] ?? '');
     $orderDate = valid_date($_POST['order_date'] ?? '') ? $_POST['order_date'] : date('Y-m-d');
@@ -54,13 +55,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $action = $oid ? 'edit' : 'new';
         $id = $oid;
     } elseif ($oid) {
-        $pdo->prepare('UPDATE orders SET client_id=?, file_type=?, file_count=?, amount=?, payment_status=?, status=?, notes=?, order_date=? WHERE id=?')
-            ->execute([$clientId, $fileType, $fileCount, $amount, $pay, $st, $notes, $orderDate, $oid]);
+        $pdo->prepare('UPDATE orders SET client_id=?, file_type=?, file_count=?, amount=?, payment_status=?, paid_amount=?, status=?, notes=?, order_date=? WHERE id=?')
+            ->execute([$clientId, $fileType, $fileCount, $amount, $pay, $paidAmt, $st, $notes, $orderDate, $oid]);
         flash('Order saved.');
         redirect('/dashboard/clients.php?action=view&id=' . $clientId);
     } else {
-        $pdo->prepare('INSERT INTO orders (client_id, file_type, file_count, amount, payment_status, status, notes, order_date) VALUES (?,?,?,?,?,?,?,?)')
-            ->execute([$clientId, $fileType, $fileCount, $amount, $pay, $st, $notes, $orderDate]);
+        $pdo->prepare('INSERT INTO orders (client_id, file_type, file_count, amount, payment_status, paid_amount, status, notes, order_date) VALUES (?,?,?,?,?,?,?,?,?)')
+            ->execute([$clientId, $fileType, $fileCount, $amount, $pay, $paidAmt, $st, $notes, $orderDate]);
         // a new order turns a lead into an active client
         $pdo->prepare("UPDATE clients SET stage='active' WHERE id=? AND stage='lead'")->execute([$clientId]);
         flash('Order added.');
@@ -74,7 +75,7 @@ $page = 'orders';
 
 if ($action === 'new' || $action === 'edit') {
     $order = ['id' => '', 'client_id' => (int)($_GET['client_id'] ?? 0), 'file_type' => FILE_TYPES[0], 'file_count' => 1, 'amount' => '',
-        'payment_status' => 'unpaid', 'status' => 'pending', 'notes' => '', 'order_date' => date('Y-m-d')];
+        'payment_status' => 'unpaid', 'paid_amount' => '', 'status' => 'pending', 'notes' => '', 'order_date' => date('Y-m-d')];
     if ($id) {
         $s = $pdo->prepare('SELECT * FROM orders WHERE id=?');
         $s->execute([$id]);
@@ -84,7 +85,7 @@ if ($action === 'new' || $action === 'edit') {
         }
     }
     if ($err) {
-        foreach (['client_id', 'file_type', 'file_count', 'amount', 'payment_status', 'status', 'notes', 'order_date'] as $f) $order[$f] = $_POST[$f] ?? $order[$f];
+        foreach (['client_id', 'file_type', 'file_count', 'amount', 'paid_amount', 'status', 'notes', 'order_date'] as $f) $order[$f] = $_POST[$f] ?? $order[$f];
     }
     $pageTitle = $order['id'] ? 'Edit order' : 'New order';
     include __DIR__ . '/includes/layout_top.php';
@@ -108,8 +109,7 @@ if ($action === 'new' || $action === 'edit') {
       <div><label for="od">Order date</label><input id="od" type="date" name="order_date" value="<?php echo e($order['order_date']); ?>"></div>
     </div>
     <div class="row2">
-      <div><label for="ps">Payment</label>
-        <select id="ps" name="payment_status"><?php foreach ($PAY as $k => $v): ?><option value="<?php echo $k; ?>"<?php echo $order['payment_status'] === $k ? ' selected' : ''; ?>><?php echo $v; ?></option><?php endforeach; ?></select></div>
+      <div><label for="pa">Amount received so far (Rs.)</label><input id="pa" type="number" name="paid_amount" min="0" step="1" value="<?php echo e((float)$order['paid_amount'] == 0 ? '' : $order['paid_amount']); ?>" placeholder="0"></div>
       <div><label for="st">Order status</label>
         <select id="st" name="status"><?php foreach ($STAT as $k => $v): ?><option value="<?php echo $k; ?>"<?php echo $order['status'] === $k ? ' selected' : ''; ?>><?php echo $v; ?></option><?php endforeach; ?></select></div>
     </div>
@@ -141,7 +141,7 @@ $s = $pdo->prepare('SELECT o.*, c.name AS client_name FROM orders o JOIN clients
 $s->execute($params);
 $orders = $s->fetchAll(PDO::FETCH_ASSOC);
 $sumAll = 0; $sumDue = 0; $files = 0;
-foreach ($orders as $o) { $sumAll += (float)$o['amount']; $files += (int)$o['file_count']; if ($o['payment_status'] !== 'paid') $sumDue += (float)$o['amount']; }
+foreach ($orders as $o) { $sumAll += (float)$o['amount']; $files += (int)$o['file_count']; $sumDue += owed($o); }
 $back = '/dashboard/orders.php' . ($_SERVER['QUERY_STRING'] ? '?' . $_SERVER['QUERY_STRING'] : '');
 
 include __DIR__ . '/includes/layout_top.php';
@@ -172,18 +172,19 @@ include __DIR__ . '/includes/layout_top.php';
         <td><a href="/dashboard/clients.php?action=view&amp;id=<?php echo (int)$o['client_id']; ?>"><?php echo e($o['client_name']); ?></a></td>
         <td><?php echo e($o['file_type']); ?></td>
         <td class="num"><?php echo (int)$o['file_count']; ?></td>
-        <td class="num"><?php echo $o['amount'] !== null ? e(number_format($o['amount'])) : '-'; ?></td>
+        <td class="num"><?php echo $o['amount'] !== null ? e(number_format($o['amount'])) : '-'; ?><?php if ($o['payment_status'] === 'partial'): ?><br><span class="muted">got <?php echo e(number_format($o['paid_amount'])); ?></span><?php endif; ?></td>
         <td><span class="badge b-<?php echo e($o['payment_status']); ?>"><?php echo e($o['payment_status']); ?></span></td>
         <td><span class="badge b-<?php echo e($o['status']); ?>"><?php echo e($o['status']); ?></span></td>
         <td style="display:flex;gap:6px">
           <?php if ($o['payment_status'] !== 'paid'): ?><form method="post" class="inline"><?php echo csrf_field(); ?><input type="hidden" name="do" value="paid"><input type="hidden" name="id" value="<?php echo (int)$o['id']; ?>"><input type="hidden" name="back" value="<?php echo e($back); ?>"><button class="ghost sm" type="submit">Mark paid</button></form><?php endif; ?>
           <?php if ($o['status'] !== 'completed'): ?><form method="post" class="inline"><?php echo csrf_field(); ?><input type="hidden" name="do" value="completed"><input type="hidden" name="id" value="<?php echo (int)$o['id']; ?>"><input type="hidden" name="back" value="<?php echo e($back); ?>"><button class="ghost sm" type="submit">Complete</button></form><?php endif; ?>
+          <a class="btn ghost sm" href="/dashboard/receipt.php?id=<?php echo (int)$o['id']; ?>" target="_blank">Receipt</a>
           <a class="btn ghost sm" href="/dashboard/orders.php?action=edit&amp;id=<?php echo (int)$o['id']; ?>">Edit</a>
         </td>
       </tr>
     <?php endforeach; ?>
     </tbody>
-    <tfoot><tr><td colspan="3"><?php echo count($orders); ?> orders</td><td class="num"><?php echo $files; ?></td><td class="num"><?php echo e(number_format($sumAll)); ?></td><td colspan="3">Not fully paid: <?php echo e(money($sumDue)); ?></td></tr></tfoot>
+    <tfoot><tr><td colspan="3"><?php echo count($orders); ?> orders</td><td class="num"><?php echo $files; ?></td><td class="num"><?php echo e(number_format($sumAll)); ?></td><td colspan="3">Still to collect: <?php echo e(money($sumDue)); ?></td></tr></tfoot>
   </table></div>
   <?php endif; ?>
 </section>

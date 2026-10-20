@@ -43,4 +43,7 @@
   document.querySelectorAll("select[data-autosubmit]").forEach(function (s) {
     s.addEventListener("change", function () { s.form.submit(); });
   });
+
+  document.querySelectorAll("[data-print]").forEach(function (b) { b.addEventListener("click", function () { window.print(); }); });
+  document.querySelectorAll("[data-back]").forEach(function (b) { b.addEventListener("click", function () { history.back(); }); });
 })();

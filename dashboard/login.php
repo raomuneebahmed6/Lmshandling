@@ -38,8 +38,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap">
-<link rel="stylesheet" href="/dashboard/assets/dash.css?v=2">
-<script src="/dashboard/assets/dash.js?v=1" defer></script>
+<link rel="stylesheet" href="/dashboard/assets/dash.css?v=3">
+<script src="/dashboard/assets/dash.js?v=2" defer></script>
 </head>
 <body class="login">
 <main class="login-card">

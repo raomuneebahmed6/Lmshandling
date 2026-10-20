@@ -7,6 +7,7 @@ $nav = [
     'clients' => ['/dashboard/clients.php', 'Clients', '<circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-6 7-6s7 2 7 6"/><path d="M16 4a4 4 0 0 1 0 8M22 21c0-3-2-5-5-5.7"/>'],
     'orders' => ['/dashboard/orders.php', 'Orders', '<path d="M6 2l-3 4v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18M16 10a4 4 0 0 1-8 0"/>'],
     'followups' => ['/dashboard/followups.php', 'Follow-ups', '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M9 16l2 2 4-4"/>'],
+    'backup' => ['/dashboard/backup.php', 'Backup', '<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/>'],
     'settings' => ['/dashboard/change_password.php', 'Password', '<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>'],
 ];
 ?>
@@ -21,8 +22,8 @@ $nav = [
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap">
-<link rel="stylesheet" href="/dashboard/assets/dash.css?v=2">
-<script src="/dashboard/assets/dash.js?v=1" defer></script>
+<link rel="stylesheet" href="/dashboard/assets/dash.css?v=3">
+<script src="/dashboard/assets/dash.js?v=2" defer></script>
 </head>
 <body class="app">
 <aside class="side" id="side" aria-label="Main navigation">

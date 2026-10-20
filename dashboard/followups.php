@@ -14,7 +14,7 @@ foreach ($all as $c) {
 }
 
 // unpaid orders older than 3 days (payment reminders)
-$unpaid = $pdo->query("SELECT o.id, o.amount, o.order_date, o.file_type, c.id cid, c.name, c.whatsapp_number FROM orders o JOIN clients c ON c.id=o.client_id WHERE o.payment_status!='paid' ORDER BY o.order_date LIMIT 30")->fetchAll(PDO::FETCH_ASSOC);
+$unpaid = $pdo->query("SELECT o.id, o.amount, o.paid_amount, o.order_date, o.file_type, c.id cid, c.name, c.whatsapp_number FROM orders o JOIN clients c ON c.id=o.client_id WHERE MAX(COALESCE(o.amount,0)-COALESCE(o.paid_amount,0),0) > 0 OR (o.amount IS NULL AND o.payment_status!='paid') ORDER BY o.order_date LIMIT 30")->fetchAll(PDO::FETCH_ASSOC);
 
 $pageTitle = 'Follow-ups';
 $page = 'followups';
@@ -50,15 +50,15 @@ include __DIR__ . '/includes/layout_top.php';
   <div class="card-head"><h2>Payments to collect <span class="badge b-unpaid"><?php echo count($unpaid); ?></span></h2><a class="btn ghost sm" href="/dashboard/orders.php?payment=due">Open in Orders</a></div>
   <?php if (!$unpaid): ?><div class="empty">All orders are paid.</div><?php else: ?>
   <div class="tablewrap"><table>
-    <thead><tr><th>Order date</th><th>Client</th><th>Type</th><th class="num">Amount</th><th></th></tr></thead>
+    <thead><tr><th>Order date</th><th>Client</th><th>Type</th><th class="num">Owes</th><th></th></tr></thead>
     <tbody>
     <?php foreach ($unpaid as $o): $wa = wa_number($o['whatsapp_number']); ?>
       <tr>
         <td><?php echo e(substr($o['order_date'], 0, 10)); ?></td>
         <td><a href="/dashboard/clients.php?action=view&amp;id=<?php echo (int)$o['cid']; ?>"><?php echo e($o['name']); ?></a></td>
         <td><?php echo e($o['file_type']); ?></td>
-        <td class="num"><?php echo $o['amount'] !== null ? e(number_format($o['amount'])) : '-'; ?></td>
-        <td><?php if ($wa): ?><a class="btn wa sm" target="_blank" rel="noopener" href="https://wa.me/<?php echo e($wa); ?>?text=<?php echo rawurlencode('Assalam o Alaikum ' . $o['name'] . ', a friendly reminder about the pending payment' . ($o['amount'] !== null ? ' of Rs. ' . number_format($o['amount']) : '') . ' for your ' . $o['file_type'] . ' order. JazakAllah.'); ?>">Remind</a><?php endif; ?></td>
+        <td class="num"><?php echo $o['amount'] !== null ? e(number_format(owed($o))) : '-'; ?></td>
+        <td><?php if ($wa): ?><a class="btn wa sm" target="_blank" rel="noopener" href="https://wa.me/<?php echo e($wa); ?>?text=<?php echo rawurlencode('Assalam o Alaikum ' . $o['name'] . ', a friendly reminder about the pending payment' . ($o['amount'] !== null ? ' of Rs. ' . number_format(owed($o)) : '') . ' for your ' . $o['file_type'] . ' order. JazakAllah.'); ?>">Remind</a><?php endif; ?></td>
       </tr>
     <?php endforeach; ?>
     </tbody>

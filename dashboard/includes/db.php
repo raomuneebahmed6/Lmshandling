@@ -82,5 +82,15 @@ function get_db() {
         $pdo->exec("UPDATE clients SET stage='active' WHERE id IN (SELECT DISTINCT client_id FROM orders)");
     }
 
+    // Additive payment column on orders (amount received so far)
+    $ohave = [];
+    foreach ($pdo->query('PRAGMA table_info(orders)') as $col) {
+        $ohave[$col['name']] = true;
+    }
+    if (!isset($ohave['paid_amount'])) {
+        $pdo->exec('ALTER TABLE orders ADD COLUMN paid_amount REAL NOT NULL DEFAULT 0');
+        $pdo->exec("UPDATE orders SET paid_amount = COALESCE(amount, 0) WHERE payment_status = 'paid'");
+    }
+
     return $pdo;
 }

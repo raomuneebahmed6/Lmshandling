@@ -11,8 +11,8 @@ $totalClients = (int)$q('SELECT COUNT(*) FROM clients');
 $activeClients = (int)$q("SELECT COUNT(*) FROM clients WHERE stage='active'");
 $leads = (int)$q("SELECT COUNT(*) FROM clients WHERE stage='lead'");
 $pendingOrders = (int)$q("SELECT COUNT(*) FROM orders WHERE status='pending'");
-$monthRevenue = (float)$q("SELECT COALESCE(SUM(amount),0) FROM orders WHERE payment_status='paid' AND substr(order_date,1,7)=?", [$month]);
-$outstanding = (float)$q("SELECT COALESCE(SUM(amount),0) FROM orders WHERE payment_status!='paid'");
+$monthRevenue = (float)$q("SELECT COALESCE(SUM(paid_amount),0) FROM orders WHERE substr(order_date,1,7)=?", [$month]);
+$outstanding = (float)$q('SELECT COALESCE(SUM(' . OWED_SQL . '),0) FROM orders');
 $unpaidCount = (int)$q("SELECT COUNT(*) FROM orders WHERE payment_status!='paid'");
 $filesTotal = (int)$q('SELECT COALESCE(SUM(file_count),0) FROM orders');
 $dueCount = (int)$q("SELECT COUNT(*) FROM clients WHERE next_followup IS NOT NULL AND next_followup!='' AND next_followup<=? AND stage IN ('lead','active')", [$today]);
@@ -23,7 +23,7 @@ for ($i = 5; $i >= 0; $i--) {
     $k = date('Y-m', strtotime("first day of -$i month"));
     $months[$k] = ['label' => date('M', strtotime($k . '-01')), 'sum' => 0.0];
 }
-$stmt = $pdo->prepare("SELECT substr(order_date,1,7) m, COALESCE(SUM(amount),0) s FROM orders WHERE payment_status='paid' AND substr(order_date,1,7)>=? GROUP BY m");
+$stmt = $pdo->prepare("SELECT substr(order_date,1,7) m, COALESCE(SUM(paid_amount),0) s FROM orders WHERE substr(order_date,1,7)>=? GROUP BY m");
 $stmt->execute([array_key_first($months)]);
 foreach ($stmt as $r) { if (isset($months[$r['m']])) $months[$r['m']]['sum'] = (float)$r['s']; }
 $maxSum = max(1, max(array_column($months, 'sum')));

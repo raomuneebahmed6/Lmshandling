@@ -136,7 +136,7 @@ if ($action === 'view' && $id) {
     $acts = $s->fetchAll(PDO::FETCH_ASSOC);
     $fileTotal = array_sum(array_column($orders, 'file_count'));
     $paidTotal = 0; $dueTotal = 0;
-    foreach ($orders as $o) { if ($o['payment_status'] === 'paid') $paidTotal += (float)$o['amount']; else $dueTotal += (float)$o['amount']; }
+    foreach ($orders as $o) { $paidTotal += (float)$o['paid_amount']; $dueTotal += owed($o); }
     $wa = wa_number($client['whatsapp_number']);
     $today = date('Y-m-d');
     $msgText = 'Assalam o Alaikum ' . $client['name'] . ', this is Nibaha Haq from lmshandling.com. ';
@@ -161,6 +161,10 @@ if ($action === 'view' && $id) {
     <dt>Paid / Outstanding</dt><dd><?php echo e(money($paidTotal)); ?> / <strong<?php echo $dueTotal > 0 ? ' class="due-over"' : ''; ?>><?php echo e(money($dueTotal)); ?></strong></dd>
     <dt>Notes</dt><dd><?php echo $client['notes'] ? nl2br(e($client['notes'])) : '-'; ?></dd>
   </dl>
+  <?php if ($wa): ?>
+  <div style="margin-top:16px"><div class="muted" style="margin-bottom:6px">Quick WhatsApp messages</div>
+    <div class="tabs"><?php foreach (MSG_TEMPLATES as $label => $tpl): ?><a target="_blank" rel="noopener" href="https://wa.me/<?php echo e($wa); ?>?text=<?php echo rawurlencode(str_replace('{name}', $client['name'], $tpl)); ?>"><?php echo e($label); ?></a><?php endforeach; ?></div></div>
+  <?php endif; ?>
 </div>
 
 <div class="grid2">
@@ -242,7 +246,7 @@ if ($search !== '') {
 if ($stageF !== '') { $where[] = 'c.stage = ?'; $params[] = $stageF; }
 $sql = "SELECT c.*,
   (SELECT COUNT(*) FROM orders o WHERE o.client_id=c.id) AS order_count,
-  (SELECT COALESCE(SUM(amount),0) FROM orders o WHERE o.client_id=c.id AND o.payment_status!='paid') AS owed
+  (SELECT COALESCE(SUM(MAX(COALESCE(o.amount,0)-COALESCE(o.paid_amount,0),0)),0) FROM orders o WHERE o.client_id=c.id) AS owed
   FROM clients c" . ($where ? ' WHERE ' . implode(' AND ', $where) : '') . ' ORDER BY c.created_at DESC, c.id DESC';
 $s = $pdo->prepare($sql);
 $s->execute($params);

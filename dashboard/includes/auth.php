@@ -140,6 +140,29 @@ const STAGES = ['lead' => 'Lead', 'active' => 'Active', 'completed' => 'Complete
 const FILE_TYPES = ['Midterm Files', 'Finalterm Files', 'Notes', 'FYP / GDB', 'LMS Handling', 'Other'];
 const ACTIVITY_KINDS = ['note' => 'Note', 'call' => 'Call', 'whatsapp' => 'WhatsApp', 'payment' => 'Payment'];
 
+// owed on one order row: never negative
+const OWED_SQL = 'MAX(COALESCE(amount,0) - COALESCE(paid_amount,0), 0)';
+
+function pay_status($amount, $paid) {
+    $amount = (float)$amount; $paid = (float)$paid;
+    if ($amount <= 0) return $paid > 0 ? 'paid' : 'unpaid';
+    if ($paid >= $amount) return 'paid';
+    return $paid > 0 ? 'partial' : 'unpaid';
+}
+
+function owed($row) {
+    return max((float)($row['amount'] ?? 0) - (float)($row['paid_amount'] ?? 0), 0);
+}
+
+// Ready-made WhatsApp messages. {name} is replaced with the client's name.
+const MSG_TEMPLATES = [
+    'Greeting' => 'Assalam o Alaikum {name}, this is Nibaha Haq from lmshandling.com. How can I help you today?',
+    'Files sent' => 'Assalam o Alaikum {name}, your files have been sent. Please check and confirm that you received them. JazakAllah.',
+    'Payment reminder' => 'Assalam o Alaikum {name}, a friendly reminder about the pending payment for your order. Please let me know once it is done. JazakAllah.',
+    'Follow-up' => 'Assalam o Alaikum {name}, just checking in. Do you need any help with your VU subjects, quizzes or exams?',
+    'Thank you' => 'Thank you {name} for choosing Nibaha Haq. Please share your feedback, and let us know if you need anything else.',
+];
+
 function wa_number($raw) {
     $d = preg_replace('/\D/', '', (string)$raw);
     if ($d === '') return '';
