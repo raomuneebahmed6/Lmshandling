@@ -26,7 +26,7 @@ jobs:
       - name: Create the archive
         run: |
           D=$(date -u +%F)
-          tar czf "lmshandling-backup-$D.tar.gz" content blog _data degrees services assets .github/cms-settings.json *.html robots.txt .htaccess 2>/dev/null || true
+          tar czf "lmshandling-backup-$D.tar.gz" blog degrees services assets *.html robots.txt sitemap.xml llms.txt .htaccess 2>/dev/null || true
           ls -la lmshandling-backup-*.tar.gz
           echo "DATE=$D" >> "$GITHUB_ENV"
 
