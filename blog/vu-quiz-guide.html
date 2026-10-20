@@ -4,18 +4,26 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
-<!-- Google tag (gtag.js), deferred until after load to keep it off the critical rendering path -->
+<!-- Google tag (gtag.js): loaded on first interaction or 3.5 s after load, so it never competes with the first paint. Queued events are replayed. -->
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
   gtag('config', 'G-RL2VZFJM2L');
-  window.addEventListener('load', function(){
-    var s = document.createElement('script');
-    s.async = true;
-    s.src = 'https://www.googletagmanager.com/gtag/js?id=G-RL2VZFJM2L';
-    document.head.appendChild(s);
-  });
+  (function(){
+    var started = false, evs = ['scroll', 'pointerdown', 'keydown', 'touchstart'];
+    function start(){
+      if (started) return;
+      started = true;
+      evs.forEach(function(e){ removeEventListener(e, start); });
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=G-RL2VZFJM2L';
+      document.head.appendChild(s);
+    }
+    evs.forEach(function(e){ addEventListener(e, start, { passive: true }); });
+    addEventListener('load', function(){ setTimeout(start, 3500); });
+  })();
 </script>
 
 <!-- ===================== PRIMARY SEO ===================== -->
@@ -719,7 +727,7 @@ img { max-width:100%; height:auto; }
       <p class="section-label"><a href="/blog/category/lms-handling">LMS Handling</a></p>
       <h1>VU Quiz Guide: How VULMS Quizzes Work &amp; How to Prepare</h1>
       <p class="lead">What a VU quiz actually is, where to find it on VULMS, how the timed MCQ format works, how to prepare for it efficiently, and the mistakes that cost students marks every semester.</p>
-      <div class="highlight-box" role="note"><p><strong>Quick answer:</strong> A VU quiz is a short, timed set of MCQs that becomes available on VULMS only within a set activation window, and once that window closes the quiz is no longer available to attempt. It is auto-graded immediately on submission and tests recent lecture content directly, unlike an assignment, which is prepared offline, or a GDB, which is a typed discussion post. Checking the Quizzes section regularly and reviewing the relevant lecture range beforehand is the most efficient way to prepare, since most lost marks come from starting late in the window rather than not knowing the material.</p></div>
+      <div class="highlight-box" role="note"><p><strong>Quick answer:</strong> A VU quiz is a short, timed MCQ set available on VULMS only within a set activation window; once it closes, you can't attempt it. It's auto-graded on submission and tests recent lecture content directly, unlike an offline assignment or a typed GDB post. Checking the Quizzes section regularly and reviewing the lecture range beforehand is the best way to prepare, since most lost marks come from starting late, not the material itself.</p></div>
       <div class="post-meta-row reveal" data-delay="1">
         <span class="chip">✍️ Nibaha Haq</span>
         <span class="chip">📅 2026</span>
@@ -960,8 +968,16 @@ safe("reveals", () => {
   if (!("IntersectionObserver" in window)) { els.forEach(el => el.classList.add("in")); return; }
   const io = new IntersectionObserver(entries => {
     entries.forEach(e => { if (e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); } });
-  }, { threshold:.15, rootMargin:"0px 0px -40px 0px" });
-  els.forEach(el => io.observe(el));
+  }, { threshold:.05, rootMargin:"0px 0px 140px 0px" });
+  const vh = window.innerHeight || 800;
+  const list = Array.prototype.slice.call(els);
+  // read phase (one layout), then write phase: no forced reflow per element
+  const tops = list.map(el => el.getBoundingClientRect().top);
+  list.forEach((el, i) => {
+    // already on screen: show at once (an entrance animation here only delays the Largest Contentful Paint)
+    if (tops[i] < vh * .95){ el.style.transition = "none"; el.classList.add("in"); }
+    else io.observe(el);
+  });
 });
 
 /* ---------- animated counters ---------- */

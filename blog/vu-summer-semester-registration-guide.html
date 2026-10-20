@@ -4,18 +4,26 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
-<!-- Google tag (gtag.js), deferred until after load to keep it off the critical rendering path -->
+<!-- Google tag (gtag.js): loaded on first interaction or 3.5 s after load, so it never competes with the first paint. Queued events are replayed. -->
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
   gtag('config', 'G-RL2VZFJM2L');
-  window.addEventListener('load', function(){
-    var s = document.createElement('script');
-    s.async = true;
-    s.src = 'https://www.googletagmanager.com/gtag/js?id=G-RL2VZFJM2L';
-    document.head.appendChild(s);
-  });
+  (function(){
+    var started = false, evs = ['scroll', 'pointerdown', 'keydown', 'touchstart'];
+    function start(){
+      if (started) return;
+      started = true;
+      evs.forEach(function(e){ removeEventListener(e, start); });
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=G-RL2VZFJM2L';
+      document.head.appendChild(s);
+    }
+    evs.forEach(function(e){ addEventListener(e, start, { passive: true }); });
+    addEventListener('load', function(){ setTimeout(start, 3500); });
+  })();
 </script>
 
 <!-- ===================== PRIMARY SEO ===================== -->
@@ -763,7 +771,7 @@ img { max-width:100%; height:auto; }
       <p class="section-label"><a href="/blog/category/registration">Registration</a></p>
       <h1>How to Apply for VU Summer Semester 2026 on VULMS (Fee &amp; Should You Take It?)</h1>
       <p class="lead">How and when Virtual University announces Summer Semester, exactly how to apply for it on VULMS step by step, the approximate fee, and whether it's actually worth taking based on your CGPA and academic situation.</p>
-      <div class="highlight-box" role="note"><p><strong>Quick answer:</strong> VU Summer Semester registration opens through Student Services on VULMS once announced, and it follows a five-step process: logging in, opening Student Services, selecting from the offered subjects list, generating a fee challan, and paying it to confirm registration. Not every course is offered in Summer Semester, and registration is only complete once payment goes through. Whether it's worth taking depends mainly on current CGPA and how many courses are left, since Summer Semester can shorten a degree but concentrates the same workload into a shorter term.</p></div>
+      <div class="highlight-box" role="note"><p><strong>Quick answer:</strong> VU Summer Semester registration opens through Student Services on VULMS once announced, via a five-step process: log in, open Student Services, select from the offered subjects, generate a fee challan, and pay it to confirm registration. Not every course is offered, and registration completes only once payment clears. Whether it's worth taking depends mainly on your CGPA and remaining courses, since it can shorten your degree but compresses the same workload into a shorter term.</p></div>
       <div class="post-meta-row reveal" data-delay="1">
         <span class="chip">✍️ Nibaha Haq</span>
         <span class="chip">📅 2026</span>
@@ -1021,8 +1029,16 @@ safe("reveals", () => {
   if (!("IntersectionObserver" in window)) { els.forEach(el => el.classList.add("in")); return; }
   const io = new IntersectionObserver(entries => {
     entries.forEach(e => { if (e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); } });
-  }, { threshold:.15, rootMargin:"0px 0px -40px 0px" });
-  els.forEach(el => io.observe(el));
+  }, { threshold:.05, rootMargin:"0px 0px 140px 0px" });
+  const vh = window.innerHeight || 800;
+  const list = Array.prototype.slice.call(els);
+  // read phase (one layout), then write phase: no forced reflow per element
+  const tops = list.map(el => el.getBoundingClientRect().top);
+  list.forEach((el, i) => {
+    // already on screen: show at once (an entrance animation here only delays the Largest Contentful Paint)
+    if (tops[i] < vh * .95){ el.style.transition = "none"; el.classList.add("in"); }
+    else io.observe(el);
+  });
 });
 
 /* ---------- animated counters ---------- */

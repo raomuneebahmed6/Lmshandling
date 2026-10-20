@@ -1,0 +1,34 @@
+name: Deploy to Hostinger
+
+# Plain static site: every push to this branch FTP-uploads the repo as-is
+# (no build step, no CMS). Source files that must never reach the live
+# server are excluded below.
+
+on:
+  push:
+    branches:
+      - claude/website-blogs-seo-3jpp70
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Deploy to Hostinger via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./
+          server-dir: ./
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/.github/**
+            **/.claude/**

@@ -15,6 +15,9 @@ RewriteRule ^(.*)$ https://lmshandling.com/$1 [L,R=301]
 # Redirect renamed PDF Store page to its new VU Notes URL
 RewriteRule ^store/?$ /vu-notes [R=301,L,NC]
 
+# Redirect the placeholder CMS slug to the GDB guide's real URL
+RewriteRule ^blog/test-cms-post(\.html)?/?$ /blog/vu-gdb-submission-format [R=301,L,NC]
+
 # Remove .html extension from URLs
 # If file exists with .html, serve it without showing .html
 RewriteCond %{REQUEST_FILENAME} !-d
@@ -29,6 +32,9 @@ RewriteRule ^(.+)\.html$ /$1 [NC,L,R=301]
 AddType text/html .html
 AddType image/jpeg .jpg .jpeg
 AddType image/png .png
+AddType image/webp .webp
+AddType image/svg+xml .svg
+AddType font/woff2 .woff2
 AddType image/x-icon .ico
 AddType application/manifest+json .webmanifest
 AddType text/css .css
@@ -44,6 +50,10 @@ AddType application/javascript .js
   ExpiresByType image/jpeg "access plus 3 months"
   ExpiresByType image/png "access plus 3 months"
   ExpiresByType image/x-icon "access plus 3 months"
+  ExpiresByType image/webp "access plus 3 months"
+  ExpiresByType image/svg+xml "access plus 3 months"
+  ExpiresByType font/woff2 "access plus 6 months"
+  ExpiresByType application/json "access plus 1 day"
   ExpiresByType text/html "access plus 0 seconds"
   ExpiresByType text/css "access plus 1 month"
   ExpiresByType application/javascript "access plus 1 month"
@@ -66,7 +76,7 @@ AddType application/javascript .js
   Header always set Referrer-Policy strict-origin-when-cross-origin
   Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
   Header always set Permissions-Policy "geolocation=(), microphone=(), camera=(), payment=(), usb=(), interest-cohort=()"
-  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https://www.google-analytics.com https://www.googletagmanager.com; connect-src 'self' https://www.google-analytics.com https://www.googletagmanager.com https://region1.google-analytics.com https://analytics.google.com https://stats.g.doubleclick.net https://www.google.com https://static.cloudflareinsights.com; frame-ancestors 'self'; base-uri 'self'; object-src 'none'"
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https://www.google-analytics.com https://www.googletagmanager.com https://www.google.com https://www.google.com.pk; connect-src 'self' https://www.google-analytics.com https://www.googletagmanager.com https://region1.google-analytics.com https://analytics.google.com https://stats.g.doubleclick.net https://www.google.com https://static.cloudflareinsights.com; frame-ancestors 'self'; base-uri 'self'; object-src 'none'"
 </IfModule>
 
 # Block access to sensitive/hidden files (source control, env files, backups)

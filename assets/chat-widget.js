@@ -226,6 +226,8 @@
     injectStyle();
     var dom = buildDom();
     var faqs = null;
+    var faqsReady = null;
+    var loadFaqsRef = null;
     var isOpen = false;
 
     function setOpen(open) {
@@ -242,7 +244,7 @@
       }
     }
 
-    dom.toggle.addEventListener("click", function () { setOpen(!isOpen); });
+    dom.toggle.addEventListener("click", function () { if (loadFaqsRef) loadFaqsRef(); setOpen(!isOpen); });
     dom.close.addEventListener("click", function () { setOpen(false); });
 
     function sendQuery(text) {
@@ -255,18 +257,21 @@
       dom.body.appendChild(typing);
       dom.body.scrollTop = dom.body.scrollHeight;
 
+      var ready = loadFaqsRef ? loadFaqsRef() : Promise.resolve();
       setTimeout(function () {
-        typing.remove();
-        if (!faqs) {
-          addMessage(dom.body, "bot", fallbackHtml(text));
-        } else {
-          var matches = bestMatches(text, faqs, 1);
-          if (matches.length) {
-            addMessage(dom.body, "bot", answerHtml(matches[0].faq, text));
-          } else {
+        ready.then(function () {
+          typing.remove();
+          if (!faqs) {
             addMessage(dom.body, "bot", fallbackHtml(text));
+          } else {
+            var matches = bestMatches(text, faqs, 1);
+            if (matches.length) {
+              addMessage(dom.body, "bot", answerHtml(matches[0].faq, text));
+            } else {
+              addMessage(dom.body, "bot", fallbackHtml(text));
+            }
           }
-        }
+        });
       }, 380);
     }
 
@@ -303,13 +308,22 @@
     // Every page load starts a fresh chat — no old conversation is restored.
     greet();
 
-    fetch(FAQ_URL).then(function (r) { return r.json(); }).then(function (data) {
-      data.forEach(function (f) {
-        f._qTokens = tokenize(f.q);
-        f._aTokens = tokenize(f.a);
-      });
-      faqs = data;
-    }).catch(function () { faqs = []; });
+    // The FAQ file is ~140 KB and tokenising it is main-thread work, so it is NOT loaded with
+    // the page: it loads when the chat is first opened (or a few seconds after load, whichever
+    // comes first), and answers wait for it.
+    function loadFaqs() {
+      if (faqsReady) return faqsReady;
+      faqsReady = fetch(FAQ_URL).then(function (r) { return r.json(); }).then(function (data) {
+        data.forEach(function (f) {
+          f._qTokens = tokenize(f.q);
+          f._aTokens = tokenize(f.a);
+        });
+        faqs = data;
+      }).catch(function () { faqs = []; });
+      return faqsReady;
+    }
+    loadFaqsRef = loadFaqs;
+    window.addEventListener("load", function () { setTimeout(loadFaqs, 8000); });
   }
 
   if (document.readyState === "loading") {

@@ -4,28 +4,36 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
-<!-- Google tag (gtag.js), deferred until after load to keep it off the critical rendering path -->
+<!-- Google tag (gtag.js): loaded on first interaction or 3.5 s after load, so it never competes with the first paint. Queued events are replayed. -->
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
   gtag('config', 'G-RL2VZFJM2L');
-  window.addEventListener('load', function(){
-    var s = document.createElement('script');
-    s.async = true;
-    s.src = 'https://www.googletagmanager.com/gtag/js?id=G-RL2VZFJM2L';
-    document.head.appendChild(s);
-  });
+  (function(){
+    var started = false, evs = ['scroll', 'pointerdown', 'keydown', 'touchstart'];
+    function start(){
+      if (started) return;
+      started = true;
+      evs.forEach(function(e){ removeEventListener(e, start); });
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=G-RL2VZFJM2L';
+      document.head.appendChild(s);
+    }
+    evs.forEach(function(e){ addEventListener(e, start, { passive: true }); });
+    addEventListener('load', function(){ setTimeout(start, 3500); });
+  })();
 </script>
 
 <!-- ===================== PRIMARY SEO ===================== -->
-<title>VU New Session Starts 5 October: First Steps | Nibaha Haq</title>
-<meta name="description" content="VU's new semester session begins 5 October 2026. A first-days checklist to confirm your courses, catch early quizzes and GDBs, and book LMS Handling early.">
-<meta name="keywords" content="VU new session starts, VU new session 5 October, VU new semester 2026, book LMS Handling, VULMS quizzes assignments GDBs, Nibaha Haq">
+<title>PAK301 Notes: Midterm &amp; Finalterm Guide 2026 | Nibaha Haq</title>
+<meta name="description" content="PAK301 (Pakistan Studies) midterm and finalterm notes: code-wise Objective and Subjective files matched to VU's own lecture content and format.">
+<meta name="keywords" content="PAK301 notes, PAK301 midterm, PAK301 finalterm, PAK301 solved MCQs, PAK301 Pakistan Studies notes, VU PAK301, Nibaha Haq">
 <meta name="author" content="Nibaha Haq">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <meta name="theme-color" content="#00448B">
-<link rel="canonical" href="https://lmshandling.com/blog/vu-new-session-starts-5-october-2026">
+<link rel="canonical" href="https://lmshandling.com/blog/pak301-pakistan-studies-notes">
 
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
@@ -34,24 +42,24 @@
 <link rel="manifest" href="/assets/site.webmanifest">
 
 <!-- ===================== OPEN GRAPH / SOCIAL ===================== -->
-<meta property="og:type" content="article">
+<meta property="og:type" content="website">
 <meta property="og:site_name" content="Nibaha Haq | Academic Support Services">
-<meta property="og:title" content="VU New Session Starts 5 October: First Steps | Nibaha Haq">
-<meta property="og:description" content="VU's new semester session begins 5 October 2026. A first-days checklist to confirm your courses, catch early quizzes and GDBs, and book LMS Handling early.">
-<meta property="og:url" content="https://lmshandling.com/blog/vu-new-session-starts-5-october-2026">
-<meta property="og:image" content="https://lmshandling.com/assets/blog-images/vu-new-session-starts-5-october-2026.png">
+<meta property="og:title" content="PAK301 Notes: Midterm &amp; Finalterm Guide 2026 | Nibaha Haq">
+<meta property="og:description" content="PAK301 (Pakistan Studies) midterm and finalterm notes: code-wise Objective and Subjective files matched to VU's own lecture content and format.">
+<meta property="og:url" content="https://lmshandling.com/blog/pak301-pakistan-studies-notes">
+<meta property="og:image" content="https://lmshandling.com/assets/blog-images/pak301-pakistan-studies-notes.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="VU New Session Starts 5 October 2026: First Steps">
+<meta property="og:image:alt" content="PAK301 Notes: Midterm & Finalterm Guide 2026">
 <meta property="og:locale" content="en_PK">
-<meta property="article:published_time" content="2026-09-26T00:00:00+05:00">
-<meta property="article:modified_time" content="2026-09-26T00:00:00+05:00">
+<meta property="article:published_time" content="2026-10-08T00:00:00+05:00">
+<meta property="article:modified_time" content="2026-10-08T00:00:00+05:00">
 <meta property="article:author" content="Nibaha Haq">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="VU New Session Starts 5 October: First Steps | Nibaha Haq">
-<meta name="twitter:description" content="VU's new semester session begins 5 October 2026. A first-days checklist to confirm your courses, catch early quizzes and GDBs, and book LMS Handling early.">
-<meta name="twitter:image" content="https://lmshandling.com/assets/blog-images/vu-new-session-starts-5-october-2026.png">
-<meta name="twitter:image:alt" content="VU New Session Starts 5 October 2026: First Steps">
+<meta name="twitter:title" content="PAK301 Notes: Midterm &amp; Finalterm Guide 2026 | Nibaha Haq">
+<meta name="twitter:description" content="PAK301 (Pakistan Studies) midterm and finalterm notes: code-wise Objective and Subjective files matched to VU's own lecture content and format.">
+<meta name="twitter:image" content="https://lmshandling.com/assets/blog-images/pak301-pakistan-studies-notes.png">
+<meta name="twitter:image:alt" content="PAK301 Notes: Midterm & Finalterm Guide 2026">
 
 <!-- ===================== FONTS ===================== -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -82,10 +90,25 @@
 }
 </script>
 <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Course",
+  "name": "PAK301 - Pakistan Studies",
+  "courseCode": "PAK301",
+  "description": "Pakistan Studies, a compulsory university requirement course offered by Virtual University of Pakistan covering the ideology of Pakistan, the freedom movement, the country's constitutional and political history, and its foreign policy.",
+  "provider": {
+    "@type": "CollegeOrUniversity",
+    "name": "Virtual University of Pakistan",
+    "sameAs": "https://vu.edu.pk/"
+  },
+  "url": "https://lmshandling.com/blog/pak301-pakistan-studies-notes"
+}
+</script>
+<script type="application/ld+json">
 {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
  {"@type":"ListItem","position":1,"name":"Home","item":"https://lmshandling.com/"},
  {"@type":"ListItem","position":2,"name":"Blog","item":"https://lmshandling.com/blog/"},
- {"@type":"ListItem","position":3,"name":"New Session Starts 5 October","item":"https://lmshandling.com/blog/vu-new-session-starts-5-october-2026"}]}
+ {"@type":"ListItem","position":3,"name":"PAK301 Midterm &amp; Finalterm Notes","item":"https://lmshandling.com/blog/pak301-pakistan-studies-notes"}]}
 </script>
 
 <style>
@@ -545,6 +568,7 @@ img { max-width:100%; height:auto; }
   .main-nav>a,.nav-item>a{font-size:1.05rem;font-family:var(--display);font-weight:700;padding:.55rem 0;border-bottom:1px solid var(--line);display:block}
   .nav-item{width:100%}
   .dropdown{position:static;transform:none;opacity:1;visibility:visible;box-shadow:none;border:0;background:none;display:none;padding:.2rem 0 .6rem 1rem;max-height:none}
+  .nav-item.open .dropdown{display:grid}
   .nav-item:hover .dropdown,.nav-item:focus-within .dropdown,.nav-item.open .dropdown{transform:none;opacity:1;visibility:visible}
   .contact-card{grid-template-columns:1fr}
   .fyp-layout,.cgpa-panel{grid-template-columns:1fr}
@@ -575,7 +599,7 @@ img { max-width:100%; height:auto; }
 /* ---------- blog post ---------- */
 .post-meta-row{display:flex;flex-wrap:wrap;gap:.6rem;margin:.8rem 0 0}
 .post-toc{background:var(--white);border:1px solid var(--line);border-radius:16px;padding:1.3rem 1.5rem;max-width:760px;margin:0 auto 1rem}
-.post-toc h3{font-size:.9rem;text-transform:uppercase;letter-spacing:.06em;font-family:var(--mono);color:var(--teal);margin-bottom:.7rem}
+.post-toc h2{font-size:.9rem;text-transform:uppercase;letter-spacing:.06em;font-family:var(--mono);color:var(--teal);margin-bottom:.7rem}
 .post-toc ol{margin:0;padding-left:1.2rem;font-size:.92rem;display:grid;gap:.5rem}
 .post-toc a{color:var(--ink);font-weight:600}
 .post-toc a:hover{color:var(--teal)}
@@ -593,53 +617,45 @@ img { max-width:100%; height:auto; }
 .author-box img{width:52px;height:52px;border-radius:50%;flex:0 0 auto}
 .author-box strong{color:var(--ink);display:block}
 .author-box span{color:var(--muted);font-size:.85rem}
-.video-wrap{max-width:760px;margin:0 auto 1.6rem;position:relative;width:100%;padding-top:56.25%;border-radius:16px;overflow:hidden;background:var(--ink);box-shadow:var(--shadow)}
-.video-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 @media (max-width:600px){.prose h2{font-size:1.25rem}}
 
-/* ---------- Summer Semester at-a-glance card ---------- */
-.ss-hero-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:2.5rem;align-items:center}
-.ss-card{max-width:340px;margin:0 auto;width:100%}
-.ss-card h2{color:#fff;font-size:1.15rem;margin-bottom:1.1rem;display:flex;align-items:center;gap:.5rem}
-.ss-row{display:flex;align-items:flex-start;gap:.7rem;padding:.75rem 0;border-top:1px solid rgba(255,255,255,.12)}
-.ss-row:first-of-type{border-top:none}
-.ss-row-icon{font-size:1.2rem;flex:0 0 auto;line-height:1.3}
-.ss-row-label{color:#AEBBD1;font-size:.75rem;text-transform:uppercase;letter-spacing:.04em;font-family:var(--mono);margin-bottom:.15rem}
-.ss-row-value{color:#fff;font-weight:600;font-size:.95rem;line-height:1.35}
-.ss-card-btn{display:flex;width:100%;margin-top:1.3rem;text-align:center}
-@media (max-width:900px){.ss-hero-grid{grid-template-columns:1fr;gap:1.6rem}.ss-card{max-width:340px}}
+/* ---------- PAK301 file cover mockup ---------- */
+.pak301-hero-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:2.5rem;align-items:center}
+.pak301-cover{max-width:300px;margin:0 auto;width:100%}
+.pak301-cover-header{color:#8B1A1A;font-weight:800;font-size:.8rem;margin-bottom:.6rem;letter-spacing:.01em}
+.pak301-cover-card{background:#2b3440;border-radius:8px;padding:2rem 1.1rem 2.4rem;display:flex;flex-direction:column;align-items:center;gap:.5rem;box-shadow:0 24px 44px -18px rgba(0,0,0,.45)}
+.pak301-cover-line{background:#7a1418;color:#fff;font-weight:800;font-size:1.02rem;padding:.32rem .85rem;text-align:center;line-height:1.15;border-radius:1px}
+.pak301-cover-line.small{font-size:.92rem}
+.pak301-cover-line.dark{background:#111417}
+.pak301-cover-spacer{height:.7rem}
+.pak301-cover-ribbon{width:44px;height:28px;background:#7a1418;color:#fff;font-weight:800;font-size:.78rem;display:flex;align-items:center;justify-content:center;margin:1rem auto 0;clip-path:polygon(0 0,100% 0,100% 62%,50% 100%,0 62%)}
+.pak301-cover-btn{display:flex;width:100%;margin-top:1.1rem;text-align:center}
+@media (max-width:900px){.pak301-hero-grid{grid-template-columns:1fr;gap:1.6rem}.pak301-cover{max-width:260px}}
 
 .tag-chips{display:flex;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0}
 .tag-chip{background:var(--gold-soft);color:#946200;font-size:.78rem;font-weight:700;padding:.3rem .8rem;border-radius:999px;font-family:var(--mono)}
-.dates-table-wrap{overflow-x:auto;margin:1rem 0 1.5rem;border-radius:14px}
-.dates-table{width:100%;border-collapse:collapse;background:var(--white);border:1px solid var(--line);border-radius:14px;overflow:hidden;font-size:.95rem}
-.dates-table th,.dates-table td{padding:.8rem 1.1rem;text-align:left;vertical-align:top}
-.dates-table th{background:var(--paper);color:var(--ink);font-family:var(--mono);font-size:.72rem;text-transform:uppercase;letter-spacing:.06em}
-.dates-table tbody tr+tr td{border-top:1px solid var(--line)}
-.dates-table td:first-child{font-weight:700;color:var(--ink);white-space:nowrap}
-.dates-note{font-size:.88rem;color:var(--muted);margin-top:-.6rem}
 </style>
 
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "BlogPosting",
-  "headline": "VU New Session Starts 5 October: What to Do First",
-  "description": "VU's new semester session begins 5 October 2026. A first-days checklist to confirm your courses, catch early quizzes and GDBs, and book LMS Handling early.",
-  "keywords": "VU new session starts, VU new session 5 October, VU new semester 2026, book LMS Handling, VULMS quizzes assignments GDBs",
-  "articleSection": "Registration",
+  "headline": "PAK301 Notes: Midterm & Finalterm Guide 2026",
+  "description": "PAK301 (Pakistan Studies) midterm and finalterm notes: code-wise Objective and Subjective files matched to VU's own lecture content and format.",
+  "keywords": "PAK301 notes, PAK301 midterm, PAK301 finalterm, PAK301 solved MCQs, PAK301 Pakistan Studies, VU PAK301",
+  "articleSection": "Course Code Guides",
   "inLanguage": "en",
-  "wordCount": "1300",
+  "wordCount": "750",
   "author": {"@type": "Person", "name": "Nibaha Haq", "url": "https://lmshandling.com/about"},
   "publisher": {
     "@type": "Organization",
     "name": "Nibaha Haq | Academic Support Services",
     "logo": {"@type": "ImageObject", "url": "https://lmshandling.com/assets/logo.png"}
   },
-  "datePublished": "2026-09-26",
-  "dateModified": "2026-09-26",
-  "mainEntityOfPage": {"@type": "WebPage", "@id": "https://lmshandling.com/blog/vu-new-session-starts-5-october-2026"},
-  "image": "https://lmshandling.com/assets/blog-images/vu-new-session-starts-5-october-2026.png"
+  "datePublished": "2026-10-08",
+  "dateModified": "2026-10-08",
+  "mainEntityOfPage": {"@type": "WebPage", "@id": "https://lmshandling.com/blog/pak301-pakistan-studies-notes"},
+  "image": "https://lmshandling.com/assets/blog-images/pak301-pakistan-studies-notes.png"
 }
 </script>
 <script type="application/ld+json">
@@ -647,10 +663,36 @@ img { max-width:100%; height:auto; }
   "@context": "https://schema.org",
   "@type": "FAQPage",
   "mainEntity": [
-    {"@type": "Question", "name": "When does VU's new session start in 2026?", "acceptedAnswer": {"@type": "Answer", "text": "The new semester session begins 5 October 2026, per VU's published schedule for this cycle, right after Summer Semester's own Finals wrap up on 3-4 October. Confirm your own course start on VULMS since term dates can shift."}},
-    {"@type": "Question", "name": "How do I confirm my course selection went through before classes start?", "acceptedAnswer": {"@type": "Answer", "text": "Log in to VULMS and check your enrolled courses list for the semester. If a subject you selected is missing, or an extra one appears, raise it through VU's support system in the first few days rather than after lectures are already underway."}},
-    {"@type": "Question", "name": "When do quizzes, assignments and GDBs usually open after a new session starts?", "acceptedAnswer": {"@type": "Answer", "text": "Each course activates its own quizzes, assignments and GDBs on its own schedule, often within the first one to two weeks once lectures begin. Check every course's own activity tabs on VULMS regularly rather than assuming one fixed date applies to all subjects."}},
-    {"@type": "Question", "name": "Why book LMS Handling right when the session starts instead of later?", "acceptedAnswer": {"@type": "Answer", "text": "Booking at session start means your course list is already confirmed and no quiz, assignment or GDB has opened yet, so there's no time pressure on either side. Waiting until the first deadline is close puts everyone in a rushed position for something that took no extra effort to arrange earlier."}}
+    {"@type": "Question", "name": "What does PAK301 (Pakistan Studies) cover?", "acceptedAnswer": {"@type": "Answer", "text": "PAK301 covers the ideology of Pakistan and the two-nation theory, the freedom movement (including the Aligarh Movement and Sir Syed Ahmad Khan's contributions), the creation of Pakistan, and the country's constitutional, political and foreign policy history."}},
+    {"@type": "Question", "name": "Is PAK301 midterm or finalterm harder?", "acceptedAnswer": {"@type": "Answer", "text": "Both build on the same course foundations, but finalterm typically covers the later constitutional and foreign-policy material, which follows directly from the ideology and freedom-movement history covered in the midterm range, so consistent coverage across the semester matters more than last-minute revision for either exam."}},
+    {"@type": "Question", "name": "Do you have a PAK301 Subjective file too?", "acceptedAnswer": {"@type": "Answer", "text": "Yes, a short and long question Subjective file is available alongside the Objective (MCQ) file, prepared for the same lecture range."}},
+    {"@type": "Question", "name": "Is the PAK301 file for midterm or finalterm?", "acceptedAnswer": {"@type": "Answer", "text": "Both are prepared separately, matched to each exam's specific lecture range: message which one you need."}},
+    {"@type": "Question", "name": "How do I get the PAK301 notes file?", "acceptedAnswer": {"@type": "Answer", "text": "Message your semester on WhatsApp and the PAK301 Objective and Subjective files are sent directly to you."}}
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  "name": "How to Prepare PAK301 Notes for Midterm and Finalterm",
+  "step": [
+    {
+      "@type": "HowToStep",
+      "text": "Go through the PAK301 notes file once fully, without timing yourself, to refresh the lecture range in order, since later history follows directly from earlier events."
+    },
+    {
+      "@type": "HowToStep",
+      "text": "Practice the Objective (MCQ) portion a few days later, timing yourself, to simulate exam conditions."
+    },
+    {
+      "@type": "HowToStep",
+      "text": "Work through the Subjective (short/long question) portion separately, writing out full answers (dates, movements, figures) rather than just reading them."
+    },
+    {
+      "@type": "HowToStep",
+      "text": "Note anything you got wrong or found confusing, and revisit just those specific topics the night before the exam."
+    }
   ]
 }
 </script>
@@ -710,7 +752,7 @@ img { max-width:100%; height:auto; }
     <a href="/scheme">Study Scheme</a>
     <a href="/cgpa-calculator">CGPA Calculator</a>
     <a href="/contact">Contact</a>
-
+    
   </nav>
 </header>
 
@@ -718,129 +760,120 @@ img { max-width:100%; height:auto; }
 <article>
 <section class="page-hero section">
   <div class="hero-bg"><div class="blob b1" data-parallax="0.2"></div><div class="blob b2" data-parallax="-0.14"></div></div>
-  <div class="ss-hero-grid">
+  <div class="pak301-hero-grid">
     <div class="reveal in">
-      <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><a href="/blog/">Blog</a><span>/</span><span>New Session Starts 5 October</span></nav>
-      <p class="section-label"><a href="/blog/category/registration">Registration</a></p>
-      <h1>VU New Session Starts 5 October: What to Do First</h1>
-      <p class="lead">VU's new semester session begins 5 October 2026, right after Summer Semester's own Finals wrap up. Here's a first-days checklist covering your course selection, when quizzes, assignments and GDBs typically open, and why booking LMS Handling now beats waiting until the first deadline is close.</p>
-      <div class="highlight-box" role="note"><p><strong>Quick answer:</strong> VU's new semester session starts <strong>5 October 2026</strong>. In the first few days, confirm your selected courses appear correctly on VULMS, watch each course's own quiz, assignment and GDB tabs for activation (these typically open within the first couple of weeks, on each course's own schedule), and check your degree scheme for anything missing. Booking LMS Handling right at session start, before any activity has opened yet, is the simplest way to keep quizzes, assignments, GDBs and attendance on track from week one rather than scrambling once a deadline is already close.</p></div>
+      <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><a href="/blog/">Blog</a><span>/</span><span>PAK301 Midterm &amp; Finalterm Notes</span></nav>
+      <p class="section-label"><a href="/blog/category/course-code-guides">Course Code Guides</a></p>
+      <h1>PAK301 Notes: Midterm &amp; Finalterm Guide 2026</h1>
+      <p class="lead">A focused guide to PAK301 (Pakistan Studies): what the course covers, how midterm and finalterm differ, how the code-wise Objective and Subjective file approach helps, and how to get the file.</p>
+      <div class="highlight-box" role="note"><p><strong>Quick answer:</strong> PAK301 (Pakistan Studies) is a compulsory course at Virtual University, covering the ideology of Pakistan, the freedom movement, and the country's constitutional, political and foreign policy history. It's history and concept heavy, so preparation works best with a code-wise Objective (MCQ) and Subjective file matched to VU's own lecture wording rather than a generic textbook. Both files are prepared together on request for your exam.</p></div>
       <div class="post-meta-row reveal" data-delay="1">
         <span class="chip">✍️ Nibaha Haq</span>
         <span class="chip">📅 2026</span>
-        <span class="chip">⏱ 5 min read</span>
-        <span class="chip">🆕 New Session</span>
+        <span class="chip">⏱ 6 min read</span>
+        <span class="chip">💻 PAK301</span>
       </div>
     </div>
-    <div class="hero-banner-card ss-card reveal" data-delay="1">
-      <h2>🆕 New Session at a Glance</h2>
-      <div class="ss-row">
-        <span class="ss-row-icon">📍</span>
-        <div><div class="ss-row-label">Session Starts</div><div class="ss-row-value">5 October 2026</div></div>
+    <div class="pak301-cover reveal" data-delay="1" role="img" aria-label="PAK301 2026 Finals Prep Objective and Subjective File cover, by Nibaha Haq">
+      <div class="pak301-cover-header">NIBAHA HAQ 0329 5209868</div>
+      <div class="pak301-cover-card">
+        <div class="pak301-cover-line">PAK 301 2026</div>
+        <div class="pak301-cover-line">FINALS PREP</div>
+        <div class="pak301-cover-line">BY NIBAHA HAQ</div>
+        <div class="pak301-cover-line small">CODE-WISE</div>
+        <div class="pak301-cover-line small">MIDTERM + FINALTERM</div>
+        <div class="pak301-cover-line small">OBJECTIVE &amp; SUBJECTIVE</div>
+        <div class="pak301-cover-spacer"></div>
+        <div class="pak301-cover-line dark">FOR LMS HANDLING</div>
+        <div class="pak301-cover-line dark">CONTACT 03295209868</div>
+        <div class="pak301-cover-ribbon">1</div>
       </div>
-      <div class="ss-row">
-        <span class="ss-row-icon">🧾</span>
-        <div><div class="ss-row-label">Course Selection</div><div class="ss-row-value">Confirmed by 18 September (8 October for Summer Semester)</div></div>
-      </div>
-      <div class="ss-row">
-        <span class="ss-row-icon">✅</span>
-        <div><div class="ss-row-label">First Activities</div><div class="ss-row-value">Quizzes, assignments &amp; GDBs, per course schedule</div></div>
-      </div>
-      <div class="ss-row">
-        <span class="ss-row-icon">💬</span>
-        <div><div class="ss-row-label">Get Ready</div><div class="ss-row-value">Book LMS Handling for the semester</div></div>
-      </div>
-      <a class="btn gold ss-card-btn" data-whatsapp="Hello Nibaha Haq, the new session has started and I want to book LMS Handling for this semester. My course codes are: " target="_blank" rel="noopener" href="https://wa.me/923295209868?text=Hello%20Nibaha%20Haq%2C%20the%20new%20session%20has%20started%20and%20I%20want%20to%20book%20LMS%20Handling%20for%20this%20semester.%20My%20course%20codes%20are%3A%20">Book LMS Handling Now</a>
+      <a class="btn gold pak301-cover-btn" data-whatsapp="Hello Nibaha Haq, I need the PAK301 Objective and Subjective file. My semester/exam is: " target="_blank" rel="noopener" href="https://wa.me/923295209868?text=Hello%20Nibaha%20Haq%2C%20I%20need%20the%20PAK301%20Objective%20and%20Subjective%20file.%20My%20semester%2Fexam%20is%3A%20">Get File: PAK301</a>
     </div>
   </div>
 </section>
 
 <section class="section" style="padding-top:1rem">
   <nav class="post-toc reveal" aria-label="Table of contents">
-    <h3>In this guide</h3>
+    <h2>In this guide</h2>
     <ol>
-      <li><a href="#confirm">When does VU's new session start, and what should I check first?</a></li>
-      <li><a href="#activities">When do quizzes, assignments and GDBs typically open?</a></li>
-      <li><a href="#checklist">Your first-week VULMS checklist</a></li>
-      <li><a href="#why-book">Why book LMS Handling right at session start</a></li>
-      <li><a href="#how">How to book LMS Handling for the new session</a></li>
-      <li><a href="#key-takeaways">Key takeaways</a></li>
+      <li><a href="#about-pak301">What is PAK301 (Pakistan Studies)?</a></li>
+      <li><a href="#midterm-vs-finalterm">What do midterm and finalterm focus on for PAK301?</a></li>
+      <li><a href="#whats-included">What's included in the PAK301 notes file</a></li>
+      <li><a href="#how-to-use">How do you prepare PAK301 notes for midterm and finalterm?</a></li>
+      <li><a href="#get-file">How to get the PAK301 notes file</a></li>
       <li><a href="#faq">FAQs</a></li>
-      <li><a href="#related">Related guides</a></li>
     </ol>
   </nav>
 
   <div class="prose">
-    <p>A new semester session starting is easy to treat as a quiet week, since nothing feels urgent yet. But the first few days after 5 October are exactly when it's worth confirming your course selection went through cleanly and getting ahead of the semester's first quizzes, assignments and GDBs, rather than waiting until the first deadline is already close. Here's what to check and do first.</p>
+    <p>PAK301 (Pakistan Studies) is one of Virtual University's university-wide compulsory requirement courses, meaning it shows up on the study plan of nearly every degree program (BS Computer Science, BBA, BS Psychology and more), not just one faculty's major. Students searching "PAK301 notes" or "PAK301 midterm" are usually looking for one thing: a code-wise, lecture-matched set of notes they can actually revise from, instead of scattered material from random sources. This guide covers what PAK301 involves, how midterm and finalterm prep typically differ for it, why a code-wise Objective and Subjective file helps, and how to get the PAK301 notes file.</p>
 
-    <h2 id="confirm">When does VU's new session start, and what should I check first?</h2>
-    <p>VU's new semester session begins classes on <strong>5 October 2026</strong>, per VU's published schedule for this cycle, arriving just a day after Summer Semester's own Finals wrap up on 3-4 October and two days before that same cycle's Results are announced on 7 October. If you selected your courses in the 18 September window (or 8 October if you're a Summer Semester student moving into your next term), this is when those subjects actually go live on VULMS.</p>
-    <p>The first thing worth doing once the session starts is logging into VULMS and confirming your enrolled courses list matches exactly what you selected: right subjects, right number, nothing missing and nothing extra. If something looks off, raise it through VU's support system in the first few days rather than after lectures are already underway, since correcting an enrollment issue gets harder to unwind the further into the semester you go. Our <a class="inline-link" href="/blog/vu-course-selection-dates-2026">VU Course Selection Dates 2026</a> guide covers how the selection windows worked this cycle if you need the full picture.</p>
+    <h2 id="about-pak301">What is PAK301 (Pakistan Studies)?</h2>
+    <p>PAK301 covers the ideology of Pakistan and the two-nation theory, the freedom movement (including the Aligarh Movement and Sir Syed Ahmad Khan's contributions, and the Urdu-Hindi controversy), the creation of Pakistan as a new state, and the country's constitutional and political history through to its foreign policy. It's a university-wide compulsory requirement course at Virtual University, included in the curriculum of nearly every degree program alongside each program's own major courses. Because it's history- and concept-heavy, the Subjective (explain/differentiate-style) portion tends to carry real weight alongside the Objective MCQs, and getting dates, movements and key figures straight in sequence matters more here than in a purely technical subject.</p>
 
-    <h2 id="activities">When do quizzes, assignments and GDBs typically open?</h2>
-    <p>Every course runs its own quizzes, assignments and GDBs on its own schedule, set by that course's instructor, so there isn't a single date that applies across every subject. In practice, the first activity of the semester, usually a quiz, tends to open within the first one to two weeks once lectures start, but this varies course by course, and some subjects activate faster than others. Rather than assuming a fixed timeline, check each course's own quiz, assignment and GDB tabs on VULMS regularly during the opening weeks so you don't miss an activation window.</p>
-    <p>If you want the mechanics of how each activity type actually works, our <a class="inline-link" href="/blog/vu-quiz-guide">VU Quiz Guide</a>, <a class="inline-link" href="/blog/vu-assignment-guide">VU Assignment Guide</a> and <a class="inline-link" href="/blog/vu-gdb-graded-discussion-board-guide">VU GDB Guide</a> cover the activation window, format and marking criteria for each, one at a time.</p>
+    <h2 id="midterm-vs-finalterm">What do midterm and finalterm focus on for PAK301?</h2>
+    <p>PAK301's midterm generally covers the earlier lecture range, typically the ideology and freedom-movement portion, while the finalterm builds on that foundation with the later lecture range, covering the more recent constitutional, political and foreign-policy material.</p>
+    <p>Because the finalterm's constitutional and foreign-policy topics assume a working understanding of the ideology and freedom-movement fundamentals from the midterm, a student who is shaky on the early range often finds the later material harder to place in sequence, not because it's unrelated, but because the later history follows directly from the events covered earlier in the course. This is exactly why code-wise notes that follow VU's own lecture order, rather than a generic external Pakistan Studies textbook, matter more for PAK301 than for many other subjects. Always confirm the exact lecture range for your own exam on VULMS, since it can shift by semester.</p>
 
-    <h2 id="checklist">Your first-week VULMS checklist</h2>
-    <p>A few minutes spent checking these in the first week catches most issues before they turn into deadline problems later:</p>
+    <h2 id="whats-included">What's included in the PAK301 notes file</h2>
     <ul>
-      <li><strong>Confirm your enrolled courses list</strong> matches your selection exactly, subjects and count both.</li>
-      <li><strong>Check your degree scheme</strong> for anything you still owe, especially a compulsory course like PAK301, ISL201 or ENG101.</li>
-      <li><strong>Open every course's quiz, assignment and GDB tabs</strong> at least once, even if nothing's active yet, so you know what to watch for.</li>
-      <li><strong>Note down each activity's deadline</strong> as it appears, rather than relying on a class WhatsApp group chat to remember it later.</li>
-      <li><strong>Make sure your lecture attendance</strong> is being recorded correctly from the first lecture onward.</li>
+      <li>Objective (MCQ) notes organized by PAK301's lecture range for the relevant exam (midterm or finalterm)</li>
+      <li>A companion Subjective (short/long question) file, covering the same lecture range in more depth</li>
+      <li>Coverage matched to VU's own PAK301 lecture order and terminology, rather than a generic external Pakistan Studies textbook</li>
     </ul>
-    <div class="highlight-box"><p>Already confirmed your course list for the new session? <a class="inline-link" data-whatsapp="Hello Nibaha Haq, the new session has started and I want to book LMS Handling for this semester. My course codes are: " target="_blank" rel="noopener" href="https://wa.me/923295209868?text=Hello%20Nibaha%20Haq%2C%20the%20new%20session%20has%20started%20and%20I%20want%20to%20book%20LMS%20Handling%20for%20this%20semester.%20My%20course%20codes%20are%3A%20">Send your course codes on WhatsApp</a> and get this semester's LMS Handling booked before the first quiz opens.</p></div>
+    <div class="highlight-box"><p>PAK301's Objective and Subjective files are prepared together on request: message your semester (midterm or finalterm) to get the correct file for your exam.</p></div>
 
-    <h2 id="why-book">Why book LMS Handling right at session start</h2>
-    <p>The days right after a new session starts are the calmest point in the whole semester: your subjects are locked in, and nothing is overdue yet, because nothing has opened yet either. That's exactly why it's the easiest moment to book LMS Handling, Nibaha Haq's semester-long support for quizzes, assignments, GDB participation and lecture attendance, covered activity by activity according to each one's own deadline once it's booked for your course codes.</p>
-    <p>Waiting until the first quiz or GDB is already live changes the situation from planning ahead to catching up, for something that takes exactly the same effort to arrange either way. Our <a class="inline-link" href="/blog/vu-course-selection-book-lms-handling-2026">Course Selection: Book LMS Handling</a> guide covers this same reasoning from the course selection side; this post is about doing it once the session itself is live, in case you didn't get to it right after selecting.</p>
-
-    <h2 id="how">How to book LMS Handling for the new session</h2>
-    <p>Booking is a short WhatsApp conversation, not a form or a portal. It's the same service already supporting 200+ VULMS accounts across past semesters.</p>
+    <h2 id="how-to-use">How do you prepare PAK301 notes for midterm and finalterm?</h2>
     <ol>
-      <li><strong>Confirm your enrolled course list</strong> for the new session on VULMS.</li>
-      <li><strong>Message your degree program and exact course codes</strong> on WhatsApp.</li>
-      <li><strong>Get your booking confirmed</strong> for LMS Handling covering the whole semester ahead.</li>
+      <li>Go through the PAK301 notes file once fully, without timing yourself, to refresh the lecture range in order, since later history follows directly from earlier events.</li>
+      <li>Practice the Objective (MCQ) portion a few days later, timing yourself, to simulate exam conditions.</li>
+      <li>Work through the Subjective (short/long question) portion separately, writing out full answers (dates, movements, figures) rather than just reading them.</li>
+      <li>Note anything you got wrong or found confusing, and revisit just those specific topics the night before the exam.</li>
     </ol>
-    <p>More detail on what's included is on the <a class="inline-link" href="/services/lms-services">LMS Handling service page</a>.</p>
+    <p>This mirrors the general approach covered in the <a class="inline-link" href="/blog/vu-midterm-finalterm-exam-preparation-guide">VU Midterm &amp; Finalterm Exam Preparation Guide</a>: separate Objective (MCQ) prep from Subjective prep, and do at least one full timed run-through before the actual exam. The same approach also applies to <a class="inline-link" href="/blog/isl201-islamic-studies-notes">ISL201 (Islamic Studies)</a> and <a class="inline-link" href="/blog/eng101-english-comprehension-notes">ENG101 (English Comprehension)</a>, VU's other two university-wide compulsory courses.</p>
+
+    <h2 id="get-file">How to get the PAK301 notes file</h2>
+    <p>Message your semester (midterm or finalterm) on WhatsApp and get the PAK301 Objective (MCQ) file, with the Subjective file available alongside it. Full details and other subjects are on the <a class="inline-link" href="/services/midterm-files">Midterm Files</a> and <a class="inline-link" href="/services/finalterm-files">Finalterm Files</a> pages.</p>
 
     <h2 id="key-takeaways">Key takeaways</h2>
     <ul>
-      <li>VU's new semester session begins 5 October 2026, right after Summer Semester's Finals wrap up on 3-4 October.</li>
-      <li>Confirm your enrolled course list matches your selection exactly in the first few days, and raise any mismatch early.</li>
-      <li>Quizzes, assignments and GDBs open on each course's own schedule, often within the first one to two weeks, so check every course's tabs rather than assuming one fixed date.</li>
-      <li>A simple first-week checklist, course list, degree scheme, activity tabs, attendance, catches most issues before they become deadline problems.</li>
-      <li>Booking LMS Handling right at session start secures the whole semester before any activity has opened, rather than arranging it once a deadline is already close.</li>
+      <li>PAK301 is a university-wide compulsory requirement course at Virtual University, built into nearly every degree program alongside each program's own major courses.</li>
+      <li>PAK301 covers Pakistan's ideology, freedom movement, and constitutional/political/foreign-policy history; it's history- and concept-heavy, so the Subjective portion carries real weight.</li>
+      <li>Midterm generally covers the earlier lecture range (ideology, freedom movement) and finalterm the later range (constitutional and foreign-policy material), though the exact split can shift by semester.</li>
+      <li>The file pairs lecture-matched Objective (MCQ) notes with a companion Subjective (short/long question) file for the same range.</li>
+      <li>Recommended prep: an untimed full read-through in lecture order, a timed MCQ pass, writing out full Subjective answers separately, then revisiting only the topics you got wrong.</li>
+      <li>Both files are sent directly on WhatsApp after sharing your semester and which exam you need.</li>
     </ul>
 
     <h2 id="faq">Frequently asked questions</h2>
     <div class="faq-list reveal">
-      <details><summary>When does VU's new session start in 2026?</summary><p>The new semester session begins 5 October 2026, per VU's published schedule for this cycle, right after Summer Semester's own Finals wrap up on 3-4 October. Confirm your own course start on VULMS since term dates can shift.</p></details>
-      <details><summary>How do I confirm my course selection went through before classes start?</summary><p>Log in to VULMS and check your enrolled courses list for the semester. If a subject you selected is missing, or an extra one appears, raise it through VU's support system in the first few days rather than after lectures are already underway.</p></details>
-      <details><summary>When do quizzes, assignments and GDBs usually open after a new session starts?</summary><p>Each course activates its own quizzes, assignments and GDBs on its own schedule, often within the first one to two weeks once lectures begin. Check every course's own activity tabs on VULMS regularly rather than assuming one fixed date applies to all subjects.</p></details>
-      <details><summary>Why book LMS Handling right when the session starts instead of later?</summary><p>Booking at session start means your course list is already confirmed and no quiz, assignment or GDB has opened yet, so there's no time pressure on either side. Waiting until the first deadline is close puts everyone in a rushed position for something that took no extra effort to arrange earlier.</p></details>
+      <details><summary>What does PAK301 (Pakistan Studies) cover?</summary><p>PAK301 covers the ideology of Pakistan and the two-nation theory, the freedom movement (including the Aligarh Movement and Sir Syed Ahmad Khan's contributions), the creation of Pakistan, and the country's constitutional, political and foreign policy history.</p></details>
+      <details><summary>Is PAK301 midterm or finalterm harder?</summary><p>Both build on the same course foundations, but finalterm typically covers the later constitutional and foreign-policy material, which follows directly from the ideology and freedom-movement history covered in the midterm range, so consistent coverage across the semester matters more than last-minute revision for either exam.</p></details>
+      <details><summary>Do you have a PAK301 Subjective file too?</summary><p>Yes, a short and long question Subjective file is available alongside the Objective (MCQ) file, prepared for the same lecture range.</p></details>
+      <details><summary>Is the PAK301 file for midterm or finalterm?</summary><p>Both are prepared separately, matched to each exam's specific lecture range: message which one you need.</p></details>
+      <details><summary>How do I get the PAK301 notes file?</summary><p>Message your semester on WhatsApp and the PAK301 Objective and Subjective files are sent directly to you.</p></details>
     </div>
 
-    <div class="highlight-box"><p>Ready to get this semester's LMS Handling booked before the first quiz or GDB goes live? <a class="inline-link" data-whatsapp="Hello Nibaha Haq, the new session has started and I want to book LMS Handling for this semester. My course codes are: " target="_blank" rel="noopener" href="https://wa.me/923295209868?text=Hello%20Nibaha%20Haq%2C%20the%20new%20session%20has%20started%20and%20I%20want%20to%20book%20LMS%20Handling%20for%20this%20semester.%20My%20course%20codes%20are%3A%20">Message your course codes on WhatsApp</a> and get it confirmed.</p></div>
+    <div class="highlight-box"><p>Have a question about PAK301 specifically? <a class="inline-link" data-whatsapp="Hello Nibaha Haq, I have a question about PAK301 (Pakistan Studies): " target="_blank" rel="noopener" href="https://wa.me/923295209868?text=Hello%20Nibaha%20Haq%2C%20I%20have%20a%20question%20about%20PAK301%20(Pakistan%20Studies)%3A%20">Message it directly on WhatsApp</a> and get a straight answer.</p></div>
 
-    <div class="tag-chips" aria-label="Topics"><span class="tag-chip">VU New Session 2026</span><span class="tag-chip">LMS Handling</span><span class="tag-chip">VULMS</span><span class="tag-chip">VU Registration</span></div>
+    <div class="tag-chips" aria-label="Topics"><span class="tag-chip">PAK301 Notes</span><span class="tag-chip">PAK301 Solved MCQs</span><span class="tag-chip">VU Pakistan Studies</span><span class="tag-chip">PAK301 Objective Subjective File</span><span class="tag-chip">PAK301 Midterm</span></div>
     <h2 id="related">Related guides</h2>
     <ul>
-      <li><a class="inline-link" href="/blog/vu-course-selection-book-lms-handling-2026">VU Course Selection Is Open: Book LMS Handling Next</a></li>
-      <li><a class="inline-link" href="/blog/vu-course-selection-dates-2026">VU Course Selection Dates 2026: 18 September &amp; 8 October</a></li>
-      <li><a class="inline-link" href="/blog/vu-important-dates-2026">VU Important Dates 2026: LMS Blocking, Mids, Finals &amp; Results</a></li>
-      <li><a class="inline-link" href="/blog/vu-quiz-guide">VU Quiz Guide</a></li>
-      <li><a class="inline-link" href="/blog/vu-gdb-graded-discussion-board-guide">VU GDB (Graded Discussion Board) Guide</a></li>
-      <li><a class="inline-link" href="/services/lms-services">VULMS Handling Service</a></li>
+      <li><a class="inline-link" href="/blog/vu-compulsory-courses-guide">VU Compulsory Courses Guide: PAK301, ISL201 &amp; ENG101</a></li>
+      <li><a class="inline-link" href="/blog/isl201-islamic-studies-notes">ISL201 Notes: Midterm &amp; Finalterm Guide 2026</a></li>
+      <li><a class="inline-link" href="/blog/eng101-english-comprehension-notes">ENG101 Notes: Midterm &amp; Finalterm Guide 2026</a></li>
+      <li><a class="inline-link" href="/blog/vu-midterm-finalterm-exam-preparation-guide">VU Midterm &amp; Finalterm Exam Preparation Guide</a></li>
+      <li><a class="inline-link" href="/services/midterm-files">VU Midterm Files</a></li>
+      <li><a class="inline-link" href="/services/finalterm-files">VU Finalterm Files</a></li>
     </ul>
   </div>
 </section>
 
 <section class="section" aria-label="Get started">
   <div class="cta-band reveal">
-    <div><h2>New session started? Get LMS Handling booked.</h2><p>Send your degree program and course codes, and get this semester's quizzes, assignments, GDB and attendance handled from week one.</p></div>
-    <a class="btn gold" data-whatsapp="Hello Nibaha Haq, the new session has started and I want to book LMS Handling for this semester. My course codes are: " target="_blank" rel="noopener" href="https://wa.me/923295209868?text=Hello%20Nibaha%20Haq%2C%20the%20new%20session%20has%20started%20and%20I%20want%20to%20book%20LMS%20Handling%20for%20this%20semester.%20My%20course%20codes%20are%3A%20">Message on WhatsApp</a>
+    <div><h2>Need your PAK301 notes file?</h2><p>Send your semester (midterm or finalterm) to get the PAK301 Objective and Subjective files sent directly.</p></div>
+    <a class="btn gold" data-whatsapp="Hello Nibaha Haq, I need the PAK301 Objective and Subjective file. My semester/exam is: " target="_blank" rel="noopener" href="https://wa.me/923295209868?text=Hello%20Nibaha%20Haq%2C%20I%20need%20the%20PAK301%20Objective%20and%20Subjective%20file.%20My%20semester%2Fexam%20is%3A%20">Order on WhatsApp</a>
   </div>
 </section>
 </article>
@@ -884,6 +917,19 @@ img { max-width:100%; height:auto; }
   <div class="footer-bottom"><p>© <span id="year">2026</span> Nibaha Haq. All rights reserved.</p></div>
 </footer>
 
+<div class="modal" id="codeModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal-card">
+    <button class="modal-close" id="modalClose" aria-label="Close">×</button>
+    <h3 id="modalTitle">Code</h3>
+    <p id="modalBody">What do you need for this code? Choose an option: it opens directly in WhatsApp.</p>
+    <div class="modal-options">
+      <a class="opt-btn" data-service="Midterm Exam Files" href="/services/midterm-files" target="_blank" rel="noopener"><span class="opt-ic">📘</span><span><strong>Midterm Exam Files</strong><small>Objective + Subjective preparation file</small></span><span class="opt-arrow">→</span></a>
+      <a class="opt-btn" data-service="Finalterm Exam Files" href="/services/finalterm-files" target="_blank" rel="noopener"><span class="opt-ic">📚</span><span><strong>Finalterm Exam Files</strong><small>4 CGPA preparation file</small></span><span class="opt-arrow">→</span></a>
+      <a class="opt-btn" data-service="LMS Handling" href="/services/lms-services" target="_blank" rel="noopener"><span class="opt-ic">🧭</span><span><strong>LMS Handling</strong><small>Quiz, Assignment, GDB, Attendance</small></span><span class="opt-arrow">→</span></a>
+    </div>
+    <a class="btn wa full" id="modalWhatsapp" href="https://wa.me/923295209868?text=Hello%20Nibaha%20Haq%2C%20I%20need%20details%20and%20files%20for%20a%20VU%20course%20code%20(Midterm%20%2F%20Finalterm%20%2F%20LMS%20support)." target="_blank" rel="noopener">Ask about all services for this code</a>
+  </div>
+</div>
 <script>
 /* ============================================================
    Defensive init: every feature runs independently.
@@ -892,7 +938,7 @@ img { max-width:100%; height:auto; }
 const $id = i => document.getElementById(i);
 function safe(name, fn){ try { fn(); } catch (err) { console.warn("[Nibaha Haq site] skipped:", name, err); } }
 
-const CODES = "ACC311,ACC501,ACC707,ACF619,ACF620,BIF101,BIF401,BIF402,BIF501,BIF601,BIF602,BIF604,BIF731,BIF732,BIF733,BIO101,BIO102,BIO201,BIO202,BIO203,BIO204,BIO301,BIO302,BIO303,BIO401,BIO502,BIO503,BIO504P,BIO505P,BIO506P,BIO506T,BIO5101,BIO5105,BIO731,BIO732,BIO733,BIO734,BIT701,BIT703,BIT710,BIT715,BNK601,BNK603,BNK604,BNK610,BNK611,BNK612,BNK613,BNK619,BNK620,BNK701,BNK703,BNK704,BNK725,BT101,BT102,BT201,BT301,BT302,BT401,BT402,BT403,BT404,BT405,BT406,BT501,BT503,BT504,BT505,BT511P,BT512P,BT513P,BT513T,BT514P,BT514T,BT601,BT603,BT604,BT605,BT611P,BT613P,BT614P,BT731,BT732,BT733,BT734,BT735,CHE201,CHE301,COM619,COM620,CS001,CS101,CS201,CS202,CS204,CS205,CS206,CS301,CS302,CS302P,CS304,CS306,CS310,CS311,CS312,CS314,CS315,CS401,CS402,CS403,CS405,CS406,CS407,CS408,CS409,CS410,CS411,CS431,CS432,CS435,CS442,CS501,CS502,CS504,CS506,CS507,CS508,CS510,CS511,CS519,CS601,CS602,CS603,CS604,CS605,CS606,CS607,CS608,CS609,CS610,CS611,CS612,CS614,CS615,CS619,CS620,CS642,CS701,CS702,CS703,CS704,CS706,CS707,CS708,CS709,CS710,CS711,CS712,CS713,CS716,CS718,CS721,CS723,CS724,CS725,CS726,ECE101,ECE201,ECE202,ECE203,ECE204,ECE301,ECE302,ECE402,ECO302,ECO303,ECO401,ECO402,ECO403,ECO404,ECO406,ECO499A,ECO499B,ECO501,ECO601,ECO602,ECO603,ECO604,ECO605,ECO606,ECO607,ECO608,ECO609,ECO612,ECO613,ECO614,ECO615,ECO616,ECO619,ECO620,ECO622,ECO704,EDU101,EDU201,EDU301,EDU302,EDU303,EDU304,EDU305,EDU306,EDU401,EDU402,EDU403,EDU404,EDU405,EDU406,EDU407,EDU410,EDU411,EDU430,EDU431,EDU433,EDU501,EDU505,EDU510,EDU512,EDU515,EDU516,EDU601,EDU602,EDU603,EDU604,EDU619,EDU631,EDU632,EDU654,EDU702,EDU705,EDUA305,EDUA411,EDUA430,EDUA630,ELT620,ENG001,ENG101,ENG201,ENG301,ENG401,ENG501,ENG502,ENG503,ENG504,ENG505,ENG506,ENG507,ENG508,ENG509,ENG510,ENG511,ENG512,ENG513,ENG514,ENG515,ENG516,ENG518,ENG519,ENG524,ENG525,ENG526,ENG527,ENG528,ETH100,ETH201,ETH202,FIN611,FIN619,FIN620,FIN621,FIN622,FIN623,FIN624,FIN625,FIN630,FIN702,FIN703,FIN704,FIN711,FIN722,FIN723,FIN725,FIN730,GEN731,GEN732,GSC101,GSC201,HRM611,HRM613,HRM617,HRM619,HRM620,HRM623,HRM624,HRM625,HRM626,HRM627,HRM628,HRM630,HRM713,HRM724,HRM727,HRM730,HRM733,HRM737,ISL1151,ISL1252,ISL1253,ISL201,ISL202,ISL2352,IT430,IT620,MB501P,MB502P,MB503P,MB504P,MCD401,MCD402,MCD403,MCD404,MCD501,MCD502,MCD503,MCD504,MCM101,MCM301,MCM304,MCM310,MCM311,MCM401,MCM404,MCM411,MCM431,MCM499A,MCM499B,MCM501,MCM511,MCM514,MCM515,MCM516,MCM517,MCM520,MCM531,MCM532,MCM601,MCM604,MCM610,MCM611,MCM619,MCM620,MCMI619,MGIT661,MGIT662,MGMT510,MGMT611,MGMT614,MGMT615,MGMT617,MGMT622,MGMT623,MGMT625,MGMT627,MGMT628,MGMT629,MGMT630,MGMT631,MGMT715,MGMT723,MGMT725,MGMT727,MGMT728,MGMT729,MGMT730,MGMT731,MGMT737,MGT101,MGT111,MGT201,MGT211,MGT301,MGT401,MGT402,MGT404,MGT411,MGT415,MGT501,MGT502,MGT503,MGT504,MGT510,MGT513,MGT520,MGT522,MGT601,MGT602,MGT603,MGT604,MGT610,MGT611,MGT612,MGT613,MGT619,MGT620,MGT621,MGT661,MGT662,MGT701,MGT703,MGT704,MGT705,MGT711,MGT713,MGT714,MGT717,MGT722,MGT723,MGT725,MGTE630,MIC501P,MKT501,MKT529,MKT530,MKT610,MKT611,MKT619,MKT620,MKT621,MKT624,MKT625,MKT626,MKT627,MKT630,MKT703,MKT711,MKT721,MKT724,MKT725,MKT726,MKT728,MKT730,MKT731,MKT740,MTH001,MTH100,MTH101,MTH201,MTH202,MTH301,MTH302,MTH303,MTH401,MTH403,MTH501,MTH5101,MTH600A,MTH600B,MTH601,MTH603,MTH631,MTH632,MTH633,MTH634,MTH641,MTH642,MTH701,MTH706,MTH7123,MTH721,PAD603,PAD619,PAD620,PAK301,PAK302,PHY101,PHY301,PSC201,PSC401,PSY101,PSY401,PSY402,PSY403,PSY404,PSY405,PSY406,PSY407,PSY408,PSY409,PSY499A,PSY499B,PSY502,PSY504,PSY505,PSY510,PSY511,PSY512,PSY513,PSY514,PSY515,PSY516,PSY610,PSY611,PSY612,PSY613,PSY619,PSY631,PSY632,PSYI619,PSYP402,SOC101,SOC301,SOC302,SOC401,SOC402,SOC403,SOC404,SOC499A,SOC499B,SOC509,SOC601,SOC602,SOC603,SOC604,SOC605,SOC606,SOC607,SOC608,SOC609,SOC610,SOC611,SOC612,SOC613,SOC614,SOC615,SOC616,SOC617,SOC619,SPT730,STA100,STA301,STA304,STA408,STA621,STA630,STA631,STA632,STA633,STA641,STA642,STA643,STA644,STA730,STAT406,STAT730,TPTA620,TPTG620,URD101,VU001F,ZOO101,ZOO102,ZOO103,ZOO201,ZOO301,ZOO302,ZOO401,ZOO403,ZOO404,ZOO501,ZOO502,ZOO502P,ZOO502T,ZOO503,ZOO504,ZOO505,ZOO506,ZOO507,ZOO510,ZOO511P,ZOO511T,ZOO512P,ZOO512T,ZOO513P,ZOO514P,ZOO514T,ZOO515P,ZOO516P,ZOO516T,ZOO517P,ZOO517T,ZOO518P,ZOO519P,ZOO519T,ZOO603P,ZOO630,ZOO630P,ZOO731".split(",");
+const CODES = "BIT701,BIT703,BIT710,BIT715,CS001,CS201,CS201,CS202,CS204,CS205,CS206,CS301,CS302,CS302P,CS304,CS306,CS310,CS311,CS312,CS314,CS315,CS401,CS402,CS403,CS405,CS406,CS407,CS408,CS409,CS410,CS411,CS431,CS432,CS435,CS442,CS501,CS502,CS504,CS506,CS507,CS508,CS510,CS511,CS519,CS601,CS602,CS603,CS604,CS605,CS606,CS607,CS608,CS609,CS610,CS611,CS612,CS614,CS615,CS619,CS620,CS642,CS701,CS702,CS703,CS704,CS706,CS707,CS708,CS709,CS710,CS711,CS712,CS713,CS716,CS718,CS721,CS723,CS724,CS725,CS726,IT430,IT620".split(",");
 const WA_NUMBER = "923295209868";
 const waLink = msg => "https://wa.me/" + WA_NUMBER + "?text=" + encodeURIComponent(msg);
 const reduceMotion = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
@@ -962,8 +1008,16 @@ safe("reveals", () => {
   if (!("IntersectionObserver" in window)) { els.forEach(el => el.classList.add("in")); return; }
   const io = new IntersectionObserver(entries => {
     entries.forEach(e => { if (e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); } });
-  }, { threshold:.15, rootMargin:"0px 0px -40px 0px" });
-  els.forEach(el => io.observe(el));
+  }, { threshold:.05, rootMargin:"0px 0px 140px 0px" });
+  const vh = window.innerHeight || 800;
+  const list = Array.prototype.slice.call(els);
+  // read phase (one layout), then write phase: no forced reflow per element
+  const tops = list.map(el => el.getBoundingClientRect().top);
+  list.forEach((el, i) => {
+    // already on screen: show at once (an entrance animation here only delays the Largest Contentful Paint)
+    if (tops[i] < vh * .95){ el.style.transition = "none"; el.classList.add("in"); }
+    else io.observe(el);
+  });
 });
 
 /* ---------- animated counters ---------- */
@@ -1018,7 +1072,7 @@ safe("marquee", () => {
   const track = $id("marqueeTrack");
   if (!track) return;
   const sample = CODES.filter((_, i) => i % 18 === 0).slice(0, 34);
-  const html = sample.map(c => '<span data-code="' + c + '"><b>' + c + '</b> · Midterm + Finalterm files</span>').join("");
+  const html = sample.map(c => '<span data-code="' + c + '"><b>' + c + '</b> \u00b7 Midterm + Finalterm files</span>').join("");
   track.innerHTML = html + html;
   track.addEventListener("click", e => {
     const sp = e.target.closest("[data-code]");
@@ -1041,7 +1095,7 @@ safe("code-library", () => {
 
   function setExpanded(open){
     grid.classList.toggle("expanded", open);
-    if (toggleBtn){ toggleBtn.setAttribute("aria-expanded", open); toggleBtn.textContent = open ? "Show fewer codes ↑" : "Show all codes ↓"; }
+    if (toggleBtn){ toggleBtn.setAttribute("aria-expanded", open); toggleBtn.textContent = open ? "Show fewer codes \u2191" : "Show all codes \u2193"; }
   }
   if (toggleBtn) toggleBtn.addEventListener("click", () => {
     const open = !grid.classList.contains("expanded");

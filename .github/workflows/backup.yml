@@ -1,0 +1,40 @@
+name: Weekly content backup
+
+# Every Sunday: a downloadable archive of all blog content, pages and images is
+# attached to a GitHub Release (backup-YYYY-MM-DD). The newest 8 are kept.
+# The code itself is already versioned in git; this protects the CONTENT in one file
+# you can keep offline.
+
+on:
+  schedule:
+    - cron: "0 2 * * 0"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout site
+        uses: actions/checkout@v4
+        with:
+          ref: claude/website-blogs-seo-3jpp70
+
+      - name: Create the archive
+        run: |
+          D=$(date -u +%F)
+          tar czf "lmshandling-backup-$D.tar.gz" blog degrees services assets *.html robots.txt sitemap.xml llms.txt .htaccess 2>/dev/null || true
+          ls -la lmshandling-backup-*.tar.gz
+          echo "DATE=$D" >> "$GITHUB_ENV"
+
+      - name: Publish as a release and prune old ones
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "backup-$DATE" "lmshandling-backup-$DATE.tar.gz" --title "Content backup $DATE" --notes "Automatic weekly backup of blog content, pages and images." --target claude/website-blogs-seo-3jpp70 || gh release upload "backup-$DATE" "lmshandling-backup-$DATE.tar.gz" --clobber
+          gh release list --limit 50 --json tagName,createdAt -q '[.[] | select(.tagName | startswith("backup-"))] | sort_by(.createdAt) | reverse | .[8:] | .[].tagName' | while read -r tag; do
+            [ -n "$tag" ] && gh release delete "$tag" --yes --cleanup-tag
+          done

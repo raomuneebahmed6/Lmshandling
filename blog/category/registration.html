@@ -4,18 +4,26 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
-<!-- Google tag (gtag.js), deferred until after load to keep it off the critical rendering path -->
+<!-- Google tag (gtag.js): loaded on first interaction or 3.5 s after load, so it never competes with the first paint. Queued events are replayed. -->
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
   gtag('config', 'G-RL2VZFJM2L');
-  window.addEventListener('load', function(){
-    var s = document.createElement('script');
-    s.async = true;
-    s.src = 'https://www.googletagmanager.com/gtag/js?id=G-RL2VZFJM2L';
-    document.head.appendChild(s);
-  });
+  (function(){
+    var started = false, evs = ['scroll', 'pointerdown', 'keydown', 'touchstart'];
+    function start(){
+      if (started) return;
+      started = true;
+      evs.forEach(function(e){ removeEventListener(e, start); });
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=G-RL2VZFJM2L';
+      document.head.appendChild(s);
+    }
+    evs.forEach(function(e){ addEventListener(e, start, { passive: true }); });
+    addEventListener('load', function(){ setTimeout(start, 3500); });
+  })();
 </script>
 
 <!-- ===================== PRIMARY SEO ===================== -->
@@ -698,21 +706,41 @@ img { max-width:100%; height:auto; }
   <div class="section-head reveal"><p class="section-label">All Guides</p><h2 id="posts-heading">All Registration guides.</h2></div>
   <div class="blog-grid">
     <article class="blog-card reveal">
-      <img src="/assets/blog-images/vu-semester-freeze-guide.png" alt="VU Semester Freeze Guide: Rules &amp; Process" width="1200" height="630" loading="lazy" class="blog-card-img">
+      <img src="/assets/blog-images/vu-new-session-starts-12-october-2026.png" alt="VU New Session Starts 12 October: What to Do First" width="1200" height="630" loading="lazy" class="blog-card-img">
       <a href="/blog/category/registration" class="blog-card-tag-link"><span class="blog-card-tag">Registration</span></a>
-      <a href="/blog/vu-semester-freeze-guide" class="blog-card-link">
-        <h3>VU Semester Freeze Guide: Rules &amp; Process</h3>
-        <p>Who's eligible to freeze a semester, how many semesters you can freeze, fee implications, and the VULMS process to freeze and unfreeze.</p>
+      <a href="/blog/vu-new-session-starts-12-october-2026" class="blog-card-link">
+        <h3>VU New Session Starts 12 October: What to Do First</h3>
+        <p>VU&#39;s new session begins 5 October. A first-days checklist: confirm your courses, catch early quizzes and GDBs, and book LMS Handling before deadlines hit.</p>
         <span class="blog-card-meta">2026 &nbsp;·&nbsp; 5 min read</span>
         <span class="read-more">Read the guide</span>
       </a>
     </article>
     <article class="blog-card reveal">
-      <img src="/assets/blog-images/vu-course-selection-book-lms-handling-2026.png" alt="Course Selection Open: Book LMS Handling" width="1200" height="630" loading="lazy" class="blog-card-img">
+      <img src="/assets/blog-images/vu-summer-semester-deadline-extension-2026.png" alt="VU Summer Semester 2026 Deadline Extended to 22 September" width="1200" height="630" loading="lazy" class="blog-card-img">
+      <a href="/blog/category/registration" class="blog-card-tag-link"><span class="blog-card-tag">Registration</span></a>
+      <a href="/blog/vu-summer-semester-deadline-extension-2026" class="blog-card-link">
+        <h3>VU Summer Semester 2026 Deadline Extended to 22 September</h3>
+        <p>VU extended the Summer Semester 2026 admission/registration deadline from 15 to 22 September 2026. Here&#39;s what to do next, and how this differs from the Fall 2026 extension.</p>
+        <span class="blog-card-meta">2026 &nbsp;·&nbsp; 4 min read</span>
+        <span class="read-more">Read the guide</span>
+      </a>
+    </article>
+    <article class="blog-card reveal">
+      <img src="/assets/blog-images/vu-semester-freeze-guide.png" alt="VU Semester Freeze Guide: Rules &amp; Process" width="1200" height="630" loading="lazy" class="blog-card-img">
+      <a href="/blog/category/registration" class="blog-card-tag-link"><span class="blog-card-tag">Registration</span></a>
+      <a href="/blog/vu-semester-freeze-guide" class="blog-card-link">
+        <h3>VU Semester Freeze Guide: Rules &amp; Process</h3>
+        <p>Who&#39;s eligible to freeze a semester, how many semesters you can freeze, fee implications, and the VULMS process to freeze and unfreeze.</p>
+        <span class="blog-card-meta">2026 &nbsp;·&nbsp; 5 min read</span>
+        <span class="read-more">Read the guide</span>
+      </a>
+    </article>
+    <article class="blog-card reveal">
+      <img src="/assets/blog-images/vu-course-selection-book-lms-handling-2026.png" alt="VU Course Selection Is Open: Book LMS Handling Next" width="1200" height="630" loading="lazy" class="blog-card-img">
       <a href="/blog/category/registration" class="blog-card-tag-link"><span class="blog-card-tag">Registration</span></a>
       <a href="/blog/vu-course-selection-book-lms-handling-2026" class="blog-card-link">
         <h3>VU Course Selection Is Open: Book LMS Handling Next</h3>
-        <p>Course selection is open. Once your subjects are confirmed, here's what to do next and why booking LMS Handling now beats waiting.</p>
+        <p>Course selection is open. Once your subjects are confirmed, here&#39;s what to do next and why booking LMS Handling now beats waiting.</p>
         <span class="blog-card-meta">2026 &nbsp;·&nbsp; 4 min read</span>
         <span class="read-more">Read the guide</span>
       </a>
@@ -728,25 +756,26 @@ img { max-width:100%; height:auto; }
       </a>
     </article>
     <article class="blog-card reveal">
-      <img src="/assets/blog-images/vu-important-dates-2026.png" alt="VU Important Dates 2026: LMS Blocking, Mids, Finals & Results" width="1200" height="630" loading="lazy" class="blog-card-img">
+      <img src="/assets/blog-images/vu-important-dates-2026.png" alt="VU Important Dates 2026: LMS Blocking, Mids, Finals &amp; Results" width="1200" height="630" loading="lazy" class="blog-card-img">
       <a href="/blog/category/registration" class="blog-card-tag-link"><span class="blog-card-tag">Registration</span></a>
       <a href="/blog/vu-important-dates-2026" class="blog-card-link">
         <h3>VU Important Dates 2026: LMS Blocking, Mids, Finals &amp; Results</h3>
-        <p>VU's LMS blocking dates for fee, Summer Semester Mids and Finals schedule, and the Results date for this cycle, plus what each deadline means.</p>
+        <p>VU&#39;s LMS blocking dates for fee, Summer Semester Mids and Finals schedule, and the Results date for this cycle, plus what each deadline means.</p>
         <span class="blog-card-meta">2026 &nbsp;·&nbsp; 5 min read</span>
         <span class="read-more">Read the guide</span>
       </a>
     </article>
-    <article class="blog-card reveal" data-delay="1">
-      <img src="/assets/blog-images/vu-summer-semester-registration-guide.png" alt="VU Summer Semester 2026: Registration Guide on VULMS & Should You Take It?" width="1200" height="630" loading="lazy" class="blog-card-img">
+    <article class="blog-card reveal">
+      <img src="/assets/blog-images/vu-summer-semester-registration-guide.png" alt="VU Summer Semester 2026: Registration Guide on VULMS &amp; Should You Take It?" width="1200" height="630" loading="lazy" class="blog-card-img">
       <a href="/blog/category/registration" class="blog-card-tag-link"><span class="blog-card-tag">Registration</span></a>
       <a href="/blog/vu-summer-semester-registration-guide" class="blog-card-link">
         <h3>VU Summer Semester 2026: Registration Guide on VULMS &amp; Should You Take It?</h3>
-        <p>How and when VU announces Summer Semester, the exact VULMS registration steps, offered subjects, approximate fee, and whether it's worth taking based on your CGPA.</p>
+        <p>How and when VU announces Summer Semester, the exact VULMS registration steps, offered subjects, approximate fee, and whether it&#39;s worth taking based on your CGPA.</p>
         <span class="blog-card-meta">2026 &nbsp;·&nbsp; 6 min read</span>
         <span class="read-more">Read the guide</span>
       </a>
     </article>
+    
   </div>
 </section>
 
@@ -879,8 +908,16 @@ safe("reveals", () => {
   if (!("IntersectionObserver" in window)) { els.forEach(el => el.classList.add("in")); return; }
   const io = new IntersectionObserver(entries => {
     entries.forEach(e => { if (e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); } });
-  }, { threshold:.15, rootMargin:"0px 0px -40px 0px" });
-  els.forEach(el => io.observe(el));
+  }, { threshold:.05, rootMargin:"0px 0px 140px 0px" });
+  const vh = window.innerHeight || 800;
+  const list = Array.prototype.slice.call(els);
+  // read phase (one layout), then write phase: no forced reflow per element
+  const tops = list.map(el => el.getBoundingClientRect().top);
+  list.forEach((el, i) => {
+    // already on screen: show at once (an entrance animation here only delays the Largest Contentful Paint)
+    if (tops[i] < vh * .95){ el.style.transition = "none"; el.classList.add("in"); }
+    else io.observe(el);
+  });
 });
 
 /* ---------- animated counters ---------- */
