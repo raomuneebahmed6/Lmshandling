@@ -2,20 +2,29 @@
 require_once __DIR__ . '/includes/auth.php';
 ensure_default_admin();
 
+if (current_user()) {
+    redirect('/dashboard/index.php');
+}
+
 $error = '';
+$username = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    csrf_check();
     $username = trim($_POST['username'] ?? '');
-    $password = $_POST['password'] ?? '';
-    $pdo = get_db();
-    $stmt = $pdo->prepare('SELECT * FROM users WHERE username = ?');
-    $stmt->execute([$username]);
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
-    if ($user && password_verify($password, $user['password_hash'])) {
-        $_SESSION['user'] = ['id' => $user['id'], 'username' => $user['username']];
-        header('Location: /dashboard/index.php');
-        exit;
+    $password = (string)($_POST['password'] ?? '');
+    if (login_blocked($username)) {
+        $error = 'Too many attempts. Please wait 15 minutes and try again.';
+    } else {
+        $stmt = get_db()->prepare('SELECT * FROM users WHERE username = ?');
+        $stmt->execute([$username]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($user && password_verify($password, $user['password_hash'])) {
+            login_success($user);
+            redirect($_SESSION['default_pw'] ? '/dashboard/change_password.php' : '/dashboard/index.php');
+        }
+        login_failed($username);
+        $error = 'Incorrect username or password.';
     }
-    $error = 'Incorrect username or password.';
 }
 ?>
 <!doctype html>
@@ -23,29 +32,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Login | Nibaha Haq Dashboard</title>
+<title>Login | Nibaha Haq</title>
 <meta name="robots" content="noindex, nofollow">
-<style>
-  body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#F4F8FD;font-family:system-ui,sans-serif}
-  .box{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:32px;width:100%;max-width:340px}
-  h1{font-size:20px;margin:0 0 20px}
-  label{font-size:13px;font-weight:600;color:#64748b;display:block;margin-bottom:4px}
-  input{width:100%;padding:9px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:14px;margin-bottom:14px;box-sizing:border-box}
-  button{width:100%;background:#2563eb;color:#fff;border:none;padding:10px;border-radius:6px;font-size:14px;cursor:pointer}
-  .error{background:#fee2e2;color:#dc2626;padding:10px;border-radius:6px;font-size:13px;margin-bottom:14px}
-</style>
+<link rel="icon" href="/assets/favicon-32x32.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap">
+<link rel="stylesheet" href="/dashboard/assets/dash.css?v=2">
+<script src="/dashboard/assets/dash.js?v=1" defer></script>
 </head>
-<body>
-<div class="box">
-  <h1>Dashboard Login</h1>
-  <?php if ($error): ?><div class="error"><?php echo htmlspecialchars($error); ?></div><?php endif; ?>
-  <form method="post">
-    <label>Username</label>
-    <input type="text" name="username" required autofocus>
-    <label>Password</label>
-    <input type="password" name="password" required>
-    <button type="submit">Login</button>
+<body class="login">
+<main class="login-card">
+  <div class="logo">
+    <img src="/assets/logo.webp" alt="" width="52" height="52">
+    <div><h1>Welcome back</h1><p>Nibaha Haq &middot; Client CRM</p></div>
+  </div>
+  <?php if ($error): ?><div class="msg msg-err" role="alert"><?php echo e($error); ?></div><?php endif; ?>
+  <form method="post" class="stack" autocomplete="on">
+    <?php echo csrf_field(); ?>
+    <div>
+      <label for="username">Username</label>
+      <input id="username" type="text" name="username" value="<?php echo e($username); ?>" required autofocus autocomplete="username">
+    </div>
+    <div>
+      <label for="password">Password</label>
+      <div class="passwrap">
+        <input id="password" type="password" name="password" required autocomplete="current-password">
+        <button type="button" data-toggle-pass="password" aria-pressed="false">Show</button>
+      </div>
+    </div>
+    <button type="submit" class="gold">Log in</button>
   </form>
-</div>
+  <div class="login-foot">Private area. Authorised use only.</div>
+</main>
 </body>
 </html>
