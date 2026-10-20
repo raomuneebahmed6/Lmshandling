@@ -16,6 +16,7 @@
 - [VU Degree Programs](https://lmshandling.com/degrees/): Browse VU degree programs by faculty: course codes with Midterm and Finalterm exam files, LMS handling and FYP support for each degree (Computer Science, Software Engineering, IT, Business Administration, Psychology, and 20+ more).
 
 ## Guides
+- [VU Fall 2026 Semester Calendar: Classes, Add/Drop, Mid-Term and Final-Term Dates](https://lmshandling.com/blog/vu-fall-2026-semester-calendar): VU Fall 2026 calendar: classes from 12 October, add/drop until 21 October, Mid-Term on 7 December, Final-Term on 25 January 2027, results on 25 February.
 - [VU Summer Semester Schedule 2026: Registration, Mids, Finals and Course Selection Timeline](https://lmshandling.com/blog/vu-summer-semester-schedule): VU Summer Semester schedule 2026 in one timeline: fee blocking, Mids, Finals, results and course selection dates, and what to confirm on VULMS.
 - [VU Summer Semester Fee Structure 2026: How the Fee Is Calculated](https://lmshandling.com/blog/vu-summer-semester-fee-structure): How VU summer semester fee works in 2026: per credit hour tuition, enrollment and exam fee, a worked example for 1 and 2 subjects, and how to pay.
 - [VU GDB Submission Format: How to Structure a Graded Discussion Board Post](https://lmshandling.com/blog/vu-gdb-submission-format): How to structure a VU GDB post on VULMS: opening stance, supporting points, a closing line, and the plagiarism and deadline rules to avoid a zero.
