@@ -6,3 +6,5 @@ admin/vendor/
 
 .dev.vars
 .wrangler/
+
+dashboard/data/*.sqlite

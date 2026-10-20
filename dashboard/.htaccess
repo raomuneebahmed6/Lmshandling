@@ -1,0 +1,8 @@
+# Block search engines and direct access to internal include files.
+<IfModule mod_headers.c>
+  Header set X-Robots-Tag "noindex, nofollow"
+</IfModule>
+
+<FilesMatch "\.(sqlite|db)$">
+  Require all denied
+</FilesMatch>
