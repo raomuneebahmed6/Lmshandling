@@ -1,0 +1,187 @@
+/* lmshandling.com UI layer: soft gradient + glass + bento + gentle motion.
+ *
+ * Loaded AFTER each page's own CSS. It is presentation only: it never changes text,
+ * headings, links, URLs or structured data, so what search engines read stays identical.
+ * Heavy effects (backdrop-filter) are limited to a few big surfaces for low-end phones.
+ */
+
+:root{
+  --glass:rgba(255,255,255,.66);
+  --glass-strong:rgba(255,255,255,.82);
+  --glass-line:rgba(255,255,255,.75);
+  --glass-shadow:0 14px 38px -16px rgba(3,43,87,.30),inset 0 1px 0 rgba(255,255,255,.95);
+  --ease:cubic-bezier(.2,.7,.2,1);
+}
+
+/* ---------- soft gradient background (cheap: no fixed attachment, no filters) ---------- */
+html body{
+  background-color:var(--paper,#F4F8FD);
+  background-image:
+    radial-gradient(900px 540px at 6% -8%,rgba(0,68,139,.11),transparent 62%),
+    radial-gradient(760px 480px at 98% 2%,rgba(245,179,1,.14),transparent 62%),
+    radial-gradient(720px 520px at 72% 48%,rgba(123,47,247,.05),transparent 64%),
+    radial-gradient(520px 420px at 4% 80%,rgba(0,68,139,.06),transparent 64%),
+    radial-gradient(rgba(0,68,139,.04) 1px,transparent 1px);
+  background-size:auto,auto,auto,auto,30px 30px;
+}
+
+/* ---------- glass header ---------- */
+html body .site-header{
+  background:var(--glass);
+  -webkit-backdrop-filter:blur(16px) saturate(1.6);
+  backdrop-filter:blur(16px) saturate(1.6);
+  border:1px solid var(--glass-line);
+  box-shadow:var(--glass-shadow);
+}
+html body .site-header.scrolled{background:var(--glass-strong)}
+.main-nav>a,.main-nav .nav-item>a{position:relative}
+.main-nav>a::after,.main-nav .nav-item>a::after{
+  content:"";position:absolute;left:.6rem;right:.6rem;bottom:.15rem;height:2px;border-radius:2px;
+  background:linear-gradient(90deg,#F7971E,#ED4E96,#7B2FF7);transform:scaleX(0);transform-origin:left;transition:transform .35s var(--ease);
+}
+.main-nav>a:hover::after,.main-nav .nav-item>a:hover::after{transform:scaleX(1)}
+.main-nav .dropdown{
+  background:var(--glass-strong);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+  border:1px solid var(--glass-line);box-shadow:var(--glass-shadow);border-radius:16px;
+}
+
+/* ---------- glass cards (selected surfaces only) ---------- */
+html body .hero-quick-services a,
+html body .service-card,
+html body .blog-card,
+html body .info-card,
+html body .calc-card,
+html body .faq-list details{
+  background:var(--glass);
+  border:1px solid var(--glass-line);
+  box-shadow:var(--glass-shadow);
+  transition:transform .35s var(--ease),box-shadow .35s var(--ease),background .35s;
+}
+html body .hero-quick-services a,
+html body .service-card{
+  -webkit-backdrop-filter:blur(10px) saturate(1.4);backdrop-filter:blur(10px) saturate(1.4);
+}
+html body .hero-quick-services a:hover,
+html body .blog-card:hover,
+html body .service-card:hover{
+  transform:translateY(-6px);background:var(--glass-strong);
+  box-shadow:0 22px 46px -18px rgba(0,68,139,.40),inset 0 1px 0 #fff;
+}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  html body .site-header,html body .hero-quick-services a,html body .service-card,.main-nav .dropdown{background:#fff}
+}
+
+/* ---------- bento grid for the services (desktop); single column on phones ---------- */
+@media (min-width:861px){
+  #services .grid-4{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:1.1rem}
+  #services .service-card{min-height:230px;padding:1.8rem 1.7rem}
+  #services .service-card:nth-child(1){grid-column:span 4}
+  #services .service-card:nth-child(2){grid-column:span 2}
+  #services .service-card:nth-child(3){grid-column:span 2}
+  #services .service-card:nth-child(4){grid-column:span 4}
+  /* the two wide tiles carry the brand colours */
+  #services .service-card:nth-child(1){background:linear-gradient(135deg,#032B57,#1a5fb0);border-color:rgba(255,255,255,.15);-webkit-backdrop-filter:none;backdrop-filter:none}
+  #services .service-card:nth-child(1) h3,#services .service-card:nth-child(1) p{color:#fff}
+  #services .service-card:nth-child(1) p{opacity:.92}
+  #services .service-card:nth-child(1) .read-more{color:#FFD86B}
+  #services .service-card:nth-child(1) .icon{background:rgba(255,255,255,.14);color:#fff}
+  #services .service-card:nth-child(4){background:linear-gradient(135deg,#FFF3D1,#FFD86B);border-color:rgba(245,179,1,.5);-webkit-backdrop-filter:none;backdrop-filter:none}
+  #services .service-card:nth-child(4) h3{color:#032B57}
+  #services .service-card:nth-child(4) p{color:#4a3a05}
+}
+
+/* ---------- buttons ---------- */
+html body .btn.primary{
+  background:linear-gradient(135deg,var(--ink-2,#00448B),#1f6fc7);color:#fff;
+  box-shadow:0 14px 28px -14px rgba(0,68,139,.7);
+}
+html body .btn.soft{
+  background:var(--glass-strong);border:1px solid var(--glass-line);color:var(--ink,#032B57);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+}
+.btn.primary::before{
+  content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.35) 50%,transparent 70%);
+  transform:translateX(-120%);transition:transform .7s var(--ease);pointer-events:none;
+}
+.btn.primary:hover::before{transform:translateX(120%)}
+.btn:hover{transform:translateY(-2px)}
+
+/* ---------- hero slider (banners). Heading text stays as real HTML text BELOW it ---------- */
+.lmh-slider{
+  position:relative;max-width:1240px;margin:8.6rem auto 0;padding:0 clamp(1rem,3vw,2rem);
+}
+.lmh-frame{
+  position:relative;border-radius:26px;overflow:hidden;aspect-ratio:16/7;
+  background:linear-gradient(135deg,#0b2b57,#1a5fb0);
+  box-shadow:0 30px 60px -28px rgba(3,43,87,.55),0 0 0 1px rgba(255,255,255,.6) inset;
+  isolation:isolate;touch-action:pan-y;
+}
+.lmh-slide{
+  position:absolute;inset:0;margin:0;opacity:0;visibility:hidden;
+  transition:opacity .9s var(--ease),visibility 0s .9s;
+}
+.lmh-slide.is-active{opacity:1;visibility:visible;transition:opacity .9s var(--ease),visibility 0s;z-index:1}
+.lmh-slide a,.lmh-slide picture{display:block;width:100%;height:100%}
+.lmh-slide img{display:block;width:100%;height:100%;object-fit:cover;transform:scale(1.04)}
+.lmh-slide.is-active img{animation:lmhZoom 7s ease-out forwards}
+@keyframes lmhZoom{from{transform:scale(1.04)}to{transform:scale(1.0)}}
+.lmh-nav{
+  position:absolute;top:50%;transform:translateY(-50%);z-index:3;width:46px;height:46px;border-radius:50%;
+  border:1px solid rgba(255,255,255,.7);background:rgba(255,255,255,.28);color:#fff;font-size:1.5rem;line-height:1;cursor:pointer;
+  display:grid;place-items:center;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);transition:background .25s,transform .25s;
+}
+.lmh-nav:hover{background:rgba(255,255,255,.5);transform:translateY(-50%) scale(1.06)}
+.lmh-nav.prev{left:12px}.lmh-nav.next{right:12px}
+.lmh-nav{width:40px;height:40px;font-size:1.3rem}
+.lmh-dots{position:absolute;left:0;right:0;bottom:8px;z-index:3;display:flex;justify-content:center;gap:0}
+/* each dot is a 24px tap target (WCAG 2.2) with a small visual dot inside */
+.lmh-dots button{width:24px;height:24px;padding:0;border:0;background:none;cursor:pointer;position:relative;transition:width .35s var(--ease)}
+.lmh-dots button::before{
+  content:"";position:absolute;top:50%;left:50%;width:10px;height:10px;border-radius:99px;transform:translate(-50%,-50%);
+  background:rgba(255,255,255,.6);box-shadow:0 0 0 1px rgba(3,43,87,.25);transition:width .35s var(--ease),background .25s;
+}
+.lmh-dots button[aria-selected="true"]{width:42px}
+.lmh-dots button[aria-selected="true"]::before{width:28px;background:#F5B301}
+/* before the page has fully loaded only the first banner exists on screen, so the other
+   banner images are not fetched during page load (keeps LCP/FCP fast) */
+.lmh-slider:not(.is-ready) .lmh-slide:not(.is-active){display:none}
+.lmh-progress{position:absolute;left:0;bottom:0;height:3px;width:0;background:linear-gradient(90deg,#F7971E,#ED4E96,#7B2FF7);z-index:3}
+.lmh-slider.is-playing .lmh-progress{animation:lmhBar var(--lmh-ms,5500ms) linear forwards}
+@keyframes lmhBar{from{width:0}to{width:100%}}
+/* with the slider on top, the heading block follows it directly */
+.lmh-slider + .hero{padding-top:2.2rem}
+
+@media (max-width:700px){
+  .lmh-slider{margin-top:6.4rem;padding:0 .8rem}
+  .lmh-frame{aspect-ratio:9/7;border-radius:20px}
+  .lmh-nav{width:38px;height:38px;font-size:1.25rem}
+}
+
+/* ---------- gentle motion ---------- */
+.hero-banner-card{animation:lmhFloat 7s ease-in-out infinite}
+@keyframes lmhFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.section-label{letter-spacing:.14em}
+
+/* ---------- small-screen polish (layout stays; touch targets and overflow improve) ---------- */
+img,svg,video,iframe{max-width:100%}
+@media (max-width:860px){
+  html body .site-header{border-radius:18px}
+  .menu-toggle{min-width:44px;min-height:44px}
+  .main-nav a{min-height:44px;display:flex;align-items:center}
+  .top-bar a,.top-bar-link,.nav-social a,.top-bar-social a,.social-links a,.footer-col a{position:relative}
+  /* enlarge the tappable area without changing how anything looks */
+  .top-bar a::after,.nav-social a::after,.top-bar-social a::after,.social-links a::after{content:"";position:absolute;inset:-9px}
+}
+
+/* ---------- image protection (deterrent): no dragging, no long-press save menu, no selection ---------- */
+main img,.blog-card img,.shot-card img,.lmh-slide img{
+  -webkit-user-drag:none;user-drag:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;
+}
+
+/* ---------- respect users who ask for less motion ---------- */
+@media (prefers-reduced-motion:reduce){
+  .lmh-slide,.lmh-slide.is-active{transition:none}
+  .lmh-slide.is-active img,.hero-banner-card{animation:none}
+  .lmh-slider.is-playing .lmh-progress{animation:none}
+  .btn.primary::before{display:none}
+}
