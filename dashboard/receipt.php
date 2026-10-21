@@ -11,6 +11,9 @@ if (!$o) {
     exit('Order not found.');
 }
 $due = owed($o);
+$pp = $pdo->prepare('SELECT * FROM payments WHERE order_id=? ORDER BY paid_at, id');
+$pp->execute([$o['id']]);
+$pays = $pp->fetchAll(PDO::FETCH_ASSOC);
 $no = 'NH-' . date('Y', strtotime($o['order_date'])) . '-' . str_pad((string)$o['id'], 4, '0', STR_PAD_LEFT);
 $wa = wa_number($o['whatsapp_number']);
 $summary = "Receipt $no\n" . $o['file_type'] . ' x ' . (int)$o['file_count'] . "\nTotal: " . money($o['amount'] ?? 0) . "\nReceived: " . money($o['paid_amount']) . "\nBalance: " . money($due) . "\nThank you, Nibaha Haq (lmshandling.com)";
@@ -25,8 +28,8 @@ $summary = "Receipt $no\n" . $o['file_type'] . ' x ' . (int)$o['file_count'] . "
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap">
-<link rel="stylesheet" href="/dashboard/assets/dash.css?v=4">
-<script src="/dashboard/assets/dash.js?v=3" defer></script>
+<link rel="stylesheet" href="/dashboard/assets/dash.css?v=5">
+<script src="/dashboard/assets/dash.js?v=4" defer></script>
 </head>
 <body class="receipt-page">
 <div class="receipt">
@@ -38,8 +41,11 @@ $summary = "Receipt $no\n" . $o['file_type'] . ' x ' . (int)$o['file_count'] . "
   <p class="r-to">Billed to<br><strong><?php echo e($o['cname']); ?></strong><?php echo $o['course'] ? '<br>' . e($o['course']) : ''; ?></p>
   <table>
     <thead><tr><th>Description</th><th class="num">Files</th><th class="num">Amount</th></tr></thead>
-    <tbody><tr><td><?php echo e($o['file_type']); ?><?php echo $o['notes'] ? '<br><span class="muted">' . e($o['notes']) . '</span>' : ''; ?></td><td class="num"><?php echo (int)$o['file_count']; ?></td><td class="num"><?php echo e(money($o['amount'] ?? 0)); ?></td></tr></tbody>
+    <tbody><tr><td><?php echo $o['course_code'] ? e($o['course_code']) . ' &middot; ' : ''; ?><?php echo e($o['file_type']); ?><?php echo $o['notes'] ? '<br><span class="muted">' . e($o['notes']) . '</span>' : ''; ?></td><td class="num"><?php echo (int)$o['file_count']; ?></td><td class="num"><?php echo e(money($o['amount'] ?? 0)); ?></td></tr></tbody>
     <tfoot>
+<?php foreach ($pays as $p): ?>
+      <tr><td colspan="2" class="muted">Paid <?php echo e($p['paid_at']); ?> (<?php echo e($p['method']); ?>)</td><td class="num muted"><?php echo e(money($p['amount'])); ?></td></tr>
+<?php endforeach; ?>
       <tr><td colspan="2">Received</td><td class="num"><?php echo e(money($o['paid_amount'])); ?></td></tr>
       <tr><td colspan="2">Balance due</td><td class="num"><?php echo e(money($due)); ?></td></tr>
     </tfoot>

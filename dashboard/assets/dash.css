@@ -154,3 +154,14 @@ body.receipt-page{background:#eef3fa;padding:24px 14px}
 .r-to{margin:0 0 16px;color:var(--muted)}.r-to strong{color:var(--ink);font-size:16px}
 .r-status{margin:16px 0 8px}.r-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
 @media print{body.receipt-page{background:#fff;padding:0}.receipt{box-shadow:none;border:0;max-width:none}.r-actions{display:none}}
+
+/* v5 additions */
+.b-preparing{background:var(--info-bg);color:var(--teal)}
+.b-sent{background:#e8e1fb;color:#5b34b1}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;vertical-align:middle}
+.dot-gold{background:var(--gold)}.dot-blue{background:var(--teal)}
+.bars.two .pair{display:flex;align-items:flex-end;justify-content:center;gap:3px;width:100%;flex:1}
+.bars.two .pair i{max-width:22px;flex:1}
+.bars.two .pair i.b{background:linear-gradient(180deg,#3d7bc4,var(--teal))}
+pre.codes{background:#f3f7fd;border:1px solid var(--line);border-radius:12px;padding:12px 14px;font:600 14px/1.7 ui-monospace,Consolas,monospace;color:var(--ink);white-space:pre-wrap;word-break:break-all;margin:0 0 14px}
+ol.steps{padding-left:1.2rem;margin:0 0 10px}

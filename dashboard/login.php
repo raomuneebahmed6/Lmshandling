@@ -8,22 +8,57 @@ if (current_user()) {
 
 $error = '';
 $username = '';
+$step = 1;
+
+// step 2: password already accepted, waiting for the authenticator / recovery code
+$pending = $_SESSION['pending_2fa'] ?? null;
+if ($pending && time() - $pending['ts'] > 300) {
+    unset($_SESSION['pending_2fa']);
+    $pending = null;
+}
+if ($pending) $step = 2;
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     csrf_check();
-    $username = trim($_POST['username'] ?? '');
-    $password = (string)($_POST['password'] ?? '');
-    if (login_blocked($username)) {
-        $error = 'Too many attempts. Please wait 15 minutes and try again.';
-    } else {
-        $stmt = get_db()->prepare('SELECT * FROM users WHERE username = ?');
-        $stmt->execute([$username]);
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
-        if ($user && password_verify($password, $user['password_hash'])) {
+    if (($_POST['do'] ?? '') === 'cancel') {
+        unset($_SESSION['pending_2fa']);
+        redirect('/dashboard/login.php');
+    }
+    if ($step === 2) {
+        $s = get_db()->prepare('SELECT * FROM users WHERE id = ? AND active = 1');
+        $s->execute([$pending['id']]);
+        $user = $s->fetch(PDO::FETCH_ASSOC);
+        if (!$user || login_blocked($user['username'])) {
+            $error = 'Too many attempts. Please wait 15 minutes and try again.';
+        } elseif (second_factor_ok($user, $_POST['code'] ?? '')) {
             login_success($user);
             redirect($_SESSION['default_pw'] ? '/dashboard/change_password.php' : '/dashboard/index.php');
+        } else {
+            login_failed($user['username']);
+            log_login($user['id'], $user['username'], false, 'wrong 2FA code');
+            $error = 'That code is not correct. Try the newest code from your app, or a recovery code.';
         }
-        login_failed($username);
-        $error = 'Incorrect username or password.';
+    } else {
+        $username = trim($_POST['username'] ?? '');
+        $password = (string)($_POST['password'] ?? '');
+        if (login_blocked($username)) {
+            $error = 'Too many attempts. Please wait 15 minutes and try again.';
+        } else {
+            $stmt = get_db()->prepare('SELECT * FROM users WHERE username = ? AND active = 1');
+            $stmt->execute([$username]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($user && password_verify($password, $user['password_hash'])) {
+                if (!empty($user['totp_enabled'])) {
+                    $_SESSION['pending_2fa'] = ['id' => (int)$user['id'], 'ts' => time()];
+                    redirect('/dashboard/login.php');
+                }
+                login_success($user);
+                redirect($_SESSION['default_pw'] ? '/dashboard/change_password.php' : '/dashboard/index.php');
+            }
+            login_failed($username);
+            log_login($user['id'] ?? null, $username, false, 'wrong password');
+            $error = 'Incorrect username or password.';
+        }
     }
 }
 ?>
@@ -35,19 +70,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <title>Login | Nibaha Haq</title>
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="/assets/favicon-32x32.png" type="image/png">
+<link rel="manifest" href="/dashboard/manifest.webmanifest">
+<meta name="theme-color" content="#032B57">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap">
-<link rel="stylesheet" href="/dashboard/assets/dash.css?v=4">
-<script src="/dashboard/assets/dash.js?v=3" defer></script>
+<link rel="stylesheet" href="/dashboard/assets/dash.css?v=5">
+<script src="/dashboard/assets/dash.js?v=4" defer></script>
 </head>
 <body class="login">
 <main class="login-card">
   <div class="logo">
     <img src="/assets/logo.webp" alt="" width="52" height="52">
-    <div><h1>Welcome back</h1><p>Nibaha Haq &middot; Client CRM</p></div>
+    <div><h1><?php echo $step === 2 ? 'Two-step check' : 'Welcome back'; ?></h1><p>Nibaha Haq &middot; Client CRM</p></div>
   </div>
   <?php if ($error): ?><div class="msg msg-err" role="alert"><?php echo e($error); ?></div><?php endif; ?>
+  <?php if ($step === 2): ?>
+  <form method="post" class="stack" autocomplete="off">
+    <?php echo csrf_field(); ?>
+    <div>
+      <label for="code">6-digit code from your authenticator app</label>
+      <input id="code" type="text" name="code" required autofocus inputmode="numeric" autocomplete="one-time-code" placeholder="123456 (or a recovery code)">
+    </div>
+    <button type="submit" class="gold">Verify and log in</button>
+  </form>
+  <form method="post" style="margin-top:10px"><?php echo csrf_field(); ?><input type="hidden" name="do" value="cancel"><button type="submit" class="linkbtn" style="color:var(--teal)">Back to password</button></form>
+  <?php else: ?>
   <form method="post" class="stack" autocomplete="on">
     <?php echo csrf_field(); ?>
     <div>
@@ -63,6 +111,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
     <button type="submit" class="gold">Log in</button>
   </form>
+  <?php endif; ?>
   <div class="login-foot">Private area. Authorised use only.</div>
 </main>
 </body>

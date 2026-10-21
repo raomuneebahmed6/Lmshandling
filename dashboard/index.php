@@ -11,7 +11,7 @@ $totalClients = (int)$q('SELECT COUNT(*) FROM clients');
 $activeClients = (int)$q("SELECT COUNT(*) FROM clients WHERE stage='active'");
 $leads = (int)$q("SELECT COUNT(*) FROM clients WHERE stage='lead'");
 $pendingOrders = (int)$q("SELECT COUNT(*) FROM orders WHERE status='pending'");
-$monthRevenue = (float)$q("SELECT COALESCE(SUM(paid_amount),0) FROM orders WHERE substr(order_date,1,7)=?", [$month]);
+$monthRevenue = (float)$q('SELECT COALESCE(SUM(amount),0) FROM payments WHERE substr(paid_at,1,7)=?', [$month]);
 $outstanding = (float)$q('SELECT COALESCE(SUM(' . OWED_SQL . '),0) FROM orders');
 $unpaidCount = (int)$q("SELECT COUNT(*) FROM orders WHERE payment_status!='paid'");
 $filesTotal = (int)$q('SELECT COALESCE(SUM(file_count),0) FROM orders');
@@ -23,7 +23,7 @@ for ($i = 5; $i >= 0; $i--) {
     $k = date('Y-m', strtotime("first day of -$i month"));
     $months[$k] = ['label' => date('M', strtotime($k . '-01')), 'sum' => 0.0];
 }
-$stmt = $pdo->prepare("SELECT substr(order_date,1,7) m, COALESCE(SUM(paid_amount),0) s FROM orders WHERE substr(order_date,1,7)>=? GROUP BY m");
+$stmt = $pdo->prepare("SELECT substr(paid_at,1,7) m, COALESCE(SUM(amount),0) s FROM payments WHERE substr(paid_at,1,7)>=? GROUP BY m");
 $stmt->execute([array_key_first($months)]);
 foreach ($stmt as $r) { if (isset($months[$r['m']])) $months[$r['m']]['sum'] = (float)$r['s']; }
 $maxSum = max(1, max(array_column($months, 'sum')));
@@ -31,6 +31,10 @@ $maxSum = max(1, max(array_column($months, 'sum')));
 $due = $pdo->prepare("SELECT id, name, whatsapp_number, next_followup, stage FROM clients WHERE next_followup IS NOT NULL AND next_followup!='' AND next_followup<=? AND stage IN ('lead','active') ORDER BY next_followup LIMIT 6");
 $due->execute([$today]);
 $dueList = $due->fetchAll(PDO::FETCH_ASSOC);
+
+$ex = $pdo->prepare("SELECT o.id, o.course_code, o.file_type, o.exam_date, o.status, o.payment_status, c.id cid, c.name FROM orders o JOIN clients c ON c.id=o.client_id WHERE o.exam_date IS NOT NULL AND o.exam_date != '' AND o.exam_date >= ? AND o.exam_date <= ? AND o.status != 'completed' ORDER BY o.exam_date LIMIT 8");
+$ex->execute([$today, date('Y-m-d', strtotime('+14 days'))]);
+$exams = $ex->fetchAll(PDO::FETCH_ASSOC);
 
 $recent = $pdo->query("SELECT orders.*, clients.name AS client_name FROM orders JOIN clients ON clients.id = orders.client_id ORDER BY orders.order_date DESC, orders.id DESC LIMIT 8")->fetchAll(PDO::FETCH_ASSOC);
 
@@ -72,6 +76,27 @@ include __DIR__ . '/includes/layout_top.php';
   </section>
 </div>
 
+<?php if ($exams): ?>
+<section class="card" style="margin-top:18px">
+  <div class="card-head"><h2>Upcoming exams (next 14 days) <span class="badge b-pending"><?php echo count($exams); ?></span></h2><a class="btn ghost sm" href="/dashboard/orders.php?status=pending">Open orders</a></div>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Exam</th><th>In</th><th>Client</th><th>Course</th><th>Order status</th><th>Payment</th></tr></thead>
+    <tbody>
+    <?php foreach ($exams as $x): $d = (int)((strtotime($x['exam_date']) - strtotime($today)) / 86400); ?>
+      <tr data-href="/dashboard/orders.php?action=edit&amp;id=<?php echo (int)$x['id']; ?>">
+        <td><?php echo e($x['exam_date']); ?></td>
+        <td><span class="<?php echo $d <= 3 ? 'due-over' : 'due-today'; ?>"><?php echo $d === 0 ? 'today' : $d . ' day' . ($d === 1 ? '' : 's'); ?></span></td>
+        <td><a href="/dashboard/clients.php?action=view&amp;id=<?php echo (int)$x['cid']; ?>"><?php echo e($x['name']); ?></a></td>
+        <td><?php echo e($x['course_code'] ?: $x['file_type']); ?></td>
+        <td><span class="badge b-<?php echo e($x['status']); ?>"><?php echo e(ORDER_STATUSES[$x['status']] ?? $x['status']); ?></span></td>
+        <td><span class="badge b-<?php echo e($x['payment_status']); ?>"><?php echo e($x['payment_status']); ?></span></td>
+      </tr>
+    <?php endforeach; ?>
+    </tbody>
+  </table></div>
+</section>
+<?php endif; ?>
+
 <section class="card" style="margin-top:18px">
   <div class="card-head"><h2>Recent orders</h2><a class="btn ghost sm" href="/dashboard/orders.php">All orders</a></div>
   <?php if (!$recent): ?>
@@ -88,7 +113,7 @@ include __DIR__ . '/includes/layout_top.php';
         <td class="num"><?php echo (int)$o['file_count']; ?></td>
         <td class="num"><?php echo $o['amount'] !== null ? e(number_format($o['amount'])) : '-'; ?></td>
         <td><span class="badge b-<?php echo e($o['payment_status']); ?>"><?php echo e($o['payment_status']); ?></span></td>
-        <td><span class="badge b-<?php echo e($o['status']); ?>"><?php echo e($o['status']); ?></span></td>
+        <td><span class="badge b-<?php echo e($o['status']); ?>"><?php echo e(ORDER_STATUSES[$o['status']] ?? $o['status']); ?></span></td>
       </tr>
     <?php endforeach; ?>
     </tbody>

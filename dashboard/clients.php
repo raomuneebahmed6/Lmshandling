@@ -14,6 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $cid = (int)($_POST['id'] ?? 0);
 
     if ($do === 'delete' && $cid) {
+        if (!is_admin()) { http_response_code(403); exit('Only the admin can delete clients.'); }
         $pdo->prepare('DELETE FROM clients WHERE id=?')->execute([$cid]);
         flash('Client deleted.');
         redirect('/dashboard/clients.php');
@@ -51,22 +52,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $course = trim($_POST['course'] ?? '');
     $source = trim($_POST['source'] ?? '');
     $notes = trim($_POST['notes'] ?? '');
+    $tags = clean_tags($_POST['tags'] ?? '');
     $stage = array_key_exists($_POST['stage'] ?? '', STAGES) ? $_POST['stage'] : 'lead';
     $fu = trim($_POST['next_followup'] ?? '');
     $fu = valid_date($fu) ? $fu : null;
 
+    $dupe = $name !== '' ? find_client_by_phone($pdo, $whatsapp, $cid) : null;
     if ($name === '') {
         $err = 'Name is required.';
         $action = $cid ? 'edit' : 'new';
         $id = $cid;
+    } elseif ($dupe && empty($_POST['allow_dupe'])) {
+        $err = 'A client with this number already exists: ' . $dupe['name'] . '. Tick "Save anyway" if this is a different person.';
+        $dupeId = (int)$dupe['id'];
+        $action = $cid ? 'edit' : 'new';
+        $id = $cid;
     } elseif ($cid) {
-        $pdo->prepare('UPDATE clients SET name=?, whatsapp_number=?, course=?, source=?, notes=?, stage=?, next_followup=? WHERE id=?')
-            ->execute([$name, $whatsapp, $course, $source, $notes, $stage, $fu, $cid]);
+        $pdo->prepare('UPDATE clients SET name=?, whatsapp_number=?, course=?, source=?, notes=?, stage=?, next_followup=?, tags=? WHERE id=?')
+            ->execute([$name, $whatsapp, $course, $source, $notes, $stage, $fu, $tags, $cid]);
         flash('Client saved.');
         redirect('/dashboard/clients.php?action=view&id=' . $cid);
     } else {
-        $pdo->prepare('INSERT INTO clients (name, whatsapp_number, course, source, notes, stage, next_followup) VALUES (?,?,?,?,?,?,?)')
-            ->execute([$name, $whatsapp, $course, $source, $notes, $stage, $fu]);
+        $pdo->prepare('INSERT INTO clients (name, whatsapp_number, course, source, notes, stage, next_followup, tags) VALUES (?,?,?,?,?,?,?,?)')
+            ->execute([$name, $whatsapp, $course, $source, $notes, $stage, $fu, $tags]);
         flash('Client added.');
         redirect('/dashboard/clients.php?action=view&id=' . $pdo->lastInsertId());
     }
@@ -77,20 +85,20 @@ $page = 'clients';
 
 // ---------- add / edit form ----------
 if ($action === 'new' || $action === 'edit') {
-    $client = ['id' => '', 'name' => '', 'whatsapp_number' => '', 'course' => '', 'source' => '', 'notes' => '', 'stage' => 'lead', 'next_followup' => ''];
+    $client = ['id' => '', 'name' => '', 'whatsapp_number' => '', 'course' => '', 'source' => '', 'notes' => '', 'stage' => 'lead', 'next_followup' => '', 'tags' => ''];
     if ($id) {
         $s = $pdo->prepare('SELECT * FROM clients WHERE id=?');
         $s->execute([$id]);
         $client = $s->fetch(PDO::FETCH_ASSOC) ?: $client;
     }
     if ($err) { // keep what was typed
-        foreach (['name', 'whatsapp_number', 'course', 'source', 'notes'] as $f) $client[$f] = $_POST[$f] ?? '';
+        foreach (['name', 'whatsapp_number', 'course', 'source', 'notes', 'tags'] as $f) $client[$f] = $_POST[$f] ?? '';
     }
     $pageTitle = $client['id'] ? 'Edit client' : 'Add client';
     include __DIR__ . '/includes/layout_top.php';
     ?>
 <div class="card" style="max-width:640px">
-  <?php if ($err): ?><div class="msg msg-err"><?php echo e($err); ?></div><?php endif; ?>
+  <?php if ($err): ?><div class="msg msg-err"><?php echo e($err); ?><?php if (!empty($dupeId)): ?> <a href="/dashboard/clients.php?action=view&amp;id=<?php echo (int)$dupeId; ?>">Open that client</a><?php endif; ?></div><?php endif; ?>
   <form method="post" class="stack">
     <?php echo csrf_field(); ?>
     <input type="hidden" name="do" value="save">
@@ -107,6 +115,8 @@ if ($action === 'new' || $action === 'edit') {
         <datalist id="sources"><option>WhatsApp</option><option>Website</option><option>Facebook</option><option>Instagram</option><option>Referral</option><option>Google</option></datalist></div>
     </div>
     <div><label for="fu">Next follow-up</label><input id="fu" type="date" name="next_followup" value="<?php echo e($client['next_followup']); ?>"></div>
+    <div><label for="tags">Tags (comma separated)</label><input id="tags" name="tags" value="<?php echo e($client['tags']); ?>" placeholder="e.g. FYP, VIP, late payer"></div>
+    <?php if (!empty($dupeId)): ?><div><label style="display:flex;gap:8px;align-items:center"><input type="checkbox" name="allow_dupe" value="1" style="width:auto"> Save anyway (different person)</label></div><?php endif; ?>
     <div><label for="notes">Notes</label><textarea id="notes" name="notes"><?php echo e($client['notes']); ?></textarea></div>
     <div style="display:flex;gap:10px"><button type="submit" class="gold">Save client</button><a class="btn ghost" href="/dashboard/clients.php<?php echo $client['id'] ? '?action=view&amp;id=' . (int)$client['id'] : ''; ?>">Cancel</a></div>
   </form>
@@ -148,15 +158,16 @@ if ($action === 'view' && $id) {
     <div style="display:flex;gap:8px;flex-wrap:wrap">
       <?php if ($wa): ?><a class="btn wa sm" target="_blank" rel="noopener" href="https://wa.me/<?php echo e($wa); ?>?text=<?php echo rawurlencode($msgText); ?>">WhatsApp</a><?php endif; ?>
       <a class="btn ghost sm" href="/dashboard/clients.php?action=edit&amp;id=<?php echo $id; ?>">Edit</a>
-      <form method="post" class="inline" data-confirm="Delete this client and all their orders and history? This cannot be undone.">
+      <?php if (is_admin()): ?><form method="post" class="inline" data-confirm="Delete this client and all their orders and history? This cannot be undone.">
         <?php echo csrf_field(); ?><input type="hidden" name="do" value="delete"><input type="hidden" name="id" value="<?php echo $id; ?>">
         <button type="submit" class="danger sm">Delete</button>
-      </form>
+      </form><?php endif; ?>
     </div>
   </div>
   <dl class="kv">
     <dt>WhatsApp</dt><dd><?php echo e($client['whatsapp_number'] ?: '-'); ?></dd>
     <dt>Course</dt><dd><?php echo e($client['course'] ?: '-'); ?></dd>
+    <dt>Tags</dt><dd><?php if ($client['tags']): foreach (explode(', ', $client['tags']) as $tg): ?><a class="badge b-partial" style="margin-right:4px" href="/dashboard/clients.php?tag=<?php echo urlencode($tg); ?>"><?php echo e($tg); ?></a><?php endforeach; else: ?>-<?php endif; ?></dd>
     <dt>Files sent</dt><dd><?php echo (int)$fileTotal; ?></dd>
     <dt>Paid / Outstanding</dt><dd><?php echo e(money($paidTotal)); ?> / <strong<?php echo $dueTotal > 0 ? ' class="due-over"' : ''; ?>><?php echo e(money($dueTotal)); ?></strong></dd>
     <dt>Notes</dt><dd><?php echo $client['notes'] ? nl2br(e($client['notes'])) : '-'; ?></dd>
@@ -234,6 +245,7 @@ if ($action === 'view' && $id) {
 
 // ---------- list ----------
 $search = trim($_GET['q'] ?? '');
+$tagF = trim($_GET['tag'] ?? '');
 $stageF = $_GET['stage'] ?? '';
 if (!array_key_exists($stageF, STAGES)) $stageF = '';
 
@@ -244,6 +256,7 @@ if ($search !== '') {
     array_push($params, $like, $like, $like, $like);
 }
 if ($stageF !== '') { $where[] = 'c.stage = ?'; $params[] = $stageF; }
+if ($tagF !== '') { $where[] = "(',' || REPLACE(COALESCE(c.tags,''), ', ', ',') || ',') LIKE ?"; $params[] = '%,' . $tagF . ',%'; }
 $sql = "SELECT c.*,
   (SELECT COUNT(*) FROM orders o WHERE o.client_id=c.id) AS order_count,
   (SELECT COALESCE(SUM(MAX(COALESCE(o.amount,0)-COALESCE(o.paid_amount,0),0)),0) FROM orders o WHERE o.client_id=c.id) AS owed
@@ -262,7 +275,7 @@ include __DIR__ . '/includes/layout_top.php';
   <div class="filters">
     <div class="tabs">
       <?php foreach (['' => 'All'] + STAGES as $k => $v): ?>
-        <a class="<?php echo $stageF === (string)$k ? 'on' : ''; ?>" href="/dashboard/clients.php?<?php echo http_build_query(array_filter(['stage' => $k, 'q' => $search])); ?>"><?php echo e($v); ?><b><?php echo $counts[$k] ?? 0; ?></b></a>
+        <a class="<?php echo $stageF === (string)$k ? 'on' : ''; ?>" href="/dashboard/clients.php?<?php echo http_build_query(array_filter(['stage' => $k, 'q' => $search, 'tag' => $tagF])); ?>"><?php echo e($v); ?><b><?php echo $counts[$k] ?? 0; ?></b></a>
       <?php endforeach; ?>
     </div>
     <form method="get" style="display:flex;gap:8px;margin-left:auto">
@@ -270,6 +283,8 @@ include __DIR__ . '/includes/layout_top.php';
       <input type="search" name="q" value="<?php echo e($search); ?>" placeholder="Search name, number, course..." aria-label="Search clients">
       <button type="submit" class="sm">Search</button>
     </form>
+    <?php if ($tagF !== ''): ?><a class="badge b-partial" href="/dashboard/clients.php">Tag: <?php echo e($tagF); ?> x</a><?php endif; ?>
+    <a class="btn ghost sm" href="/dashboard/import.php">Import CSV</a>
     <a class="btn ghost sm" href="/dashboard/export.php?type=clients">Export CSV</a>
   </div>
   <?php if (!$clients): ?>
@@ -280,7 +295,7 @@ include __DIR__ . '/includes/layout_top.php';
     <tbody>
     <?php foreach ($clients as $c): $wa = wa_number($c['whatsapp_number']); ?>
       <tr data-href="/dashboard/clients.php?action=view&amp;id=<?php echo (int)$c['id']; ?>">
-        <td><strong><?php echo e($c['name']); ?></strong></td>
+        <td><strong><?php echo e($c['name']); ?></strong><?php if ($c['tags']): ?><br><span class="muted"><?php echo e($c['tags']); ?></span><?php endif; ?></td>
         <td><?php echo $wa ? '<a target="_blank" rel="noopener" href="https://wa.me/' . e($wa) . '">' . e($c['whatsapp_number']) . '</a>' : '-'; ?></td>
         <td><?php echo e($c['course'] ?: '-'); ?></td>
         <td><span class="badge b-<?php echo e($c['stage']); ?>"><?php echo e(STAGES[$c['stage']] ?? $c['stage']); ?></span></td>

@@ -46,4 +46,6 @@
 
   document.querySelectorAll("[data-print]").forEach(function (b) { b.addEventListener("click", function () { window.print(); }); });
   document.querySelectorAll("[data-back]").forEach(function (b) { b.addEventListener("click", function () { history.back(); }); });
+
+  if ("serviceWorker" in navigator) { window.addEventListener("load", function () { navigator.serviceWorker.register("/dashboard/sw.js", { scope: "/dashboard/" }).catch(function () {}); }); }
 })();

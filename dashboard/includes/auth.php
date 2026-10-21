@@ -35,6 +35,19 @@ function current_user() {
     return $_SESSION['user'] ?? null;
 }
 
+function is_admin() {
+    $u = current_user();
+    return $u && ($u['role'] ?? 'admin') === 'admin';
+}
+
+function require_admin() {
+    require_login();
+    if (!is_admin()) {
+        http_response_code(403);
+        exit('This section is for the admin account only.');
+    }
+}
+
 function csrf_token() {
     if (empty($_SESSION['csrf'])) {
         $_SESSION['csrf'] = bin2hex(random_bytes(32));
@@ -77,6 +90,17 @@ function redirect($url) {
     exit;
 }
 
+function settings_get($k, $default = '') {
+    $s = get_db()->prepare('SELECT v FROM settings WHERE k = ?');
+    $s->execute([$k]);
+    $v = $s->fetchColumn();
+    return $v === false ? $default : $v;
+}
+
+function settings_set($k, $v) {
+    get_db()->prepare('INSERT INTO settings (k, v) VALUES (?, ?) ON CONFLICT(k) DO UPDATE SET v = excluded.v')->execute([$k, (string)$v]);
+}
+
 function require_login() {
     $u = current_user();
     if (!$u) {
@@ -100,12 +124,12 @@ function ensure_default_admin() {
     $count = $pdo->query('SELECT COUNT(*) FROM users')->fetchColumn();
     if ($count == 0) {
         // First run only. The first login is forced to set a new password.
-        $stmt = $pdo->prepare('INSERT INTO users (username, password_hash) VALUES (?, ?)');
+        $stmt = $pdo->prepare("INSERT INTO users (username, password_hash, role) VALUES (?, ?, 'admin')");
         $stmt->execute(['admin', password_hash(DEFAULT_ADMIN_PASSWORD, PASSWORD_DEFAULT)]);
     }
 }
 
-// ---------- brute-force throttle ----------
+// ---------- brute-force throttle + login history ----------
 function client_ip() {
     return substr($_SERVER['REMOTE_ADDR'] ?? 'unknown', 0, 64);
 }
@@ -126,19 +150,106 @@ function login_failed($username) {
         ->execute([client_ip(), strtolower($username), time()]);
 }
 
+function log_login($uid, $username, $ok, $note = '') {
+    $pdo = get_db();
+    $pdo->prepare('INSERT INTO login_log (user_id, username, ip, agent, ok, note, ts) VALUES (?,?,?,?,?,?,?)')
+        ->execute([$uid, substr((string)$username, 0, 60), client_ip(), substr($_SERVER['HTTP_USER_AGENT'] ?? '', 0, 160), $ok ? 1 : 0, $note, time()]);
+    $pdo->exec('DELETE FROM login_log WHERE ts < ' . (time() - 90 * 86400));
+}
+
 function login_success($user) {
     session_regenerate_id(true);
-    $_SESSION['user'] = ['id' => $user['id'], 'username' => $user['username']];
+    $_SESSION['user'] = ['id' => (int)$user['id'], 'username' => $user['username'], 'role' => $user['role'] ?? 'admin'];
+    unset($_SESSION['pending_2fa']);
     $_SESSION['last_seen'] = time();
     $_SESSION['csrf'] = bin2hex(random_bytes(32));
     $_SESSION['default_pw'] = password_verify(DEFAULT_ADMIN_PASSWORD, $user['password_hash']);
     get_db()->prepare('DELETE FROM login_attempts WHERE username = ?')->execute([strtolower($user['username'])]);
+    log_login($user['id'], $user['username'], true);
+}
+
+// ---------- two-factor authentication (TOTP, RFC 6238; works with Google Authenticator and similar apps) ----------
+const B32 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+
+function b32_encode($bin) {
+    $bits = '';
+    foreach (str_split($bin) as $c) $bits .= str_pad(decbin(ord($c)), 8, '0', STR_PAD_LEFT);
+    $out = '';
+    foreach (str_split($bits, 5) as $chunk) $out .= B32[bindec(str_pad($chunk, 5, '0'))];
+    return $out;
+}
+
+function b32_decode($s) {
+    $s = strtoupper(preg_replace('/[^A-Z2-7]/i', '', $s));
+    $bits = '';
+    foreach (str_split($s) as $c) $bits .= str_pad(decbin(strpos(B32, $c)), 5, '0', STR_PAD_LEFT);
+    $out = '';
+    foreach (str_split($bits, 8) as $byte) if (strlen($byte) === 8) $out .= chr(bindec($byte));
+    return $out;
+}
+
+function totp_new_secret() {
+    return b32_encode(random_bytes(20));
+}
+
+function totp_code($secret, $counter) {
+    $hash = hash_hmac('sha1', pack('N*', 0, $counter), b32_decode($secret), true);
+    $o = ord($hash[19]) & 0xf;
+    $n = ((ord($hash[$o]) & 0x7f) << 24) | ((ord($hash[$o + 1]) & 0xff) << 16) | ((ord($hash[$o + 2]) & 0xff) << 8) | (ord($hash[$o + 3]) & 0xff);
+    return str_pad((string)($n % 1000000), 6, '0', STR_PAD_LEFT);
+}
+
+// returns the accepted time-step counter (so it can be stored against replay) or false
+function totp_verify($secret, $code, $afterCounter = 0) {
+    $code = preg_replace('/\D/', '', (string)$code);
+    if (strlen($code) !== 6) return false;
+    $now = (int)floor(time() / 30);
+    for ($i = -1; $i <= 1; $i++) {
+        $c = $now + $i;
+        if ($c > $afterCounter && hash_equals(totp_code($secret, $c), $code)) return $c;
+    }
+    return false;
+}
+
+function totp_uri($secret, $username) {
+    return 'otpauth://totp/' . rawurlencode('Nibaha Haq CRM:' . $username) . '?secret=' . $secret . '&issuer=' . rawurlencode('Nibaha Haq CRM') . '&digits=6&period=30';
+}
+
+function new_recovery_codes() {
+    $plain = []; $hashed = [];
+    for ($i = 0; $i < 8; $i++) {
+        $c = strtolower(bin2hex(random_bytes(3)) . '-' . bin2hex(random_bytes(3)));
+        $plain[] = $c; $hashed[] = password_hash($c, PASSWORD_DEFAULT);
+    }
+    return [$plain, $hashed];
+}
+
+// checks an authenticator code or a one-time recovery code for this user row; true when accepted
+function second_factor_ok($user, $input) {
+    $pdo = get_db();
+    $input = trim((string)$input);
+    $c = totp_verify($user['totp_secret'], $input, (int)settings_get('totp_last_' . $user['id'], 0));
+    if ($c !== false) {
+        settings_set('totp_last_' . $user['id'], $c);
+        return true;
+    }
+    $codes = json_decode((string)$user['recovery_codes'], true) ?: [];
+    foreach ($codes as $i => $h) {
+        if (password_verify(strtolower($input), $h)) {
+            unset($codes[$i]);
+            $pdo->prepare('UPDATE users SET recovery_codes = ? WHERE id = ?')->execute([json_encode(array_values($codes)), $user['id']]);
+            return true;
+        }
+    }
+    return false;
 }
 
 // ---------- CRM helpers ----------
 const STAGES = ['lead' => 'Lead', 'active' => 'Active', 'completed' => 'Completed', 'lost' => 'Lost'];
 const FILE_TYPES = ['Midterm Files', 'Finalterm Files', 'Notes', 'FYP / GDB', 'LMS Handling', 'Other'];
 const ACTIVITY_KINDS = ['note' => 'Note', 'call' => 'Call', 'whatsapp' => 'WhatsApp', 'payment' => 'Payment'];
+const ORDER_STATUSES = ['pending' => 'Pending', 'preparing' => 'Preparing', 'sent' => 'Sent', 'completed' => 'Completed'];
+const PAY_METHODS = ['Cash', 'JazzCash', 'Easypaisa', 'Bank transfer', 'Other'];
 
 // owed on one order row: never negative
 const OWED_SQL = 'MAX(COALESCE(amount,0) - COALESCE(paid_amount,0), 0)';
@@ -152,6 +263,27 @@ function pay_status($amount, $paid) {
 
 function owed($row) {
     return max((float)($row['amount'] ?? 0) - (float)($row['paid_amount'] ?? 0), 0);
+}
+
+// keeps orders.paid_amount / payment_status in step with the payments table
+function recalc_order($pdo, $orderId) {
+    $s = $pdo->prepare('SELECT COALESCE(SUM(amount),0) FROM payments WHERE order_id = ?');
+    $s->execute([$orderId]);
+    $paid = (float)$s->fetchColumn();
+    $a = $pdo->prepare('SELECT amount FROM orders WHERE id = ?');
+    $a->execute([$orderId]);
+    $amount = $a->fetchColumn();
+    $pdo->prepare('UPDATE orders SET paid_amount = ?, payment_status = ? WHERE id = ?')->execute([$paid, pay_status($amount, $paid), $orderId]);
+}
+
+function add_payment($pdo, $orderId, $amount, $method, $date, $note = '') {
+    $amount = (float)$amount;
+    if ($amount <= 0) return false;
+    $method = in_array($method, PAY_METHODS, true) ? $method : 'Other';
+    $date = valid_date($date) ? $date : date('Y-m-d');
+    $pdo->prepare('INSERT INTO payments (order_id, amount, method, paid_at, note) VALUES (?,?,?,?,?)')->execute([$orderId, $amount, $method, $date, mb_substr($note, 0, 200)]);
+    recalc_order($pdo, $orderId);
+    return true;
 }
 
 // Ready-made WhatsApp messages. {name} is replaced with the client's name.
@@ -173,4 +305,23 @@ function wa_number($raw) {
 
 function valid_date($d) {
     return is_string($d) && preg_match('/^\d{4}-\d{2}-\d{2}$/', $d) && checkdate((int)substr($d, 5, 2), (int)substr($d, 8, 2), (int)substr($d, 0, 4));
+}
+
+// finds another client with the same phone number (normalised), or null
+function find_client_by_phone($pdo, $phone, $exceptId = 0) {
+    $n = wa_number($phone);
+    if (strlen($n) < 10) return null;
+    foreach ($pdo->query('SELECT id, name, whatsapp_number FROM clients') as $c) {
+        if ((int)$c['id'] !== (int)$exceptId && wa_number($c['whatsapp_number']) === $n) return $c;
+    }
+    return null;
+}
+
+function clean_tags($raw) {
+    $tags = [];
+    foreach (preg_split('/[,\n]+/', (string)$raw) as $t) {
+        $t = trim(mb_substr(preg_replace('/\s+/', ' ', $t), 0, 24));
+        if ($t !== '' && !in_array(mb_strtolower($t), array_map('mb_strtolower', $tags), true)) $tags[] = $t;
+    }
+    return implode(', ', array_slice($tags, 0, 10));
 }
