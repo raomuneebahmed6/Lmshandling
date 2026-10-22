@@ -37,6 +37,7 @@ include __DIR__ . '/includes/layout_top.php';
         <td><span class="badge b-<?php echo e($c['stage']); ?>"><?php echo e(STAGES[$c['stage']] ?? $c['stage']); ?></span></td>
         <td style="display:flex;gap:6px">
           <?php if ($wa): ?><a class="btn wa sm" target="_blank" rel="noopener" href="https://wa.me/<?php echo e($wa); ?>?text=<?php echo rawurlencode('Assalam o Alaikum ' . $c['name'] . ', this is Nibaha Haq from lmshandling.com. '); ?>">WhatsApp</a><?php endif; ?>
+          <form method="post" action="/dashboard/clients.php" class="inline"><?php echo csrf_field(); ?><input type="hidden" name="do" value="snooze"><input type="hidden" name="id" value="<?php echo (int)$c['id']; ?>"><input type="hidden" name="back" value="followups"><button name="days" value="1" class="ghost sm" title="Move to tomorrow">+1d</button><button name="days" value="3" class="ghost sm">+3d</button><button name="days" value="7" class="ghost sm">+7d</button></form>
           <form method="post" action="/dashboard/clients.php" class="inline"><?php echo csrf_field(); ?><input type="hidden" name="do" value="done"><input type="hidden" name="id" value="<?php echo (int)$c['id']; ?>"><input type="hidden" name="back" value="followups"><button type="submit" class="ghost sm">Done</button></form>
         </td>
       </tr>

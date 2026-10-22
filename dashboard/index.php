@@ -68,6 +68,7 @@ include __DIR__ . '/includes/layout_top.php';
       <?php foreach ($dueList as $c): $over = $c['next_followup'] < $today; ?>
       <li>
         <span><a href="/dashboard/clients.php?action=view&amp;id=<?php echo (int)$c['id']; ?>"><strong><?php echo e($c['name']); ?></strong></a><br><span class="muted <?php echo $over ? 'due-over' : 'due-today'; ?>"><?php echo $over ? 'Overdue since ' : 'Today, '; ?><?php echo e($c['next_followup']); ?></span></span>
+        <form method="post" action="/dashboard/clients.php" class="inline"><?php echo csrf_field(); ?><input type="hidden" name="do" value="snooze"><input type="hidden" name="id" value="<?php echo (int)$c['id']; ?>"><input type="hidden" name="back" value="home"><button name="days" value="1" class="ghost sm" title="Move to tomorrow">+1d</button></form>
         <?php if (wa_number($c['whatsapp_number'])): ?><a class="btn wa sm" target="_blank" rel="noopener" href="https://wa.me/<?php echo e(wa_number($c['whatsapp_number'])); ?>">WhatsApp</a><?php endif; ?>
       </li>
       <?php endforeach; ?>

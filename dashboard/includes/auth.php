@@ -286,6 +286,36 @@ function add_payment($pdo, $orderId, $amount, $method, $date, $note = '') {
     return true;
 }
 
+// ---------- audit trail and trash (recoverable deletes) ----------
+function audit($action, $detail = '') {
+    $u = current_user();
+    $pdo = get_db();
+    $pdo->prepare('INSERT INTO audit_log (ts, username, action, detail) VALUES (?,?,?,?)')
+        ->execute([time(), $u['username'] ?? 'system', mb_substr($action, 0, 60), mb_substr((string)$detail, 0, 300)]);
+    $pdo->exec('DELETE FROM audit_log WHERE ts < ' . (time() - 365 * 86400));
+}
+
+function trash_put($kind, $label, $payload) {
+    $u = current_user();
+    $pdo = get_db();
+    $pdo->prepare('INSERT INTO trash (kind, label, payload, deleted_by, deleted_at) VALUES (?,?,?,?,?)')
+        ->execute([$kind, mb_substr($label, 0, 120), json_encode($payload), $u['username'] ?? 'system', time()]);
+    $pdo->exec('DELETE FROM trash WHERE deleted_at < ' . (time() - 90 * 86400));
+}
+
+// follow-ups that are due today or overdue (for the sidebar badge)
+function due_followups_count() {
+    static $n = null;
+    if ($n === null) {
+        $s = get_db()->prepare("SELECT COUNT(*) FROM clients WHERE next_followup IS NOT NULL AND next_followup != '' AND next_followup <= ? AND stage IN ('lead','active')");
+        $s->execute([date('Y-m-d')]);
+        $n = (int)$s->fetchColumn();
+    }
+    return $n;
+}
+
+const EXPENSE_CATEGORIES = ['Ads / promotion', 'Tools / software', 'Hosting / domain', 'Internet / phone', 'Staff / helper', 'Other'];
+
 // Ready-made WhatsApp messages. {name} is replaced with the client's name.
 const MSG_TEMPLATES = [
     'Greeting' => 'Assalam o Alaikum {name}, this is Nibaha Haq from lmshandling.com. How can I help you today?',

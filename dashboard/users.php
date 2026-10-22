@@ -20,6 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             try {
                 $pdo->prepare('INSERT INTO users (username, password_hash, role) VALUES (?,?,?)')->execute([$username, password_hash($password, PASSWORD_DEFAULT), $role]);
+                audit('user created', $username . ' (' . $role . ')');
                 flash('User "' . $username . '" created. Share the password privately and ask them to change it.');
             } catch (PDOException $ex) {
                 flash('That username already exists.', 'err');
@@ -30,6 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($do === 'activate') $pdo->prepare('UPDATE users SET active = 1 WHERE id = ?')->execute([$uid]);
         if ($do === 'role_admin') $pdo->prepare("UPDATE users SET role = 'admin' WHERE id = ?")->execute([$uid]);
         if ($do === 'role_staff') $pdo->prepare("UPDATE users SET role = 'staff' WHERE id = ?")->execute([$uid]);
+        audit('user ' . $do, '#' . $uid);
         flash('User updated.');
     } elseif ($do === 'reset' && $uid) {
         $password = (string)($_POST['password'] ?? '');
@@ -37,10 +39,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             flash('Password must be at least 10 characters.', 'err');
         } else {
             $pdo->prepare('UPDATE users SET password_hash = ? WHERE id = ?')->execute([password_hash($password, PASSWORD_DEFAULT), $uid]);
+            audit('password reset', 'user #' . $uid);
             flash('Password reset.');
         }
     } elseif ($do === 'reset2fa' && $uid) {
         $pdo->prepare('UPDATE users SET totp_secret = NULL, totp_enabled = 0, recovery_codes = NULL WHERE id = ?')->execute([$uid]);
+        audit('2FA cleared', 'user #' . $uid);
         flash('Two-step login cleared for that user.');
     }
     redirect('/dashboard/users.php');

@@ -23,8 +23,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $s = $pdo->prepare('SELECT client_id FROM orders WHERE id=?');
         $s->execute([$oid]);
         $cid = $s->fetchColumn();
+        $os = $pdo->prepare('SELECT * FROM orders WHERE id=?'); $os->execute([$oid]); $orow = $os->fetch(PDO::FETCH_ASSOC);
+        if ($orow) {
+            $ps = $pdo->prepare('SELECT * FROM payments WHERE order_id=?'); $ps->execute([$oid]);
+            trash_put('order', ($orow['course_code'] ?: $orow['file_type']) . ' #' . $oid, ['order' => $orow, 'payments' => $ps->fetchAll(PDO::FETCH_ASSOC)]);
+            audit('order deleted', '#' . $oid . ' ' . ($orow['course_code'] ?: $orow['file_type']));
+        }
         $pdo->prepare('DELETE FROM orders WHERE id=?')->execute([$oid]);
-        flash('Order deleted.');
+        flash('Order deleted. The admin can restore it from Activity > Trash for 90 days.');
         redirect($cid ? '/dashboard/clients.php?action=view&id=' . $cid : '/dashboard/orders.php');
     }
 
@@ -40,6 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $pdo->prepare('UPDATE orders SET status=? WHERE id=?')->execute([$do, $oid]);
         }
+        audit('order ' . $do, '#' . $oid);
         flash('Order updated.');
         $b = (string)($_POST['back'] ?? '');
         redirect(strpos($b, '/dashboard/') === 0 ? $b : '/dashboard/orders.php');
@@ -47,6 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($do === 'addpay' && $oid) {
         $ok = add_payment($pdo, $oid, $_POST['amount'] ?? 0, $_POST['method'] ?? '', $_POST['paid_at'] ?? '', trim($_POST['note'] ?? ''));
+        if ($ok) audit('payment added', 'order #' . $oid . ' Rs. ' . (float)($_POST['amount'] ?? 0));
         flash($ok ? 'Payment recorded.' : 'Enter an amount above zero.', $ok ? 'ok' : 'err');
         redirect('/dashboard/orders.php?action=edit&id=' . $oid);
     }
@@ -55,6 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!is_admin()) { http_response_code(403); exit('Only the admin can remove payments.'); }
         $pdo->prepare('DELETE FROM payments WHERE id=?')->execute([(int)($_POST['pay_id'] ?? 0)]);
         recalc_order($pdo, $oid);
+        audit('payment removed', 'order #' . $oid);
         flash('Payment removed.');
         redirect('/dashboard/orders.php?action=edit&id=' . $oid);
     }
@@ -84,6 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $pdo->prepare('UPDATE orders SET client_id=?, file_type=?, file_count=?, amount=?, status=?, notes=?, order_date=?, course_code=?, exam_date=?, files_note=? WHERE id=?')
             ->execute([$clientId, $fileType, $fileCount, $amount, $st, $notes, $orderDate, $course, $exam, $filesNote, $oid]);
         recalc_order($pdo, $oid);
+        audit('order updated', '#' . $oid);
         flash('Order saved.');
         redirect('/dashboard/orders.php?action=edit&id=' . $oid);
     } else {
@@ -95,6 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         else recalc_order($pdo, $newId);
         // a new order turns a lead into an active client
         $pdo->prepare("UPDATE clients SET stage='active' WHERE id=? AND stage='lead'")->execute([$clientId]);
+        audit('order added', '#' . $newId . ' ' . ($course ?: $fileType));
         flash('Order added.');
         redirect('/dashboard/clients.php?action=view&id=' . $clientId);
     }

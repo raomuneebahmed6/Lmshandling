@@ -104,6 +104,32 @@ function get_db() {
         v TEXT
     )");
 
+    $pdo->exec("CREATE TABLE IF NOT EXISTS expenses (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        spent_at TEXT NOT NULL,
+        category TEXT NOT NULL,
+        amount REAL NOT NULL,
+        note TEXT,
+        created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    )");
+
+    $pdo->exec("CREATE TABLE IF NOT EXISTS audit_log (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        ts INTEGER NOT NULL,
+        username TEXT,
+        action TEXT NOT NULL,
+        detail TEXT
+    )");
+
+    $pdo->exec("CREATE TABLE IF NOT EXISTS trash (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        kind TEXT NOT NULL,
+        label TEXT,
+        payload TEXT NOT NULL,
+        deleted_by TEXT,
+        deleted_at INTEGER NOT NULL
+    )");
+
     // ---- additive columns ----
     $added = db_add_columns($pdo, 'clients', [
         'stage' => "TEXT NOT NULL DEFAULT 'lead'",

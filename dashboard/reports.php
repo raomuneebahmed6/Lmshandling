@@ -21,6 +21,9 @@ $maxM = max(1, max(array_column($months, 'recv')), max(array_column($months, 'bi
 $totRecv = array_sum(array_column($months, 'recv'));
 $totBilled = array_sum(array_column($months, 'billed'));
 $totOrders = array_sum(array_column($months, 'orders'));
+$spentRows = $q('SELECT category k, SUM(amount) s FROM expenses WHERE substr(spent_at,1,7) >= ? GROUP BY category ORDER BY s DESC', [$from]);
+$totSpent = array_sum(array_column($spentRows, 's'));
+$profit = $totRecv - $totSpent;
 
 $byType = $q('SELECT file_type k, COUNT(*) n, SUM(file_count) f, SUM(COALESCE(amount,0)) billed, SUM(paid_amount) recv FROM orders WHERE order_date >= ? GROUP BY file_type ORDER BY billed DESC', [$fromDate]);
 $byCourse = $q("SELECT course_code k, COUNT(*) n, SUM(COALESCE(amount,0)) billed, SUM(paid_amount) recv FROM orders WHERE order_date >= ? AND course_code IS NOT NULL AND course_code != '' GROUP BY course_code ORDER BY n DESC, billed DESC LIMIT 10", [$fromDate]);
@@ -55,6 +58,8 @@ include __DIR__ . '/includes/layout_top.php';
 <div class="stats">
   <div class="stat"><div class="num"><?php echo e(money($totRecv)); ?></div><div class="label">Received (<?php echo $range; ?> months)</div></div>
   <div class="stat"><div class="num"><?php echo e(money($totBilled)); ?></div><div class="label">Billed in orders</div></div>
+  <div class="stat"><div class="num"><?php echo e(money($totSpent)); ?></div><div class="label">Spent (<a href="/dashboard/expenses.php">expenses</a>)</div></div>
+  <div class="stat<?php echo $profit < 0 ? ' alert' : ''; ?>"><div class="num"><?php echo e(money($profit)); ?></div><div class="label">Profit (received minus spent)</div></div>
   <div class="stat"><div class="num"><?php echo (int)$totOrders; ?></div><div class="label">Orders</div></div>
   <div class="stat"><div class="num"><?php echo $conv; ?>%</div><div class="label">Leads that became clients</div></div>
   <div class="stat"><div class="num"><?php echo $buyers ? round($repeat / $buyers * 100) : 0; ?>%</div><div class="label">Clients who ordered again</div></div>
@@ -106,6 +111,12 @@ include __DIR__ . '/includes/layout_top.php';
   </section>
 </div>
 
+<?php if ($spentRows): ?>
+<section class="card" style="margin-top:18px">
+  <div class="card-head"><h2>Where the money went</h2><a class="btn ghost sm" href="/dashboard/expenses.php">Expenses</a></div>
+  <ul class="list"><?php foreach ($spentRows as $r): ?><li><span><?php echo e($r['k']); ?></span><strong><?php echo e(money($r['s'])); ?></strong></li><?php endforeach; ?></ul>
+</section>
+<?php endif; ?>
 <div class="grid2" style="margin-top:18px">
   <section class="card">
     <div class="card-head"><h2>Best clients</h2></div>

@@ -47,6 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $added++;
     }
     $pdo->commit();
+    audit('clients imported', $added . ' added, ' . count($skipped) . ' skipped');
     $report = ['added' => $added, 'skipped' => $skipped];
 }
 

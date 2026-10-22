@@ -15,8 +15,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($do === 'delete' && $cid) {
         if (!is_admin()) { http_response_code(403); exit('Only the admin can delete clients.'); }
+        $cs = $pdo->prepare('SELECT * FROM clients WHERE id=?'); $cs->execute([$cid]); $crow = $cs->fetch(PDO::FETCH_ASSOC);
+        if ($crow) {
+            $os = $pdo->prepare('SELECT * FROM orders WHERE client_id=?'); $os->execute([$cid]); $orows = $os->fetchAll(PDO::FETCH_ASSOC);
+            $prow = [];
+            foreach ($orows as $or) { $ps = $pdo->prepare('SELECT * FROM payments WHERE order_id=?'); $ps->execute([$or['id']]); foreach ($ps->fetchAll(PDO::FETCH_ASSOC) as $pr) $prow[] = $pr; }
+            $as = $pdo->prepare('SELECT * FROM activities WHERE client_id=?'); $as->execute([$cid]);
+            trash_put('client', $crow['name'], ['client' => $crow, 'orders' => $orows, 'payments' => $prow, 'activities' => $as->fetchAll(PDO::FETCH_ASSOC)]);
+            audit('client deleted', $crow['name'] . ' (#' . $cid . ')');
+        }
         $pdo->prepare('DELETE FROM clients WHERE id=?')->execute([$cid]);
-        flash('Client deleted.');
+        flash('Client deleted. The admin can restore it from Activity > Trash for 90 days.');
         redirect('/dashboard/clients.php');
     }
 
@@ -37,6 +46,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $pdo->prepare('UPDATE clients SET stage=?, next_followup=? WHERE id=?')->execute([$stage, $fu, $cid]);
         flash('Client updated.');
         redirect('/dashboard/clients.php?action=view&id=' . $cid);
+    }
+
+    if ($do === 'snooze' && $cid) {
+        $days = max(1, min(60, (int)($_POST['days'] ?? 1)));
+        $pdo->prepare('UPDATE clients SET next_followup=? WHERE id=?')->execute([date('Y-m-d', strtotime("+$days days")), $cid]);
+        audit('follow-up snoozed', '#' . $cid . ' +' . $days . 'd');
+        flash("Follow-up moved by $days day(s).");
+        $b = (string)($_POST['back'] ?? '');
+        redirect($b === 'followups' ? '/dashboard/followups.php' : ($b === 'home' ? '/dashboard/index.php' : '/dashboard/clients.php?action=view&id=' . $cid));
     }
 
     if ($do === 'done' && $cid) {
@@ -70,13 +88,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif ($cid) {
         $pdo->prepare('UPDATE clients SET name=?, whatsapp_number=?, course=?, source=?, notes=?, stage=?, next_followup=?, tags=? WHERE id=?')
             ->execute([$name, $whatsapp, $course, $source, $notes, $stage, $fu, $tags, $cid]);
+        audit('client updated', $name . ' (#' . $cid . ')');
         flash('Client saved.');
         redirect('/dashboard/clients.php?action=view&id=' . $cid);
     } else {
         $pdo->prepare('INSERT INTO clients (name, whatsapp_number, course, source, notes, stage, next_followup, tags) VALUES (?,?,?,?,?,?,?,?)')
             ->execute([$name, $whatsapp, $course, $source, $notes, $stage, $fu, $tags]);
+        $newCid = (int)$pdo->lastInsertId(); // read before audit() inserts its own row
+        audit('client added', $name . ' (#' . $newCid . ')');
         flash('Client added.');
-        redirect('/dashboard/clients.php?action=view&id=' . $pdo->lastInsertId());
+        redirect('/dashboard/clients.php?action=view&id=' . $newCid);
     }
 }
 
@@ -157,6 +178,7 @@ if ($action === 'view' && $id) {
       <div class="muted">Added <?php echo e(substr($client['created_at'], 0, 10)); ?><?php echo $client['source'] ? ' &middot; via ' . e($client['source']) : ''; ?></div></div>
     <div style="display:flex;gap:8px;flex-wrap:wrap">
       <?php if ($wa): ?><a class="btn wa sm" target="_blank" rel="noopener" href="https://wa.me/<?php echo e($wa); ?>?text=<?php echo rawurlencode($msgText); ?>">WhatsApp</a><?php endif; ?>
+      <a class="btn ghost sm" href="/dashboard/statement.php?client=<?php echo $id; ?>" target="_blank">Statement</a>
       <a class="btn ghost sm" href="/dashboard/clients.php?action=edit&amp;id=<?php echo $id; ?>">Edit</a>
       <?php if (is_admin()): ?><form method="post" class="inline" data-confirm="Delete this client and all their orders and history? This cannot be undone.">
         <?php echo csrf_field(); ?><input type="hidden" name="do" value="delete"><input type="hidden" name="id" value="<?php echo $id; ?>">
@@ -215,6 +237,7 @@ if ($action === 'view' && $id) {
       </form>
       <?php if ($client['next_followup']): ?>
       <form method="post" style="margin-top:8px"><?php echo csrf_field(); ?><input type="hidden" name="do" value="done"><input type="hidden" name="id" value="<?php echo $id; ?>"><input type="hidden" name="back" value="client"><button type="submit" class="ghost sm">Mark follow-up done</button></form>
+      <form method="post" style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;align-items:center"><?php echo csrf_field(); ?><input type="hidden" name="do" value="snooze"><input type="hidden" name="id" value="<?php echo $id; ?>"><input type="hidden" name="back" value="client"><span class="muted">Snooze:</span><button name="days" value="1" class="ghost sm">+1 day</button><button name="days" value="3" class="ghost sm">+3 days</button><button name="days" value="7" class="ghost sm">+1 week</button></form>
       <?php endif; ?>
     </section>
 
