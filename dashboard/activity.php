@@ -42,6 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
                 foreach ($p['payments'] as $pay) restore_row($pdo, 'payments', $pay, ['order_id' => $orderMap]);
                 foreach ($p['activities'] as $a) restore_row($pdo, 'activities', $a, ['client_id' => [$p['client']['id'] => $newCid]]);
+                foreach (($p['chats'] ?? []) as $chat) restore_row($pdo, 'chats', $chat, ['client_id' => [$p['client']['id'] => $newCid]]);
                 $msg = 'Client "' . $t['label'] . '" restored with its orders and history.';
             } else {
                 $cl = $pdo->prepare('SELECT COUNT(*) FROM clients WHERE id = ?');

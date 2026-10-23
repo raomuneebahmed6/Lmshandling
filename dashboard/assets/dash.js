@@ -47,5 +47,14 @@
   document.querySelectorAll("[data-print]").forEach(function (b) { b.addEventListener("click", function () { window.print(); }); });
   document.querySelectorAll("[data-back]").forEach(function (b) { b.addEventListener("click", function () { history.back(); }); });
 
+  // search inside a saved chat
+  document.querySelectorAll("input[data-chat-filter]").forEach(function (inp) {
+    inp.addEventListener("input", function () {
+      var q = inp.value.trim().toLowerCase();
+      document.querySelectorAll(".msg2").forEach(function (m) { m.style.display = !q || (m.getAttribute("data-text") || "").indexOf(q) >= 0 ? "" : "none"; });
+      document.querySelectorAll(".chatday").forEach(function (d) { d.style.display = q ? "none" : ""; });
+    });
+  });
+
   if ("serviceWorker" in navigator) { window.addEventListener("load", function () { navigator.serviceWorker.register("/dashboard/sw.js", { scope: "/dashboard/" }).catch(function () {}); }); }
 })();

@@ -130,6 +130,21 @@ function get_db() {
         deleted_at INTEGER NOT NULL
     )");
 
+    $pdo->exec("CREATE TABLE IF NOT EXISTS chats (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        client_id INTEGER NOT NULL,
+        title TEXT,
+        msg_count INTEGER NOT NULL DEFAULT 0,
+        first_at TEXT,
+        last_at TEXT,
+        courses TEXT,
+        sha TEXT,
+        body TEXT NOT NULL,
+        imported_by TEXT,
+        imported_at INTEGER NOT NULL,
+        FOREIGN KEY (client_id) REFERENCES clients(id) ON DELETE CASCADE
+    )");
+
     // ---- additive columns ----
     $added = db_add_columns($pdo, 'clients', [
         'stage' => "TEXT NOT NULL DEFAULT 'lead'",

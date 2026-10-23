@@ -21,7 +21,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $prow = [];
             foreach ($orows as $or) { $ps = $pdo->prepare('SELECT * FROM payments WHERE order_id=?'); $ps->execute([$or['id']]); foreach ($ps->fetchAll(PDO::FETCH_ASSOC) as $pr) $prow[] = $pr; }
             $as = $pdo->prepare('SELECT * FROM activities WHERE client_id=?'); $as->execute([$cid]);
-            trash_put('client', $crow['name'], ['client' => $crow, 'orders' => $orows, 'payments' => $prow, 'activities' => $as->fetchAll(PDO::FETCH_ASSOC)]);
+            $cs2 = $pdo->prepare('SELECT * FROM chats WHERE client_id=?'); $cs2->execute([$cid]);
+            trash_put('client', $crow['name'], ['client' => $crow, 'orders' => $orows, 'payments' => $prow, 'activities' => $as->fetchAll(PDO::FETCH_ASSOC), 'chats' => $cs2->fetchAll(PDO::FETCH_ASSOC)]);
             audit('client deleted', $crow['name'] . ' (#' . $cid . ')');
         }
         $pdo->prepare('DELETE FROM clients WHERE id=?')->execute([$cid]);
@@ -165,6 +166,9 @@ if ($action === 'view' && $id) {
     $s = $pdo->prepare('SELECT * FROM activities WHERE client_id=? ORDER BY created_at DESC, id DESC LIMIT 60');
     $s->execute([$id]);
     $acts = $s->fetchAll(PDO::FETCH_ASSOC);
+    $cq = $pdo->prepare('SELECT id, title, msg_count, first_at, last_at, courses, imported_at FROM chats WHERE client_id=? ORDER BY imported_at DESC');
+    $cq->execute([$id]);
+    $chatList = $cq->fetchAll(PDO::FETCH_ASSOC);
     $fileTotal = array_sum(array_column($orders, 'file_count'));
     $paidTotal = 0; $dueTotal = 0;
     foreach ($orders as $o) { $paidTotal += (float)$o['paid_amount']; $dueTotal += owed($o); }
@@ -242,6 +246,13 @@ if ($action === 'view' && $id) {
     </section>
 
     <section class="card">
+      <div class="card-head"><h2>WhatsApp chats</h2><a class="btn ghost sm" href="/dashboard/chats.php?client=<?php echo $id; ?>">+ Add chat</a></div>
+      <?php if (!$chatList): ?><div class="muted">No chat saved. Export it from WhatsApp and add it here.</div><?php else: ?>
+      <ul class="list"><?php foreach ($chatList as $cc): ?><li><span><a href="/dashboard/chat.php?id=<?php echo (int)$cc['id']; ?>"><strong>Open chat</strong></a> <span class="muted">&middot; <?php echo (int)$cc['msg_count']; ?> messages</span><br><span class="muted"><?php echo e($cc['first_at']); ?> &ndash; <?php echo e($cc['last_at']); ?><?php echo $cc['courses'] ? ' &middot; ' . e($cc['courses']) : ''; ?></span></span></li><?php endforeach; ?></ul>
+      <?php endif; ?>
+    </section>
+
+    <section class="card">
       <div class="card-head"><h2>Activity</h2></div>
       <form method="post" class="stack" style="margin-bottom:16px">
         <?php echo csrf_field(); ?><input type="hidden" name="do" value="activity"><input type="hidden" name="id" value="<?php echo $id; ?>">
@@ -307,7 +318,8 @@ include __DIR__ . '/includes/layout_top.php';
       <button type="submit" class="sm">Search</button>
     </form>
     <?php if ($tagF !== ''): ?><a class="badge b-partial" href="/dashboard/clients.php">Tag: <?php echo e($tagF); ?> x</a><?php endif; ?>
-    <a class="btn ghost sm" href="/dashboard/import.php">Import CSV</a>
+    <a class="btn ghost sm" href="/dashboard/import.php">Import contacts</a>
+    <a class="btn ghost sm" href="/dashboard/chats.php">Import chats</a>
     <a class="btn ghost sm" href="/dashboard/export.php?type=clients">Export CSV</a>
   </div>
   <?php if (!$clients): ?>

@@ -31,8 +31,8 @@ $nav = [
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap">
-<link rel="stylesheet" href="/dashboard/assets/dash.css?v=6">
-<script src="/dashboard/assets/dash.js?v=5" defer></script>
+<link rel="stylesheet" href="/dashboard/assets/dash.css?v=7">
+<script src="/dashboard/assets/dash.js?v=6" defer></script>
 </head>
 <body class="app">
 <aside class="side" id="side" aria-label="Main navigation">
