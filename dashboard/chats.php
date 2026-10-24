@@ -2,6 +2,7 @@
 require_once __DIR__ . '/includes/auth.php';
 require_login();
 require_once __DIR__ . '/includes/chat.php';
+require_once __DIR__ . '/includes/chat_insights.php';
 $pdo = get_db();
 
 $report = [];
@@ -55,8 +56,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($dup->fetchColumn()) { $report[] = ['file' => $it['name'], 'status' => 'skip', 'client' => $client, 'note' => 'This exact chat is already saved for this client.']; continue; }
 
         $courses = chat_courses($body);
-        $pdo->prepare('INSERT INTO chats (client_id, title, msg_count, first_at, last_at, courses, sha, body, imported_by, imported_at) VALUES (?,?,?,?,?,?,?,?,?,?)')
-            ->execute([$client['id'], mb_substr($title, 0, 120), count($msgs), $msgs[0]['at'], $msgs[count($msgs) - 1]['at'], implode(', ', $courses), $sha, $body, current_user()['username'], time()]);
+        $ins = chat_insights($msgs, $title, $client['name']);
+        $pdo->prepare('INSERT INTO chats (client_id, title, msg_count, first_at, last_at, courses, sha, body, imported_by, imported_at, last_ts, last_from, insights) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)')
+            ->execute([$client['id'], mb_substr($title, 0, 120), count($msgs), $msgs[0]['at'], $msgs[count($msgs) - 1]['at'], implode(', ', $courses), $sha, $body, current_user()['username'], time(), $ins['last_ts'], $ins['last_from'], json_encode($ins)]);
         // fill the client's course only if it was empty; never overwrite what you typed
         if ($courses && trim((string)$client['course']) === '') $pdo->prepare('UPDATE clients SET course = ? WHERE id = ?')->execute([implode(', ', array_slice($courses, 0, 3)), $client['id']]);
         $pdo->prepare("INSERT INTO activities (client_id, kind, body) VALUES (?, 'whatsapp', ?)")->execute([$client['id'], 'WhatsApp chat imported: ' . count($msgs) . ' messages (' . $msgs[0]['at'] . ' to ' . $msgs[count($msgs) - 1]['at'] . ')']);

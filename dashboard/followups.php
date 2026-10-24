@@ -16,6 +16,13 @@ foreach ($all as $c) {
 // unpaid orders older than 3 days (payment reminders)
 $unpaid = $pdo->query("SELECT o.id, o.amount, o.paid_amount, o.order_date, o.file_type, c.id cid, c.name, c.whatsapp_number FROM orders o JOIN clients c ON c.id=o.client_id WHERE MAX(COALESCE(o.amount,0)-COALESCE(o.paid_amount,0),0) > 0 OR (o.amount IS NULL AND o.payment_status!='paid') ORDER BY o.order_date LIMIT 30")->fetchAll(PDO::FETCH_ASSOC);
 
+// clients whose newest saved chat ends with a message from the client (they are waiting for you)
+$waiting = $pdo->prepare("SELECT ch.id AS chat_id, ch.last_ts, ch.insights, ch.imported_at, c.id AS cid, c.name, c.whatsapp_number FROM chats ch JOIN clients c ON c.id = ch.client_id
+    WHERE ch.id = (SELECT c2.id FROM chats c2 WHERE c2.client_id = ch.client_id ORDER BY c2.imported_at DESC, c2.id DESC LIMIT 1)
+    AND ch.last_from = 'client' AND ch.last_ts IS NOT NULL AND ch.last_ts <= ? AND c.stage IN ('lead','active') ORDER BY ch.last_ts LIMIT 30");
+$waiting->execute([time() - 86400]);
+$waitList = $waiting->fetchAll(PDO::FETCH_ASSOC);
+
 $pageTitle = 'Follow-ups';
 $page = 'followups';
 include __DIR__ . '/includes/layout_top.php';
@@ -46,6 +53,26 @@ include __DIR__ . '/includes/layout_top.php';
   </table></div>
 </section>
 <?php endforeach; ?>
+
+<?php if ($waitList): ?>
+<section class="card">
+  <div class="card-head"><h2>Waiting for your reply <span class="badge b-unpaid"><?php echo count($waitList); ?></span></h2><span class="muted">from the newest saved chat of each client</span></div>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Client</th><th>Last message</th><th>Waiting</th><th></th></tr></thead>
+    <tbody>
+    <?php foreach ($waitList as $w): $d = (int)floor((time() - (int)$w['last_ts']) / 86400); $wi = json_decode((string)$w['insights'], true) ?: []; $wa = wa_number($w['whatsapp_number']); ?>
+      <tr>
+        <td><a href="/dashboard/clients.php?action=view&amp;id=<?php echo (int)$w['cid']; ?>"><strong><?php echo e($w['name']); ?></strong></a><?php echo !empty($wi['urgent']) ? ' <span class="badge b-unpaid">urgent</span>' : ''; ?></td>
+        <td class="muted"><?php echo e(date('Y-m-d H:i', (int)$w['last_ts'])); ?><?php echo !empty($wi['questions']) ? '<br>' . e(end($wi['questions'])) : ''; ?></td>
+        <td class="<?php echo $d >= 3 ? 'due-over' : 'due-today'; ?>"><?php echo $d; ?> day<?php echo $d === 1 ? '' : 's'; ?></td>
+        <td style="display:flex;gap:6px"><a class="btn ghost sm" href="/dashboard/chat.php?id=<?php echo (int)$w['chat_id']; ?>">Open chat</a><?php if ($wa): ?><a class="btn wa sm" target="_blank" rel="noopener" href="https://wa.me/<?php echo e($wa); ?>">WhatsApp</a><?php endif; ?></td>
+      </tr>
+    <?php endforeach; ?>
+    </tbody>
+  </table></div>
+  <p class="muted" style="margin-bottom:0">Based on the date of the saved export. Save a newer chat export to refresh it.</p>
+</section>
+<?php endif; ?>
 
 <section class="card">
   <div class="card-head"><h2>Payments to collect <span class="badge b-unpaid"><?php echo count($unpaid); ?></span></h2><a class="btn ghost sm" href="/dashboard/orders.php?payment=due">Open in Orders</a></div>

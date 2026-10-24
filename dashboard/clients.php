@@ -168,9 +168,14 @@ if ($action === 'view' && $id) {
     $s = $pdo->prepare('SELECT * FROM activities WHERE client_id=? ORDER BY created_at DESC, id DESC LIMIT 60');
     $s->execute([$id]);
     $acts = $s->fetchAll(PDO::FETCH_ASSOC);
-    $cq = $pdo->prepare('SELECT id, title, msg_count, first_at, last_at, courses, imported_at FROM chats WHERE client_id=? ORDER BY imported_at DESC');
+    require_once __DIR__ . '/includes/chat_insights.php';
+    $cq = $pdo->prepare('SELECT id, title, msg_count, first_at, last_at, courses, imported_at, insights FROM chats WHERE client_id=? ORDER BY imported_at DESC, id DESC');
     $cq->execute([$id]);
     $chatList = $cq->fetchAll(PDO::FETCH_ASSOC);
+    $ins = $chatList ? json_decode((string)$chatList[0]['insights'], true) : null;
+    $lp = $pdo->prepare('SELECT MAX(p.paid_at) FROM payments p JOIN orders o ON o.id = p.order_id WHERE o.client_id = ?');
+    $lp->execute([$id]);
+    $nextSteps = $ins ? chat_next_steps($ins, null, $lp->fetchColumn() ?: null) : [];
     $fileTotal = array_sum(array_column($orders, 'file_count'));
     $paidTotal = 0; $dueTotal = 0;
     foreach ($orders as $o) { $paidTotal += (float)$o['paid_amount']; $dueTotal += owed($o); }
@@ -247,6 +252,20 @@ if ($action === 'view' && $id) {
       <form method="post" style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;align-items:center"><?php echo csrf_field(); ?><input type="hidden" name="do" value="snooze"><input type="hidden" name="id" value="<?php echo $id; ?>"><input type="hidden" name="back" value="client"><span class="muted">Snooze:</span><button name="days" value="1" class="ghost sm">+1 day</button><button name="days" value="3" class="ghost sm">+3 days</button><button name="days" value="7" class="ghost sm">+1 week</button></form>
       <?php endif; ?>
     </section>
+
+    <?php if ($ins): ?>
+    <section class="card">
+      <div class="card-head"><h2>Next steps (from the chat)</h2><span class="muted">saved <?php echo e(date('Y-m-d', (int)$chatList[0]['imported_at'])); ?></span></div>
+      <?php if ($nextSteps): ?><ul class="list"><?php foreach ($nextSteps as $st): ?><li><span><?php echo e($st); ?></span></li><?php endforeach; ?></ul>
+      <?php else: ?><div class="muted">Nothing waiting. You replied last.</div><?php endif; ?>
+      <dl class="kv" style="margin-top:12px">
+        <?php if (!empty($ins['needs'])): ?><dt>Asked about</dt><dd><?php foreach ($ins['needs'] as $nd): ?><span class="badge b-partial" style="margin-right:4px"><?php echo e($nd); ?></span><?php endforeach; ?><?php echo !empty($ins['urgent']) ? ' <span class="badge b-unpaid">urgent</span>' : ''; ?></dd><?php endif; ?>
+        <?php if (!empty($ins['amounts'])): ?><dt>Amounts mentioned</dt><dd><?php foreach ($ins['amounts'] as $am): ?>Rs. <?php echo e(number_format($am['v'])); ?> <span class="muted">(<?php echo $am['by'] === 'me' ? 'you' : 'client'; ?>, <?php echo e(explode(' ', $am['at'])[0]); ?>)</span><br><?php endforeach; ?></dd><?php endif; ?>
+        <?php if (!empty($ins['payment'])): ?><dt>Last payment talk</dt><dd><?php echo e($ins['payment']['at']); ?>: <span class="muted"><?php echo e($ins['payment']['text']); ?></span></dd><?php endif; ?>
+      </dl>
+      <p class="muted" style="margin-bottom:0;font-size:12px">These are hints from keywords, not facts. Open the chat to be sure. Add a newer export to refresh them.</p>
+    </section>
+    <?php endif; ?>
 
     <section class="card">
       <div class="card-head"><h2>WhatsApp chats</h2><a class="btn ghost sm" href="/dashboard/chats.php?client=<?php echo $id; ?>">+ Add chat</a></div>

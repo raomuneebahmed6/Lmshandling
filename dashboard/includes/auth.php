@@ -6,6 +6,7 @@ const SESSION_IDLE_SECONDS = 28800; // 8 hours
 
 $secure = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
     || (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https');
+date_default_timezone_set('Asia/Karachi');
 session_name('lmh_dash');
 session_set_cookie_params([
     'lifetime' => 0,

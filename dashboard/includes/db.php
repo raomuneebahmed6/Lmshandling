@@ -172,6 +172,12 @@ function get_db() {
         SELECT o.id, o.paid_amount, 'Earlier', substr(o.order_date,1,10), 'Opening balance'
         FROM orders o WHERE o.paid_amount > 0 AND NOT EXISTS (SELECT 1 FROM payments p WHERE p.order_id = o.id)");
 
+    db_add_columns($pdo, 'chats', [
+        'last_ts' => 'INTEGER',
+        'last_from' => 'TEXT',
+        'insights' => 'TEXT',
+    ]);
+
     db_add_columns($pdo, 'users', [
         'role' => "TEXT NOT NULL DEFAULT 'admin'",
         'totp_secret' => 'TEXT',
