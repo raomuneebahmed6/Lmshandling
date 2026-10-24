@@ -23,7 +23,7 @@ function parse_vcf($text) {
             elseif ($key === 'ORG' && $org === '') $org = trim(str_replace(';', ' ', $v));
             elseif ($key === 'NOTE' && $note === '') $note = $v;
         }
-        if ($name !== '' || $tel !== '') $out[] = ['name' => $name, 'phone' => $tel, 'course' => $org, 'source' => '', 'tags' => '', 'notes' => $note];
+        if ($name !== '' || $tel !== '') $out[] = ['name' => $name, 'phone' => $tel, 'course' => $org, 'source' => '', 'tags' => '', 'notes' => $note, 'vu_id' => '', 'stage' => ''];
     }
     return $out;
 }
@@ -46,7 +46,7 @@ function parse_csv_rows($path) {
     $find = function ($names) use ($hdr) { foreach ($names as $n) { $i = array_search($n, $hdr, true); if ($i !== false) return $i; } return null; };
     $hasHeader = $find(['name', 'full name', 'client', 'first name', 'given name', 'display name', 'whatsapp', 'phone', 'phone 1 - value', 'mobile phone', 'mobile']) !== null;
     if (!$hasHeader) {
-        $map = ['name' => 0, 'phone' => 1, 'course' => 2, 'source' => 3, 'tags' => 4, 'notes' => 5, 'first' => null, 'last' => null];
+        $map = ['name' => 0, 'phone' => 1, 'course' => 2, 'source' => 3, 'tags' => 4, 'notes' => 5, 'first' => null, 'last' => null, 'vu_id' => null, 'stage' => null];
     } else {
         $map = [
             'name' => $find(['name', 'full name', 'client', 'display name']),
@@ -55,6 +55,7 @@ function parse_csv_rows($path) {
             'phone' => $find(['whatsapp', 'whatsapp number', 'phone', 'phone 1 - value', 'mobile phone', 'primary phone', 'mobile', 'number', 'tel', 'phone number']),
             'course' => $find(['course', 'program', 'course / program', 'organization 1 - name', 'company']),
             'source' => $find(['source']), 'tags' => $find(['tags', 'tag', 'labels']), 'notes' => $find(['notes', 'note']),
+            'vu_id' => $find(['vu id', 'vu_id', 'student id', 'studentid', 'roll no', 'registration no', 'id']), 'stage' => $find(['stage', 'status']),
         ];
         array_shift($rows);
     }
@@ -62,7 +63,7 @@ function parse_csv_rows($path) {
     foreach ($rows as $r) {
         $g = fn($k) => (isset($map[$k]) && $map[$k] !== null && isset($r[$map[$k]])) ? trim((string)$r[$map[$k]]) : '';
         $name = $g('name') !== '' ? $g('name') : trim($g('first') . ' ' . $g('last'));
-        $out[] = ['name' => $name, 'phone' => $g('phone'), 'course' => $g('course'), 'source' => $g('source'), 'tags' => str_replace(' ::: ', ', ', $g('tags')), 'notes' => $g('notes')];
+        $out[] = ['name' => $name, 'phone' => $g('phone'), 'course' => $g('course'), 'source' => $g('source'), 'tags' => str_replace(' ::: ', ', ', $g('tags')), 'notes' => $g('notes'), 'vu_id' => $g('vu_id'), 'stage' => strtolower($g('stage'))];
     }
     return $out;
 }
@@ -81,8 +82,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $source = trim($_POST['source'] ?? '');
     $tag = clean_tags($_POST['tag'] ?? '');
-    $added = 0; $skipped = []; $seen = [];
-    $ins = $pdo->prepare("INSERT INTO clients (name, whatsapp_number, course, source, notes, stage, tags) VALUES (?,?,?,?,?,'lead',?)");
+    $added = 0; $skipped = []; $seen = []; $seenId = []; $seenName = [];
+    $ins = $pdo->prepare("INSERT INTO clients (name, whatsapp_number, course, source, notes, stage, tags, vu_id) VALUES (?,?,?,?,?,?,?,?)");
     $pdo->beginTransaction();
     foreach ($records as $n => $r) {
         $name = mb_substr($r['name'], 0, 120);
@@ -90,11 +91,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($name === '') { $name = $phone; }
         if ($name === '') continue;
         $norm = wa_number($phone);
+        $vid = clean_vu_id($r['vu_id'] ?? '');
+        if ($vid !== '' && (isset($seenId[$vid]) || find_client_by_vu_id($pdo, $vid))) { $skipped[] = $name . ': VU ID already exists'; continue; }
+        if ($vid !== '') $seenId[$vid] = 1;
+        if ($norm === '' && $vid === '') { // nothing to match on except the name
+            $k = mb_strtolower($name);
+            $same = $pdo->prepare("SELECT COUNT(*) FROM clients WHERE lower(name) = ? AND COALESCE(whatsapp_number,'') = '' AND COALESCE(vu_id,'') = ''");
+            $same->execute([$k]);
+            if (isset($seenName[$k]) || $same->fetchColumn()) { $skipped[] = $name . ': same name already exists'; continue; }
+            $seenName[$k] = 1;
+        }
         if ($norm !== '' && strlen($norm) < 10) { $skipped[] = $name . ': number looks too short'; continue; }
         if ($norm !== '' && (isset($seen[$norm]) || find_client_by_phone($pdo, $phone))) { $skipped[] = $name . ': number already exists'; continue; }
         if ($norm !== '') $seen[$norm] = 1;
         $tags = clean_tags(trim($r['tags'] . ',' . $tag, ','));
-        $ins->execute([$name, $phone, mb_substr($r['course'], 0, 120), mb_substr($r['source'] !== '' ? $r['source'] : ($source !== '' ? $source : 'Import'), 0, 60), mb_substr($r['notes'], 0, 1000), $tags]);
+        $stg = array_key_exists($r['stage'] ?? '', STAGES) ? $r['stage'] : 'lead';
+        $ins->execute([$name, $phone, mb_substr($r['course'], 0, 120), mb_substr($r['source'] !== '' ? $r['source'] : ($source !== '' ? $source : 'Import'), 0, 60), mb_substr($r['notes'], 0, 1000), $stg, $tags, $vid]);
         $added++;
     }
     $pdo->commit();
@@ -113,7 +125,7 @@ include __DIR__ . '/includes/layout_top.php';
 <div class="grid2">
 <section class="card">
   <div class="card-head"><h2>Import contacts</h2></div>
-  <p class="muted" style="margin-top:0">Upload a <strong>.vcf</strong> (phone contacts export) or a <strong>.csv</strong> (Google Contacts, Excel, Sheets). Names and phone numbers are read automatically. Numbers that already exist (even written differently, like 0300-1234567 and +92 300 1234567) are skipped. New people come in as <em>Leads</em>.</p>
+  <p class="muted" style="margin-top:0">Upload a <strong>.vcf</strong> (phone contacts export) or a <strong>.csv</strong> (Google Contacts, Excel, Sheets). Names and phone numbers are read automatically. Numbers that already exist (even written differently, like 0300-1234567 and +92 300 1234567) are skipped. New people come in as <em>Leads</em>, unless the file has a <strong>stage</strong> column (lead, active, completed, lost). A <strong>VU ID</strong> column is also read.</p>
   <form method="post" enctype="multipart/form-data" class="stack">
     <?php echo csrf_field(); ?>
     <div><label for="csv">Contacts file (.vcf or .csv, up to 5 MB)</label><input id="csv" type="file" name="csv" accept=".csv,.vcf,text/csv,text/vcard,text/x-vcard" required></div>

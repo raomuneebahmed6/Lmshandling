@@ -151,6 +151,7 @@ function get_db() {
         'source' => 'TEXT',
         'next_followup' => 'TEXT',
         'tags' => 'TEXT',
+        'vu_id' => 'TEXT',
     ]);
     // Clients that already have orders before this upgrade are existing customers
     if (isset($added['stage'])) {

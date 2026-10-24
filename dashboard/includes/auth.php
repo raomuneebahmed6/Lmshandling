@@ -347,6 +347,19 @@ function find_client_by_phone($pdo, $phone, $exceptId = 0) {
     return null;
 }
 
+// VU student ID such as BC250411610, kept upper-case without spaces
+function clean_vu_id($raw) {
+    return strtoupper(preg_replace('/[^A-Za-z0-9]/', '', mb_substr((string)$raw, 0, 24)));
+}
+
+function find_client_by_vu_id($pdo, $vuId, $exceptId = 0) {
+    $v = clean_vu_id($vuId);
+    if (strlen($v) < 6) return null;
+    $s = $pdo->prepare('SELECT id, name FROM clients WHERE upper(vu_id) = ? AND id != ? LIMIT 1');
+    $s->execute([$v, (int)$exceptId]);
+    return $s->fetch(PDO::FETCH_ASSOC) ?: null;
+}
+
 function clean_tags($raw) {
     $tags = [];
     foreach (preg_split('/[,\n]+/', (string)$raw) as $t) {

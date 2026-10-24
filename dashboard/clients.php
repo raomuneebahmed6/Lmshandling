@@ -69,6 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = trim($_POST['name'] ?? '');
     $whatsapp = trim($_POST['whatsapp_number'] ?? '');
     $course = trim($_POST['course'] ?? '');
+    $vuId = clean_vu_id($_POST['vu_id'] ?? '');
     $source = trim($_POST['source'] ?? '');
     $notes = trim($_POST['notes'] ?? '');
     $tags = clean_tags($_POST['tags'] ?? '');
@@ -76,25 +77,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $fu = trim($_POST['next_followup'] ?? '');
     $fu = valid_date($fu) ? $fu : null;
 
-    $dupe = $name !== '' ? find_client_by_phone($pdo, $whatsapp, $cid) : null;
+    $dupe = $name !== '' ? (find_client_by_phone($pdo, $whatsapp, $cid) ?: find_client_by_vu_id($pdo, $vuId, $cid)) : null;
     if ($name === '') {
         $err = 'Name is required.';
         $action = $cid ? 'edit' : 'new';
         $id = $cid;
     } elseif ($dupe && empty($_POST['allow_dupe'])) {
-        $err = 'A client with this number already exists: ' . $dupe['name'] . '. Tick "Save anyway" if this is a different person.';
+        $err = 'A client with this number or VU ID already exists: ' . $dupe['name'] . '. Tick "Save anyway" if this is a different person.';
         $dupeId = (int)$dupe['id'];
         $action = $cid ? 'edit' : 'new';
         $id = $cid;
     } elseif ($cid) {
-        $pdo->prepare('UPDATE clients SET name=?, whatsapp_number=?, course=?, source=?, notes=?, stage=?, next_followup=?, tags=? WHERE id=?')
-            ->execute([$name, $whatsapp, $course, $source, $notes, $stage, $fu, $tags, $cid]);
+        $pdo->prepare('UPDATE clients SET name=?, whatsapp_number=?, course=?, source=?, notes=?, stage=?, next_followup=?, tags=?, vu_id=? WHERE id=?')
+            ->execute([$name, $whatsapp, $course, $source, $notes, $stage, $fu, $tags, $vuId, $cid]);
         audit('client updated', $name . ' (#' . $cid . ')');
         flash('Client saved.');
         redirect('/dashboard/clients.php?action=view&id=' . $cid);
     } else {
-        $pdo->prepare('INSERT INTO clients (name, whatsapp_number, course, source, notes, stage, next_followup, tags) VALUES (?,?,?,?,?,?,?,?)')
-            ->execute([$name, $whatsapp, $course, $source, $notes, $stage, $fu, $tags]);
+        $pdo->prepare('INSERT INTO clients (name, whatsapp_number, course, source, notes, stage, next_followup, tags, vu_id) VALUES (?,?,?,?,?,?,?,?,?)')
+            ->execute([$name, $whatsapp, $course, $source, $notes, $stage, $fu, $tags, $vuId]);
         $newCid = (int)$pdo->lastInsertId(); // read before audit() inserts its own row
         audit('client added', $name . ' (#' . $newCid . ')');
         flash('Client added.');
@@ -107,14 +108,14 @@ $page = 'clients';
 
 // ---------- add / edit form ----------
 if ($action === 'new' || $action === 'edit') {
-    $client = ['id' => '', 'name' => '', 'whatsapp_number' => '', 'course' => '', 'source' => '', 'notes' => '', 'stage' => 'lead', 'next_followup' => '', 'tags' => ''];
+    $client = ['id' => '', 'name' => '', 'whatsapp_number' => '', 'course' => '', 'source' => '', 'notes' => '', 'stage' => 'lead', 'next_followup' => '', 'tags' => '', 'vu_id' => ''];
     if ($id) {
         $s = $pdo->prepare('SELECT * FROM clients WHERE id=?');
         $s->execute([$id]);
         $client = $s->fetch(PDO::FETCH_ASSOC) ?: $client;
     }
     if ($err) { // keep what was typed
-        foreach (['name', 'whatsapp_number', 'course', 'source', 'notes', 'tags'] as $f) $client[$f] = $_POST[$f] ?? '';
+        foreach (['name', 'whatsapp_number', 'course', 'source', 'notes', 'tags', 'vu_id'] as $f) $client[$f] = $_POST[$f] ?? '';
     }
     $pageTitle = $client['id'] ? 'Edit client' : 'Add client';
     include __DIR__ . '/includes/layout_top.php';
@@ -128,6 +129,7 @@ if ($action === 'new' || $action === 'edit') {
     <div><label for="name">Name</label><input id="name" name="name" value="<?php echo e($client['name']); ?>" required></div>
     <div class="row2">
       <div><label for="wa">WhatsApp number</label><input id="wa" name="whatsapp_number" value="<?php echo e($client['whatsapp_number']); ?>" placeholder="03XXXXXXXXX" inputmode="tel"></div>
+      <div><label for="vuid">VU student ID</label><input id="vuid" name="vu_id" value="<?php echo e($client['vu_id']); ?>" placeholder="e.g. BC250411610" autocomplete="off"></div>
       <div><label for="course">Course / program</label><input id="course" name="course" value="<?php echo e($client['course']); ?>" placeholder="e.g. BS CS, MBA"></div>
     </div>
     <div class="row2">
@@ -192,6 +194,7 @@ if ($action === 'view' && $id) {
   </div>
   <dl class="kv">
     <dt>WhatsApp</dt><dd><?php echo e($client['whatsapp_number'] ?: '-'); ?></dd>
+    <dt>VU ID</dt><dd><?php echo e($client['vu_id'] ?: '-'); ?></dd>
     <dt>Course</dt><dd><?php echo e($client['course'] ?: '-'); ?></dd>
     <dt>Tags</dt><dd><?php if ($client['tags']): foreach (explode(', ', $client['tags']) as $tg): ?><a class="badge b-partial" style="margin-right:4px" href="/dashboard/clients.php?tag=<?php echo urlencode($tg); ?>"><?php echo e($tg); ?></a><?php endforeach; else: ?>-<?php endif; ?></dd>
     <dt>Files sent</dt><dd><?php echo (int)$fileTotal; ?></dd>
@@ -285,9 +288,9 @@ if (!array_key_exists($stageF, STAGES)) $stageF = '';
 
 $where = []; $params = [];
 if ($search !== '') {
-    $where[] = '(c.name LIKE ? OR c.whatsapp_number LIKE ? OR c.course LIKE ? OR c.source LIKE ?)';
+    $where[] = '(c.name LIKE ? OR c.whatsapp_number LIKE ? OR c.course LIKE ? OR c.source LIKE ? OR c.vu_id LIKE ?)';
     $like = '%' . $search . '%';
-    array_push($params, $like, $like, $like, $like);
+    array_push($params, $like, $like, $like, $like, $like);
 }
 if ($stageF !== '') { $where[] = 'c.stage = ?'; $params[] = $stageF; }
 if ($tagF !== '') { $where[] = "(',' || REPLACE(COALESCE(c.tags,''), ', ', ',') || ',') LIKE ?"; $params[] = '%,' . $tagF . ',%'; }
@@ -330,7 +333,7 @@ include __DIR__ . '/includes/layout_top.php';
     <tbody>
     <?php foreach ($clients as $c): $wa = wa_number($c['whatsapp_number']); ?>
       <tr data-href="/dashboard/clients.php?action=view&amp;id=<?php echo (int)$c['id']; ?>">
-        <td><strong><?php echo e($c['name']); ?></strong><?php if ($c['tags']): ?><br><span class="muted"><?php echo e($c['tags']); ?></span><?php endif; ?></td>
+        <td><strong><?php echo e($c['name']); ?></strong><?php if ($c['vu_id']): ?> <span class="muted"><?php echo e($c['vu_id']); ?></span><?php endif; ?><?php if ($c['tags']): ?><br><span class="muted"><?php echo e($c['tags']); ?></span><?php endif; ?></td>
         <td><?php echo $wa ? '<a target="_blank" rel="noopener" href="https://wa.me/' . e($wa) . '">' . e($c['whatsapp_number']) . '</a>' : '-'; ?></td>
         <td><?php echo e($c['course'] ?: '-'); ?></td>
         <td><span class="badge b-<?php echo e($c['stage']); ?>"><?php echo e(STAGES[$c['stage']] ?? $c['stage']); ?></span></td>

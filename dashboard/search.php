@@ -8,8 +8,8 @@ $clients = []; $orders = []; $acts = [];
 if ($q !== '') {
     $like = '%' . str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], $q) . '%';
     $digits = preg_replace('/\D/', '', $q);
-    $s = $pdo->prepare("SELECT * FROM clients WHERE name LIKE ? ESCAPE '\\' OR course LIKE ? ESCAPE '\\' OR tags LIKE ? ESCAPE '\\' OR source LIKE ? ESCAPE '\\' OR notes LIKE ? ESCAPE '\\' OR whatsapp_number LIKE ? ESCAPE '\\' ORDER BY created_at DESC LIMIT 30");
-    $s->execute([$like, $like, $like, $like, $like, $like]);
+    $s = $pdo->prepare("SELECT * FROM clients WHERE name LIKE ? ESCAPE '\\' OR course LIKE ? ESCAPE '\\' OR tags LIKE ? ESCAPE '\\' OR source LIKE ? ESCAPE '\\' OR notes LIKE ? ESCAPE '\\' OR whatsapp_number LIKE ? ESCAPE '\\' OR vu_id LIKE ? ESCAPE '\\' ORDER BY created_at DESC LIMIT 30");
+    $s->execute([$like, $like, $like, $like, $like, $like, $like]);
     $clients = $s->fetchAll(PDO::FETCH_ASSOC);
     if (strlen($digits) >= 6) {
         $have = array_column($clients, 'id');

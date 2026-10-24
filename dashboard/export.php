@@ -21,9 +21,9 @@ if ($type === 'orders') {
         fputcsv($out, array_map('csv_cell', [substr($r['order_date'], 0, 10), $r['cname'], $r['file_type'], $r['file_count'], $r['amount'], $r['paid_amount'], $r['payment_status'], $r['status'], $r['course_code'], $r['exam_date'], $r['files_note'], $r['notes']]));
     }
 } else {
-    fputcsv($out, ['Name', 'WhatsApp', 'Course', 'Stage', 'Source', 'Next follow-up', 'Tags', 'Added', 'Notes']);
+    fputcsv($out, ['Name', 'VU ID', 'WhatsApp', 'Course', 'Stage', 'Source', 'Next follow-up', 'Tags', 'Added', 'Notes']);
     foreach ($pdo->query('SELECT * FROM clients ORDER BY created_at DESC') as $r) {
-        fputcsv($out, array_map('csv_cell', [$r['name'], $r['whatsapp_number'], $r['course'], $r['stage'], $r['source'], $r['next_followup'], $r['tags'], substr($r['created_at'], 0, 10), $r['notes']]));
+        fputcsv($out, array_map('csv_cell', [$r['name'], $r['vu_id'], $r['whatsapp_number'], $r['course'], $r['stage'], $r['source'], $r['next_followup'], $r['tags'], substr($r['created_at'], 0, 10), $r['notes']]));
     }
 }
 fclose($out);
