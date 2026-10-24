@@ -321,6 +321,7 @@ include __DIR__ . '/includes/layout_top.php';
       <button type="submit" class="sm">Search</button>
     </form>
     <?php if ($tagF !== ''): ?><a class="badge b-partial" href="/dashboard/clients.php">Tag: <?php echo e($tagF); ?> x</a><?php endif; ?>
+    <?php if (is_admin()): ?><a class="btn ghost sm" href="/dashboard/cleanup.php">Clean up</a><?php endif; ?>
     <a class="btn ghost sm" href="/dashboard/import.php">Import contacts</a>
     <a class="btn ghost sm" href="/dashboard/chats.php">Import chats</a>
     <a class="btn ghost sm" href="/dashboard/export.php?type=clients">Export CSV</a>

@@ -32,7 +32,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $p = json_decode($t['payload'], true);
         try {
             $pdo->beginTransaction();
-            if ($t['kind'] === 'client') {
+            if ($t['kind'] === 'bulk') {
+                $n = 0;
+                foreach ($p['clients'] as $b) {
+                    $newCid = restore_row($pdo, 'clients', $b['client']);
+                    $orderMap = [];
+                    foreach ($b['orders'] as $o) { $oldId = $o['id']; $orderMap[$oldId] = restore_row($pdo, 'orders', $o, ['client_id' => [$b['client']['id'] => $newCid]]); }
+                    foreach ($b['payments'] as $pay) restore_row($pdo, 'payments', $pay, ['order_id' => $orderMap]);
+                    foreach ($b['activities'] as $a) restore_row($pdo, 'activities', $a, ['client_id' => [$b['client']['id'] => $newCid]]);
+                    foreach (($b['chats'] ?? []) as $chat) restore_row($pdo, 'chats', $chat, ['client_id' => [$b['client']['id'] => $newCid]]);
+                    $n++;
+                }
+                $msg = $n . ' clients restored from the clean-up batch.';
+            } elseif ($t['kind'] === 'client') {
                 $newCid = restore_row($pdo, 'clients', $p['client']);
                 $orderMap = [];
                 foreach ($p['orders'] as $o) {
