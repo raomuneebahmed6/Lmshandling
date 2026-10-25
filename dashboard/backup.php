@@ -8,7 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $do = $_POST['do'] ?? '';
     if ($do === 'create') {
         flash('Backup saved on the server: ' . make_backup());
-        redirect('/dashboard/backup.php');
+        redirect('/dashboard/backup');
     }
     if ($do === 'download') {
         $name = make_backup();
@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
         flash('Backup not found.', 'err');
-        redirect('/dashboard/backup.php');
+        redirect('/dashboard/backup');
     }
 }
 

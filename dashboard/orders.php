@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         $pdo->prepare('DELETE FROM orders WHERE id=?')->execute([$oid]);
         flash('Order deleted. The admin can restore it from Activity > Trash for 90 days.');
-        redirect($cid ? '/dashboard/clients.php?action=view&id=' . $cid : '/dashboard/orders.php');
+        redirect($cid ? '/dashboard/clients?action=view&id=' . $cid : '/dashboard/orders');
     }
 
     if (($do === 'paid' || $do === 'completed' || $do === 'sent') && $oid) {
@@ -49,14 +49,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         audit('order ' . $do, '#' . $oid);
         flash('Order updated.');
         $b = (string)($_POST['back'] ?? '');
-        redirect(strpos($b, '/dashboard/') === 0 ? $b : '/dashboard/orders.php');
+        redirect(strpos($b, '/dashboard/') === 0 ? $b : '/dashboard/orders');
     }
 
     if ($do === 'addpay' && $oid) {
         $ok = add_payment($pdo, $oid, $_POST['amount'] ?? 0, $_POST['method'] ?? '', $_POST['paid_at'] ?? '', trim($_POST['note'] ?? ''));
         if ($ok) audit('payment added', 'order #' . $oid . ' Rs. ' . (float)($_POST['amount'] ?? 0));
         flash($ok ? 'Payment recorded.' : 'Enter an amount above zero.', $ok ? 'ok' : 'err');
-        redirect('/dashboard/orders.php?action=edit&id=' . $oid);
+        redirect('/dashboard/orders?action=edit&id=' . $oid);
     }
 
     if ($do === 'delpay' && $oid) {
@@ -65,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         recalc_order($pdo, $oid);
         audit('payment removed', 'order #' . $oid);
         flash('Payment removed.');
-        redirect('/dashboard/orders.php?action=edit&id=' . $oid);
+        redirect('/dashboard/orders?action=edit&id=' . $oid);
     }
 
     $clientId = (int)($_POST['client_id'] ?? 0);
@@ -95,7 +95,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         recalc_order($pdo, $oid);
         audit('order updated', '#' . $oid);
         flash('Order saved.');
-        redirect('/dashboard/orders.php?action=edit&id=' . $oid);
+        redirect('/dashboard/orders?action=edit&id=' . $oid);
     } else {
         $pdo->prepare('INSERT INTO orders (client_id, file_type, file_count, amount, status, notes, order_date, course_code, exam_date, files_note) VALUES (?,?,?,?,?,?,?,?,?,?)')
             ->execute([$clientId, $fileType, $fileCount, $amount, $st, $notes, $orderDate, $course, $exam, $filesNote]);
@@ -107,7 +107,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $pdo->prepare("UPDATE clients SET stage='active' WHERE id=? AND stage='lead'")->execute([$clientId]);
         audit('order added', '#' . $newId . ' ' . ($course ?: $fileType));
         flash('Order added.');
-        redirect('/dashboard/clients.php?action=view&id=' . $clientId);
+        redirect('/dashboard/clients?action=view&id=' . $clientId);
     }
 }
 
@@ -141,7 +141,7 @@ if ($action === 'new' || $action === 'edit') {
 <div class="grid2">
 <div class="card">
   <?php if ($err): ?><div class="msg msg-err"><?php echo e($err); ?></div><?php endif; ?>
-  <?php if (!$clients): ?><div class="msg msg-warn">Add a client first. <a href="/dashboard/clients.php?action=new">Add client</a></div><?php endif; ?>
+  <?php if (!$clients): ?><div class="msg msg-warn">Add a client first. <a href="/dashboard/clients?action=new">Add client</a></div><?php endif; ?>
   <form method="post" class="stack">
     <?php echo csrf_field(); ?><input type="hidden" name="do" value="save"><input type="hidden" name="id" value="<?php echo e($order['id']); ?>">
     <div><label for="client">Client</label>
@@ -172,8 +172,8 @@ if ($action === 'new' || $action === 'edit') {
     <?php endif; ?>
     <div><label for="fn">Files sent (names or Google Drive link)</label><textarea id="fn" name="files_note" placeholder="e.g. STA301 midterm MCQs.pdf, drive link..."><?php echo e($order['files_note']); ?></textarea></div>
     <div><label for="on">Notes</label><textarea id="on" name="notes"><?php echo e($order['notes']); ?></textarea></div>
-    <div style="display:flex;gap:10px;flex-wrap:wrap"><button type="submit" class="gold">Save order</button><a class="btn ghost" href="/dashboard/orders.php">Back to orders</a>
-      <?php if ($order['id']): ?><a class="btn ghost" href="/dashboard/receipt.php?id=<?php echo (int)$order['id']; ?>" target="_blank">Receipt</a><?php endif; ?></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap"><button type="submit" class="gold">Save order</button><a class="btn ghost" href="/dashboard/orders">Back to orders</a>
+      <?php if ($order['id']): ?><a class="btn ghost" href="/dashboard/receipt?id=<?php echo (int)$order['id']; ?>" target="_blank">Receipt</a><?php endif; ?></div>
   </form>
   <?php if ($order['id'] && is_admin()): ?>
   <form method="post" data-confirm="Delete this order and its payments?" style="margin-top:14px"><?php echo csrf_field(); ?><input type="hidden" name="do" value="delete"><input type="hidden" name="id" value="<?php echo (int)$order['id']; ?>"><button type="submit" class="danger sm">Delete order</button></form>
@@ -234,7 +234,7 @@ $s->execute($params);
 $orders = $s->fetchAll(PDO::FETCH_ASSOC);
 $sumAll = 0; $sumDue = 0; $files = 0;
 foreach ($orders as $o) { $sumAll += (float)$o['amount']; $files += (int)$o['file_count']; $sumDue += owed($o); }
-$back = '/dashboard/orders.php' . ($_SERVER['QUERY_STRING'] ? '?' . $_SERVER['QUERY_STRING'] : '');
+$back = '/dashboard/orders' . ($_SERVER['QUERY_STRING'] ? '?' . $_SERVER['QUERY_STRING'] : '');
 $today = date('Y-m-d');
 
 include __DIR__ . '/includes/layout_top.php';
@@ -252,11 +252,11 @@ include __DIR__ . '/includes/layout_top.php';
     <select name="client" data-autosubmit aria-label="Client filter"><option value="">All clients</option>
       <?php foreach ($clients as $c): ?><option value="<?php echo (int)$c['id']; ?>"<?php echo $cf === (int)$c['id'] ? ' selected' : ''; ?>><?php echo e($c['name']); ?></option><?php endforeach; ?></select>
     <input type="month" name="month" value="<?php echo e($mf); ?>" aria-label="Month" data-autosubmit style="width:auto">
-    <a class="btn ghost sm" href="/dashboard/orders.php">Reset</a>
-    <a class="btn ghost sm" href="/dashboard/export.php?type=orders" style="margin-left:auto">Export CSV</a>
+    <a class="btn ghost sm" href="/dashboard/orders">Reset</a>
+    <a class="btn ghost sm" href="/dashboard/export?type=orders" style="margin-left:auto">Export CSV</a>
   </form>
   <?php if (!$orders): ?>
-    <div class="empty">No orders match. <a href="/dashboard/orders.php?action=new">Create an order</a></div>
+    <div class="empty">No orders match. <a href="/dashboard/orders?action=new">Create an order</a></div>
   <?php else: ?>
   <div class="tablewrap"><table>
     <thead><tr><th>Date</th><th>Client</th><th>Course / type</th><th>Exam</th><th class="num">Amount</th><th>Payment</th><th>Status</th><th></th></tr></thead>
@@ -264,7 +264,7 @@ include __DIR__ . '/includes/layout_top.php';
     <?php foreach ($orders as $o): ?>
       <tr>
         <td><?php echo e(substr($o['order_date'], 0, 10)); ?></td>
-        <td><a href="/dashboard/clients.php?action=view&amp;id=<?php echo (int)$o['client_id']; ?>"><?php echo e($o['client_name']); ?></a></td>
+        <td><a href="/dashboard/clients?action=view&amp;id=<?php echo (int)$o['client_id']; ?>"><?php echo e($o['client_name']); ?></a></td>
         <td><?php echo $o['course_code'] ? '<strong>' . e($o['course_code']) . '</strong><br>' : ''; ?><span class="muted"><?php echo e($o['file_type']); ?> &middot; <?php echo (int)$o['file_count']; ?> file(s)</span></td>
         <td><?php if ($o['exam_date']): $d = (int)((strtotime($o['exam_date']) - strtotime($today)) / 86400); ?><span class="<?php echo $d < 0 ? 'muted' : ($d <= 3 ? 'due-over' : ($d <= 7 ? 'due-today' : '')); ?>"><?php echo e($o['exam_date']); ?></span><?php else: ?>-<?php endif; ?></td>
         <td class="num"><?php echo $o['amount'] !== null ? e(number_format($o['amount'])) : '-'; ?><?php if ($o['payment_status'] === 'partial'): ?><br><span class="muted">got <?php echo e(number_format($o['paid_amount'])); ?></span><?php endif; ?></td>
@@ -274,8 +274,8 @@ include __DIR__ . '/includes/layout_top.php';
           <?php if ($o['payment_status'] !== 'paid'): ?><form method="post" class="inline"><?php echo csrf_field(); ?><input type="hidden" name="do" value="paid"><input type="hidden" name="id" value="<?php echo (int)$o['id']; ?>"><input type="hidden" name="back" value="<?php echo e($back); ?>"><button class="ghost sm" type="submit">Mark paid</button></form><?php endif; ?>
           <?php if (!in_array($o['status'], ['sent', 'completed'], true)): ?><form method="post" class="inline"><?php echo csrf_field(); ?><input type="hidden" name="do" value="sent"><input type="hidden" name="id" value="<?php echo (int)$o['id']; ?>"><input type="hidden" name="back" value="<?php echo e($back); ?>"><button class="ghost sm" type="submit">Sent</button></form><?php endif; ?>
           <?php if ($o['status'] !== 'completed'): ?><form method="post" class="inline"><?php echo csrf_field(); ?><input type="hidden" name="do" value="completed"><input type="hidden" name="id" value="<?php echo (int)$o['id']; ?>"><input type="hidden" name="back" value="<?php echo e($back); ?>"><button class="ghost sm" type="submit">Complete</button></form><?php endif; ?>
-          <a class="btn ghost sm" href="/dashboard/receipt.php?id=<?php echo (int)$o['id']; ?>" target="_blank">Receipt</a>
-          <a class="btn ghost sm" href="/dashboard/orders.php?action=edit&amp;id=<?php echo (int)$o['id']; ?>">Edit</a>
+          <a class="btn ghost sm" href="/dashboard/receipt?id=<?php echo (int)$o['id']; ?>" target="_blank">Receipt</a>
+          <a class="btn ghost sm" href="/dashboard/orders?action=edit&amp;id=<?php echo (int)$o['id']; ?>">Edit</a>
         </td>
       </tr>
     <?php endforeach; ?>

@@ -15,10 +15,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $pdo->prepare('DELETE FROM chats WHERE id = ?')->execute([$ch['id']]);
     audit('chat deleted', $ch['client_name'] . ' (#' . $ch['client_id'] . ')');
     flash('Chat deleted.');
-    redirect('/dashboard/clients.php?action=view&id=' . $ch['client_id']);
+    redirect('/dashboard/clients?action=view&id=' . $ch['client_id']);
 }
 
-$msgs = chat_parse($ch['body']);
+$msgs = chat_parse(secret_decrypt($ch['body']));
 // the "other person" is the sender whose name matches the chat title (or phone digits); everyone else is "you"
 $titleDigits = preg_replace('/\D/', '', (string)$ch['title']);
 $isOther = function ($who) use ($ch, $titleDigits) {
@@ -32,7 +32,7 @@ $page = 'clients';
 include __DIR__ . '/includes/layout_top.php';
 ?>
 <div class="filters">
-  <a class="btn ghost sm" href="/dashboard/clients.php?action=view&amp;id=<?php echo (int)$ch['client_id']; ?>">&larr; <?php echo e($ch['client_name']); ?></a>
+  <a class="btn ghost sm" href="/dashboard/clients?action=view&amp;id=<?php echo (int)$ch['client_id']; ?>">&larr; <?php echo e($ch['client_name']); ?></a>
   <input type="search" data-chat-filter placeholder="Search inside this chat..." aria-label="Search inside this chat" style="max-width:300px">
   <span class="muted" id="chatcount"><?php echo count($msgs); ?> messages &middot; <?php echo e($ch['first_at']); ?> &ndash; <?php echo e($ch['last_at']); ?></span>
   <?php if (is_admin()): ?><form method="post" class="inline" style="margin-left:auto" data-confirm="Delete this saved chat? This cannot be undone."><?php echo csrf_field(); ?><input type="hidden" name="id" value="<?php echo (int)$ch['id']; ?>"><button class="danger sm" type="submit">Delete chat</button></form><?php endif; ?>

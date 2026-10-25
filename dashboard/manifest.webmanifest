@@ -2,7 +2,7 @@
   "name": "Nibaha Haq CRM",
   "short_name": "NH CRM",
   "description": "Client and order tracking for Nibaha Haq",
-  "start_url": "/dashboard/index.php",
+  "start_url": "/dashboard/",
   "scope": "/dashboard/",
   "display": "standalone",
   "orientation": "portrait",

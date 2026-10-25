@@ -52,13 +52,13 @@ $page = 'reports';
 include __DIR__ . '/includes/layout_top.php';
 ?>
 <div class="filters">
-  <div class="tabs"><?php foreach ([3, 6, 12, 24] as $m): ?><a class="<?php echo $range === $m ? 'on' : ''; ?>" href="/dashboard/reports.php?months=<?php echo $m; ?>">Last <?php echo $m; ?> months</a><?php endforeach; ?></div>
+  <div class="tabs"><?php foreach ([3, 6, 12, 24] as $m): ?><a class="<?php echo $range === $m ? 'on' : ''; ?>" href="/dashboard/reports?months=<?php echo $m; ?>">Last <?php echo $m; ?> months</a><?php endforeach; ?></div>
 </div>
 
 <div class="stats">
   <div class="stat"><div class="num"><?php echo e(money($totRecv)); ?></div><div class="label">Received (<?php echo $range; ?> months)</div></div>
   <div class="stat"><div class="num"><?php echo e(money($totBilled)); ?></div><div class="label">Billed in orders</div></div>
-  <div class="stat"><div class="num"><?php echo e(money($totSpent)); ?></div><div class="label">Spent (<a href="/dashboard/expenses.php">expenses</a>)</div></div>
+  <div class="stat"><div class="num"><?php echo e(money($totSpent)); ?></div><div class="label">Spent (<a href="/dashboard/expenses">expenses</a>)</div></div>
   <div class="stat<?php echo $profit < 0 ? ' alert' : ''; ?>"><div class="num"><?php echo e(money($profit)); ?></div><div class="label">Profit (received minus spent)</div></div>
   <div class="stat"><div class="num"><?php echo (int)$totOrders; ?></div><div class="label">Orders</div></div>
   <div class="stat"><div class="num"><?php echo $conv; ?>%</div><div class="label">Leads that became clients</div></div>
@@ -88,7 +88,7 @@ include __DIR__ . '/includes/layout_top.php';
     <div class="card-head"><h2>Top courses</h2></div>
     <?php if (!$byCourse): ?><div class="empty">Add a course code to orders to see which courses sell most.</div><?php else: ?>
     <div class="tablewrap"><table><thead><tr><th>Course</th><th class="num">Orders</th><th class="num">Billed</th><th class="num">Received</th></tr></thead><tbody>
-      <?php foreach ($byCourse as $r): ?><tr><td><a href="/dashboard/orders.php?course=<?php echo urlencode($r['k']); ?>"><strong><?php echo e($r['k']); ?></strong></a></td><td class="num"><?php echo (int)$r['n']; ?></td><td class="num"><?php echo e(number_format($r['billed'])); ?></td><td class="num"><?php echo e(number_format($r['recv'])); ?></td></tr><?php endforeach; ?>
+      <?php foreach ($byCourse as $r): ?><tr><td><a href="/dashboard/orders?course=<?php echo urlencode($r['k']); ?>"><strong><?php echo e($r['k']); ?></strong></a></td><td class="num"><?php echo (int)$r['n']; ?></td><td class="num"><?php echo e(number_format($r['billed'])); ?></td><td class="num"><?php echo e(number_format($r['recv'])); ?></td></tr><?php endforeach; ?>
     </tbody></table></div><?php endif; ?>
   </section>
 </div>
@@ -113,7 +113,7 @@ include __DIR__ . '/includes/layout_top.php';
 
 <?php if ($spentRows): ?>
 <section class="card" style="margin-top:18px">
-  <div class="card-head"><h2>Where the money went</h2><a class="btn ghost sm" href="/dashboard/expenses.php">Expenses</a></div>
+  <div class="card-head"><h2>Where the money went</h2><a class="btn ghost sm" href="/dashboard/expenses">Expenses</a></div>
   <ul class="list"><?php foreach ($spentRows as $r): ?><li><span><?php echo e($r['k']); ?></span><strong><?php echo e(money($r['s'])); ?></strong></li><?php endforeach; ?></ul>
 </section>
 <?php endif; ?>
@@ -122,12 +122,12 @@ include __DIR__ . '/includes/layout_top.php';
     <div class="card-head"><h2>Best clients</h2></div>
     <?php if (!$topClients): ?><div class="empty">No orders yet.</div><?php else: ?>
     <div class="tablewrap"><table><thead><tr><th>Client</th><th class="num">Orders</th><th class="num">Received</th><th class="num">Owes</th></tr></thead><tbody>
-      <?php foreach ($topClients as $r): ?><tr><td><a href="/dashboard/clients.php?action=view&amp;id=<?php echo (int)$r['id']; ?>"><?php echo e($r['name']); ?></a></td><td class="num"><?php echo (int)$r['n']; ?></td><td class="num"><?php echo e(number_format($r['recv'])); ?></td><td class="num"><?php echo $r['owes'] > 0 ? '<span class="due-over">' . e(number_format($r['owes'])) . '</span>' : '-'; ?></td></tr><?php endforeach; ?>
+      <?php foreach ($topClients as $r): ?><tr><td><a href="/dashboard/clients?action=view&amp;id=<?php echo (int)$r['id']; ?>"><?php echo e($r['name']); ?></a></td><td class="num"><?php echo (int)$r['n']; ?></td><td class="num"><?php echo e(number_format($r['recv'])); ?></td><td class="num"><?php echo $r['owes'] > 0 ? '<span class="due-over">' . e(number_format($r['owes'])) . '</span>' : '-'; ?></td></tr><?php endforeach; ?>
     </tbody></table></div><?php endif; ?>
   </section>
   <div>
     <section class="card">
-      <div class="card-head"><h2>Still to collect</h2><a class="btn ghost sm" href="/dashboard/orders.php?payment=due">Open</a></div>
+      <div class="card-head"><h2>Still to collect</h2><a class="btn ghost sm" href="/dashboard/orders?payment=due">Open</a></div>
       <ul class="list"><?php foreach ($aging as $k => $v): ?><li><span><?php echo e($k); ?> old</span><strong<?php echo $v > 0 && $k === '31+ days' ? ' class="due-over"' : ''; ?>><?php echo e(money($v)); ?></strong></li><?php endforeach; ?></ul>
     </section>
     <section class="card">

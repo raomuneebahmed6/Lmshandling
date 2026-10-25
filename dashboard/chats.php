@@ -23,11 +23,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $paste = trim((string)($_POST['paste'] ?? ''));
     if ($paste !== '') {
         $target = (int)($_POST['paste_client'] ?? 0);
-        if (!$target) { flash('Choose the client for the pasted chat.', 'err'); redirect('/dashboard/chats.php'); }
-        if (strlen($paste) > CHAT_MAX_BYTES) { flash('The pasted text is too long. Paste a shorter part.', 'err'); redirect('/dashboard/chats.php'); }
+        if (!$target) { flash('Choose the client for the pasted chat.', 'err'); redirect('/dashboard/chats'); }
+        if (strlen($paste) > CHAT_MAX_BYTES) { flash('The pasted text is too long. Paste a shorter part.', 'err'); redirect('/dashboard/chats'); }
         $items[] = ['name' => 'Pasted chat', 'text' => $paste];
     }
-    if (!$items && !$report) { flash('Choose chat files (.txt or .zip) or paste a copied chat.', 'err'); redirect('/dashboard/chats.php' . ($target ? '?client=' . $target : '')); }
+    if (!$items && !$report) { flash('Choose chat files (.txt or .zip) or paste a copied chat.', 'err'); redirect('/dashboard/chats' . ($target ? '?client=' . $target : '')); }
 
     foreach ($items as $it) {
         $title = chat_title_from_filename($it['name']);
@@ -66,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $courses = chat_courses($body);
         $ins = chat_insights($msgs, $title, $client['name']);
         $pdo->prepare('INSERT INTO chats (client_id, title, msg_count, first_at, last_at, courses, sha, body, imported_by, imported_at, last_ts, last_from, insights) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)')
-            ->execute([$client['id'], mb_substr($title, 0, 120), count($msgs), $msgs[0]['at'], $msgs[count($msgs) - 1]['at'], implode(', ', $courses), $sha, $body, current_user()['username'], time(), $ins['last_ts'], $ins['last_from'], json_encode($ins)]);
+            ->execute([$client['id'], mb_substr($title, 0, 120), count($msgs), $msgs[0]['at'], $msgs[count($msgs) - 1]['at'], implode(', ', $courses), $sha, secret_encrypt($body), current_user()['username'], time(), $ins['last_ts'], $ins['last_from'], json_encode($ins)]);
         // fill the client's course only if it was empty; never overwrite what you typed
         if ($courses && trim((string)$client['course']) === '') $pdo->prepare('UPDATE clients SET course = ? WHERE id = ?')->execute([implode(', ', array_slice($courses, 0, 3)), $client['id']]);
         $pdo->prepare("INSERT INTO activities (client_id, kind, body) VALUES (?, 'whatsapp', ?)")->execute([$client['id'], 'WhatsApp chat imported: ' . count($msgs) . ' messages (' . $msgs[0]['at'] . ' to ' . $msgs[count($msgs) - 1]['at'] . ')']);
@@ -89,7 +89,7 @@ include __DIR__ . '/includes/layout_top.php';
   <div class="tablewrap"><table><thead><tr><th>File</th><th>Client</th><th class="num">Messages</th><th>Result</th></tr></thead><tbody>
     <?php foreach ($report as $r): ?><tr>
       <td><?php echo e($r['file']); ?></td>
-      <td><?php echo isset($r['client']) ? '<a href="/dashboard/clients.php?action=view&amp;id=' . (int)$r['client']['id'] . '">' . e($r['client']['name']) . '</a>' : '-'; ?></td>
+      <td><?php echo isset($r['client']) ? '<a href="/dashboard/clients?action=view&amp;id=' . (int)$r['client']['id'] . '">' . e($r['client']['name']) . '</a>' : '-'; ?></td>
       <td class="num"><?php echo isset($r['n']) ? (int)$r['n'] : '-'; ?></td>
       <td><?php
         if ($r['status'] === 'ok') echo '<span class="badge b-paid">added to client</span>';
@@ -111,7 +111,7 @@ include __DIR__ . '/includes/layout_top.php';
     <?php if ($targetClient): ?><input type="hidden" name="client" value="<?php echo (int)$targetClient['id']; ?>"><?php endif; ?>
     <div><label for="ch">Chat files (.txt, or .zip from iPhone), up to 30</label><input id="ch" type="file" name="chats[]" accept=".txt,.zip,text/plain" multiple required></div>
     <?php if (!$targetClient): ?><div><label style="display:flex;gap:8px;align-items:center"><input type="checkbox" name="create" value="1" checked style="width:auto"> Create the client if not found</label></div><?php endif; ?>
-    <div style="display:flex;gap:10px"><button type="submit" class="gold">Import</button><a class="btn ghost" href="/dashboard/clients.php">Back to clients</a></div>
+    <div style="display:flex;gap:10px"><button type="submit" class="gold">Import</button><a class="btn ghost" href="/dashboard/clients">Back to clients</a></div>
   </form>
   <p class="muted" style="margin-bottom:0">Chats are matched by the name in the file name ("WhatsApp Chat with Ali Khan") or by phone number when the contact is not saved. Order details, amounts and course codes stay in your own words in Orders; the chat is kept as a private record on the client's page.</p>
 </section>
@@ -134,7 +134,7 @@ include __DIR__ . '/includes/layout_top.php';
   <div class="card-head"><h2>Recently imported</h2></div>
   <?php if (!$recent): ?><div class="empty">Nothing yet.</div><?php else: ?>
   <ul class="list"><?php foreach ($recent as $c): ?>
-    <li><span><a href="/dashboard/chat.php?id=<?php echo (int)$c['id']; ?>"><strong><?php echo e($c['name']); ?></strong></a><br><span class="muted"><?php echo (int)$c['msg_count']; ?> messages &middot; <?php echo e($c['first_at']); ?> &ndash; <?php echo e($c['last_at']); ?><?php echo $c['courses'] ? ' &middot; ' . e($c['courses']) : ''; ?></span></span></li>
+    <li><span><a href="/dashboard/chat?id=<?php echo (int)$c['id']; ?>"><strong><?php echo e($c['name']); ?></strong></a><br><span class="muted"><?php echo (int)$c['msg_count']; ?> messages &middot; <?php echo e($c['first_at']); ?> &ndash; <?php echo e($c['last_at']); ?><?php echo $c['courses'] ? ' &middot; ' . e($c['courses']) : ''; ?></span></span></li>
   <?php endforeach; ?></ul>
   <?php endif; ?>
 </section>

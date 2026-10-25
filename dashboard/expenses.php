@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         audit('expense removed', '#' . (int)($_POST['id'] ?? 0));
         flash('Expense removed.');
     }
-    redirect('/dashboard/expenses.php' . (!empty($_POST['m']) ? '?m=' . urlencode($_POST['m']) : ''));
+    redirect('/dashboard/expenses' . (!empty($_POST['m']) ? '?m=' . urlencode($_POST['m']) : ''));
 }
 
 $m = $_GET['m'] ?? date('Y-m');

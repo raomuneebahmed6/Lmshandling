@@ -3,7 +3,7 @@ require_once __DIR__ . '/includes/auth.php';
 ensure_default_admin();
 
 if (current_user()) {
-    redirect('/dashboard/index.php');
+    redirect('/dashboard/');
 }
 
 $error = '';
@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     csrf_check();
     if (($_POST['do'] ?? '') === 'cancel') {
         unset($_SESSION['pending_2fa']);
-        redirect('/dashboard/login.php');
+        redirect('/dashboard/login');
     }
     if ($step === 2) {
         $s = get_db()->prepare('SELECT * FROM users WHERE id = ? AND active = 1');
@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $error = 'Too many attempts. Please wait 15 minutes and try again.';
         } elseif (second_factor_ok($user, $_POST['code'] ?? '')) {
             login_success($user);
-            redirect($_SESSION['default_pw'] ? '/dashboard/change_password.php' : '/dashboard/index.php');
+            redirect($_SESSION['default_pw'] ? '/dashboard/change_password' : '/dashboard/');
         } else {
             login_failed($user['username']);
             log_login($user['id'], $user['username'], false, 'wrong 2FA code');
@@ -50,10 +50,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($user && password_verify($password, $user['password_hash'])) {
                 if (!empty($user['totp_enabled'])) {
                     $_SESSION['pending_2fa'] = ['id' => (int)$user['id'], 'ts' => time()];
-                    redirect('/dashboard/login.php');
+                    redirect('/dashboard/login');
                 }
                 login_success($user);
-                redirect($_SESSION['default_pw'] ? '/dashboard/change_password.php' : '/dashboard/index.php');
+                redirect($_SESSION['default_pw'] ? '/dashboard/change_password' : '/dashboard/');
             }
             login_failed($username);
             log_login($user['id'] ?? null, $username, false, 'wrong password');
@@ -75,8 +75,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap">
-<link rel="stylesheet" href="/dashboard/assets/dash.css?v=7">
-<script src="/dashboard/assets/dash.js?v=6" defer></script>
+<link rel="stylesheet" href="/dashboard/assets/dash.css?v=8">
+<script src="/dashboard/assets/dash.js?v=7" defer></script>
 </head>
 <body class="login">
 <main class="login-card">
@@ -112,6 +112,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <button type="submit" class="gold">Log in</button>
   </form>
   <?php endif; ?>
+  <?php if (unclaimed_admin_exists()): ?><div class="login-foot"><a href="/dashboard/setup">First time here? Claim the account with your setup code</a></div><?php endif; ?>
   <div class="login-foot">Private area. Authorised use only.</div>
 </main>
 </body>

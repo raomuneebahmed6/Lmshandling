@@ -27,10 +27,10 @@ $kept = $total - count($targets);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['do'] ?? '') === 'delete') {
     csrf_check();
-    if ($keep === '') { flash('Enter the tag of the clients you want to keep.', 'err'); redirect('/dashboard/cleanup.php'); }
-    if (!$targets) { flash('Nothing to remove.', 'err'); redirect('/dashboard/cleanup.php'); }
-    if ($kept < 1) { flash('No client has that tag, so nothing was removed.', 'err'); redirect('/dashboard/cleanup.php'); }
-    if ((int)($_POST['confirm'] ?? -1) !== count($targets)) { flash('The number you typed does not match. Nothing was deleted.', 'err'); redirect('/dashboard/cleanup.php?keep_tag=' . urlencode($keep) . '&q=1' . ($noOrdersOnly ? '&no_orders=1' : '')); }
+    if ($keep === '') { flash('Enter the tag of the clients you want to keep.', 'err'); redirect('/dashboard/cleanup'); }
+    if (!$targets) { flash('Nothing to remove.', 'err'); redirect('/dashboard/cleanup'); }
+    if ($kept < 1) { flash('No client has that tag, so nothing was removed.', 'err'); redirect('/dashboard/cleanup'); }
+    if ((int)($_POST['confirm'] ?? -1) !== count($targets)) { flash('The number you typed does not match. Nothing was deleted.', 'err'); redirect('/dashboard/cleanup?keep_tag=' . urlencode($keep) . '&q=1' . ($noOrdersOnly ? '&no_orders=1' : '')); }
     $bundle = [];
     $act = $pdo->prepare('SELECT * FROM activities WHERE client_id = ?');
     $ord = $pdo->prepare('SELECT * FROM orders WHERE client_id = ?');
@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['do'] ?? '') === 'delete') 
     $pdo->commit();
     audit('bulk clean-up', count($targets) . ' clients removed, kept tag "' . $keep . '"');
     flash(count($targets) . ' clients moved to Trash as one batch. You can bring them all back from Activity > Trash for 90 days.');
-    redirect('/dashboard/cleanup.php?keep_tag=' . urlencode($keep));
+    redirect('/dashboard/cleanup?keep_tag=' . urlencode($keep));
 }
 
 $byStage = []; $bySource = [];
@@ -84,7 +84,7 @@ include __DIR__ . '/includes/layout_top.php';
     <div><label style="display:flex;gap:8px;align-items:center"><input type="checkbox" name="no_orders" value="1" style="width:auto"<?php echo $noOrdersOnly ? ' checked' : ''; ?>> Safety: never remove a client who has orders</label></div>
     <div><button type="submit" class="ghost">Preview</button></div>
   </form>
-  <?php if ($tagCounts): ?><p class="muted" style="margin-bottom:0">Tags in use: <?php foreach (array_slice($tagCounts, 0, 12, true) as $t => $n): ?><a class="badge b-partial" style="margin-right:4px" href="/dashboard/cleanup.php?q=1&amp;no_orders=1&amp;keep_tag=<?php echo urlencode($t); ?>"><?php echo e($t); ?> (<?php echo (int)$n; ?>)</a><?php endforeach; ?></p><?php endif; ?>
+  <?php if ($tagCounts): ?><p class="muted" style="margin-bottom:0">Tags in use: <?php foreach (array_slice($tagCounts, 0, 12, true) as $t => $n): ?><a class="badge b-partial" style="margin-right:4px" href="/dashboard/cleanup?q=1&amp;no_orders=1&amp;keep_tag=<?php echo urlencode($t); ?>"><?php echo e($t); ?> (<?php echo (int)$n; ?>)</a><?php endforeach; ?></p><?php endif; ?>
 </section>
 
 <section class="card">

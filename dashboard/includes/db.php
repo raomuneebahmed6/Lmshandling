@@ -1,7 +1,9 @@
 <?php
-// SQLite database. It lives in data/ and is blocked from direct HTTP access
-// by data/.htaccess ("Require all denied"). Migrations below are additive only:
+// SQLite database. It lives in a private folder outside the web root when the host allows it
+// (see secure.php), otherwise in data/ which .htaccess blocks. Migrations below are additive only:
 // existing rows are never dropped or rewritten.
+require_once __DIR__ . '/secure.php';
+
 function db_add_columns($pdo, $table, $cols) {
     $have = [];
     foreach ($pdo->query("PRAGMA table_info($table)") as $col) {
@@ -23,12 +25,7 @@ function get_db() {
         return $pdo;
     }
 
-    $dbPath = __DIR__ . '/../data/dashboard.sqlite';
-    if (!is_dir(dirname($dbPath))) {
-        mkdir(dirname($dbPath), 0755, true);
-    }
-
-    $pdo = new PDO('sqlite:' . $dbPath);
+    $pdo = new PDO('sqlite:' . db_path());
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $pdo->exec('PRAGMA foreign_keys = ON');
 
@@ -184,7 +181,23 @@ function get_db() {
         'totp_enabled' => 'INTEGER NOT NULL DEFAULT 0',
         'recovery_codes' => 'TEXT',
         'active' => 'INTEGER NOT NULL DEFAULT 1',
+        'must_change' => 'INTEGER NOT NULL DEFAULT 0',
     ]);
+
+    // One-time sweep: the old public starting password must not keep working. Any account that still uses it
+    // gets an unknown random password and has to be claimed with a setup code.
+    if (settings_get('default_sweep') !== '1') {
+        $swept = 0;
+        foreach ($pdo->query('SELECT id, password_hash FROM users')->fetchAll(PDO::FETCH_ASSOC) as $u) {
+            if (password_verify(LEGACY_DEFAULT_PASSWORD, $u['password_hash'])) {
+                $pdo->prepare('UPDATE users SET password_hash = ?, must_change = 1, totp_secret = NULL, totp_enabled = 0, recovery_codes = NULL WHERE id = ?')
+                    ->execute([password_hash(bin2hex(random_bytes(16)), PASSWORD_DEFAULT), $u['id']]);
+                $swept++;
+            }
+        }
+        settings_set('default_sweep', '1');
+        if ($swept > 0) issue_setup_code();
+    }
 
     return $pdo;
 }

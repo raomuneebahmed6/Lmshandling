@@ -9,4 +9,4 @@ if (ini_get('session.use_cookies')) {
     setcookie(session_name(), '', time() - 3600, $p['path'], $p['domain'] ?? '', $p['secure'], $p['httponly']);
 }
 session_destroy();
-redirect('/dashboard/login.php');
+redirect('/dashboard/login');

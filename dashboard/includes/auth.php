@@ -1,12 +1,29 @@
 <?php
 require_once __DIR__ . '/db.php';
 
-const DEFAULT_ADMIN_PASSWORD = 'ChangeMe123!';
-const SESSION_IDLE_SECONDS = 28800; // 8 hours
+const SESSION_IDLE_SECONDS = 7200;   // 2 hours without activity logs you out
+const SESSION_MAX_SECONDS = 43200;   // 12 hours is the longest a login lasts
+
+// never show PHP errors to visitors (they can reveal file paths); log them privately instead
+ini_set('display_errors', '0');
+ini_set('log_errors', '1');
+@ini_set('error_log', private_path('php-errors.log'));
+set_exception_handler(function ($ex) {
+    error_log('Uncaught: ' . $ex->getMessage() . ' in ' . $ex->getFile() . ':' . $ex->getLine());
+    if (!headers_sent()) http_response_code(500);
+    echo 'Something went wrong. Please try again, or contact the site owner.';
+});
 
 $secure = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
     || (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https');
 date_default_timezone_set('Asia/Karachi');
+ini_set('session.use_strict_mode', '1');
+ini_set('session.use_only_cookies', '1');
+ini_set('session.use_trans_sid', '0');
+ini_set('session.gc_maxlifetime', (string)SESSION_MAX_SECONDS);
+$sessDir = private_path('sessions');
+if (!is_dir($sessDir)) @mkdir($sessDir, 0700, true);
+if (is_dir($sessDir) && is_writable($sessDir)) session_save_path($sessDir);
 session_name('lmh_dash');
 session_set_cookie_params([
     'lifetime' => 0,
@@ -21,6 +38,9 @@ header('X-Frame-Options: DENY');
 header('X-Content-Type-Options: nosniff');
 header('Referrer-Policy: same-origin');
 header('Cache-Control: no-store');
+header('Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()');
+header('Cross-Origin-Opener-Policy: same-origin');
+header('Cross-Origin-Resource-Policy: same-origin');
 header("Content-Security-Policy: default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; script-src 'self'; form-action 'self'; frame-ancestors 'none'");
 
 // ---------- helpers ----------
@@ -91,42 +111,78 @@ function redirect($url) {
     exit;
 }
 
-function settings_get($k, $default = '') {
-    $s = get_db()->prepare('SELECT v FROM settings WHERE k = ?');
-    $s->execute([$k]);
-    $v = $s->fetchColumn();
-    return $v === false ? $default : $v;
-}
-
-function settings_set($k, $v) {
-    get_db()->prepare('INSERT INTO settings (k, v) VALUES (?, ?) ON CONFLICT(k) DO UPDATE SET v = excluded.v')->execute([$k, (string)$v]);
-}
-
 function require_login() {
     $u = current_user();
     if (!$u) {
-        redirect('/dashboard/login.php');
+        redirect('/dashboard/login');
     }
-    if (time() - ($_SESSION['last_seen'] ?? 0) > SESSION_IDLE_SECONDS) {
+    $now = time();
+    $fp = hash('sha256', ($_SERVER['HTTP_USER_AGENT'] ?? '') . '|lmh');
+    if ($now - ($_SESSION['last_seen'] ?? 0) > SESSION_IDLE_SECONDS || $now - ($_SESSION['born'] ?? 0) > SESSION_MAX_SECONDS
+        || !hash_equals($_SESSION['fp'] ?? '', $fp)) {
         $_SESSION = [];
         session_destroy();
-        redirect('/dashboard/login.php');
+        redirect('/dashboard/login');
     }
-    $_SESSION['last_seen'] = time();
-    // Force a new password while the built-in default is still active
-    if (!empty($_SESSION['default_pw']) && basename($_SERVER['SCRIPT_NAME']) !== 'change_password.php'
-        && basename($_SERVER['SCRIPT_NAME']) !== 'logout.php') {
-        redirect('/dashboard/change_password.php');
+    $_SESSION['last_seen'] = $now;
+    // renew the session id every 15 minutes
+    if ($now - ($_SESSION['rotated'] ?? 0) > 900) { session_regenerate_id(true); $_SESSION['rotated'] = $now; }
+    $script = basename($_SERVER['SCRIPT_NAME']);
+    // a new or reset password must be replaced before anything else
+    if (!empty($_SESSION['default_pw']) && $script !== 'change_password.php' && $script !== 'logout.php') {
+        redirect('/dashboard/change_password');
     }
+    // everyone must use two-step login (the admin can switch this off in Settings)
+    if (two_factor_required() && empty($_SESSION['has2fa']) && $script !== 'change_password.php' && $script !== 'logout.php') {
+        flash('Turn on two-step login to continue. It protects the students\' data even if a password leaks.', 'warn');
+        redirect('/dashboard/change_password#twofa');
+    }
+}
+
+function two_factor_required() {
+    if (getenv('LMH_REQUIRE_2FA') === '0') return false; // used only by automated tests
+    return settings_get('require_2fa', '1') !== '0';
+}
+
+// returns an error message when a new password is too weak, or '' when it is acceptable
+function weak_password($pw, $username = '') {
+    $pw = (string)$pw;
+    if (strlen($pw) < 10) return 'Password must be at least 10 characters.';
+    $l = strtolower($pw);
+    $common = ['password', 'passw0rd', 'qwerty', 'qwertyuiop', 'letmein', '123456789', '1234567890', '0987654321', 'iloveyou', 'welcome', 'admin', 'changeme', 'academic', 'virtual', 'lmshandling', 'nibaha', 'islamabad', 'pakistan', 'abcdefgh', 'asdfghjk', 'zxcvbnm'];
+    foreach ($common as $c) if (strpos($l, $c) !== false) return 'That password is too easy to guess. Avoid common words, names and "admin", "password", "academic".';
+    if ($username !== '' && stripos($pw, $username) !== false) return 'The password must not contain your username.';
+    if (preg_match('/^(.)\1+$/', $pw) || preg_match('/^(?:0123456789|1234567890|abcdefghij)/i', $pw)) return 'That password is a simple pattern. Use something longer and mixed.';
+    if (strlen(count_chars($pw, 3)) < 6) return 'Use more different characters.';
+    // four letters or digits in a row (1234, abcd, 9876) make a password easy to guess
+    $n = strlen($l);
+    for ($i = 0; $i + 3 < $n; $i++) {
+        $d = ord($l[$i + 1]) - ord($l[$i]);
+        if (($d === 1 || $d === -1) && ctype_alnum(substr($l, $i, 4)) && ord($l[$i + 2]) - ord($l[$i + 1]) === $d && ord($l[$i + 3]) - ord($l[$i + 2]) === $d) {
+            return 'Avoid runs like 1234 or abcd in a password.';
+        }
+    }
+    return '';
 }
 
 function ensure_default_admin() {
     $pdo = get_db();
-    $count = $pdo->query('SELECT COUNT(*) FROM users')->fetchColumn();
-    if ($count == 0) {
-        // First run only. The first login is forced to set a new password.
-        $stmt = $pdo->prepare("INSERT INTO users (username, password_hash, role) VALUES (?, ?, 'admin')");
-        $stmt->execute(['admin', password_hash(DEFAULT_ADMIN_PASSWORD, PASSWORD_DEFAULT)]);
+    // Emergency reset: create an empty file named reset-admin.flag in the private folder (hosting File Manager).
+    // The next visit resets the admin account, clears its 2-step login and issues a new setup code.
+    $flag = private_path('reset-admin.flag');
+    if (is_file($flag)) {
+        @unlink($flag);
+        if (reset_admin_account()) { try { audit('admin reset', 'via reset-admin.flag'); } catch (Throwable $e) {} }
+    }
+    $count = (int)$pdo->query('SELECT COUNT(*) FROM users')->fetchColumn();
+    if ($count === 0) {
+        // First run only. For real use the account gets a random unknown password and is claimed with a setup code.
+        // Automated tests may set LMH_TEST_DEFAULT_ADMIN=1 to start with a known starting password instead.
+        $test = getenv('LMH_TEST_DEFAULT_ADMIN') === '1';
+        $pw = $test ? LEGACY_DEFAULT_PASSWORD : bin2hex(random_bytes(16));
+        $pdo->prepare("INSERT INTO users (username, password_hash, role, must_change) VALUES (?, ?, 'admin', 1)")
+            ->execute(['admin', password_hash($pw, PASSWORD_DEFAULT)]);
+        if (!$test) issue_setup_code();
     }
 }
 
@@ -164,9 +220,21 @@ function login_success($user) {
     unset($_SESSION['pending_2fa']);
     $_SESSION['last_seen'] = time();
     $_SESSION['csrf'] = bin2hex(random_bytes(32));
-    $_SESSION['default_pw'] = password_verify(DEFAULT_ADMIN_PASSWORD, $user['password_hash']);
+    $_SESSION['default_pw'] = !empty($user['must_change']);
+    $_SESSION['has2fa'] = !empty($user['totp_enabled']);
+    $_SESSION['born'] = time();
+    $_SESSION['rotated'] = time();
+    $_SESSION['fp'] = hash('sha256', ($_SERVER['HTTP_USER_AGENT'] ?? '') . '|lmh');
     get_db()->prepare('DELETE FROM login_attempts WHERE username = ?')->execute([strtolower($user['username'])]);
-    log_login($user['id'], $user['username'], true);
+    // tell the owner when someone signs in from an address not seen in the last 60 days
+    $seen = get_db()->prepare('SELECT COUNT(*) FROM login_log WHERE ok = 1 AND ip = ? AND user_id = ? AND ts > ?');
+    $seen->execute([client_ip(), $user['id'], time() - 60 * 86400]);
+    $newIp = !$seen->fetchColumn();
+    log_login($user['id'], $user['username'], true, $newIp ? 'new address' : '');
+    if ($newIp) {
+        $to = settings_get('summary_email') ?: 'nibahahaqvu1@gmail.com';
+        @mail($to, 'Dashboard login from a new address', "Account: {$user['username']}\nAddress: " . client_ip() . "\nTime: " . date('Y-m-d H:i') . "\nDevice: " . substr($_SERVER['HTTP_USER_AGENT'] ?? '', 0, 120) . "\n\nIf this was not you, open Security > Recent logins, change your password and turn on two-step login.", "From: Nibaha Haq CRM <no-reply@lmshandling.com>\r\nContent-Type: text/plain; charset=UTF-8");
+    }
 }
 
 // ---------- two-factor authentication (TOTP, RFC 6238; works with Google Authenticator and similar apps) ----------

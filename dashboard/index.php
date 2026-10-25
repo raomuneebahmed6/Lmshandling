@@ -60,15 +60,15 @@ include __DIR__ . '/includes/layout_top.php';
     </div>
   </section>
   <section class="card">
-    <div class="card-head"><h2>Follow-ups due <?php if ($dueCount): ?><span class="badge b-unpaid"><?php echo $dueCount; ?></span><?php endif; ?></h2><a class="btn ghost sm" href="/dashboard/followups.php">See all</a></div>
+    <div class="card-head"><h2>Follow-ups due <?php if ($dueCount): ?><span class="badge b-unpaid"><?php echo $dueCount; ?></span><?php endif; ?></h2><a class="btn ghost sm" href="/dashboard/followups">See all</a></div>
     <?php if (!$dueList): ?>
       <div class="empty">Nothing due. You are all caught up.</div>
     <?php else: ?>
     <ul class="list">
       <?php foreach ($dueList as $c): $over = $c['next_followup'] < $today; ?>
       <li>
-        <span><a href="/dashboard/clients.php?action=view&amp;id=<?php echo (int)$c['id']; ?>"><strong><?php echo e($c['name']); ?></strong></a><br><span class="muted <?php echo $over ? 'due-over' : 'due-today'; ?>"><?php echo $over ? 'Overdue since ' : 'Today, '; ?><?php echo e($c['next_followup']); ?></span></span>
-        <form method="post" action="/dashboard/clients.php" class="inline"><?php echo csrf_field(); ?><input type="hidden" name="do" value="snooze"><input type="hidden" name="id" value="<?php echo (int)$c['id']; ?>"><input type="hidden" name="back" value="home"><button name="days" value="1" class="ghost sm" title="Move to tomorrow">+1d</button></form>
+        <span><a href="/dashboard/clients?action=view&amp;id=<?php echo (int)$c['id']; ?>"><strong><?php echo e($c['name']); ?></strong></a><br><span class="muted <?php echo $over ? 'due-over' : 'due-today'; ?>"><?php echo $over ? 'Overdue since ' : 'Today, '; ?><?php echo e($c['next_followup']); ?></span></span>
+        <form method="post" action="/dashboard/clients" class="inline"><?php echo csrf_field(); ?><input type="hidden" name="do" value="snooze"><input type="hidden" name="id" value="<?php echo (int)$c['id']; ?>"><input type="hidden" name="back" value="home"><button name="days" value="1" class="ghost sm" title="Move to tomorrow">+1d</button></form>
         <?php if (wa_number($c['whatsapp_number'])): ?><a class="btn wa sm" target="_blank" rel="noopener" href="https://wa.me/<?php echo e(wa_number($c['whatsapp_number'])); ?>">WhatsApp</a><?php endif; ?>
       </li>
       <?php endforeach; ?>
@@ -79,15 +79,15 @@ include __DIR__ . '/includes/layout_top.php';
 
 <?php if ($exams): ?>
 <section class="card" style="margin-top:18px">
-  <div class="card-head"><h2>Upcoming exams (next 14 days) <span class="badge b-pending"><?php echo count($exams); ?></span></h2><a class="btn ghost sm" href="/dashboard/orders.php?status=pending">Open orders</a></div>
+  <div class="card-head"><h2>Upcoming exams (next 14 days) <span class="badge b-pending"><?php echo count($exams); ?></span></h2><a class="btn ghost sm" href="/dashboard/orders?status=pending">Open orders</a></div>
   <div class="tablewrap"><table>
     <thead><tr><th>Exam</th><th>In</th><th>Client</th><th>Course</th><th>Order status</th><th>Payment</th></tr></thead>
     <tbody>
     <?php foreach ($exams as $x): $d = (int)((strtotime($x['exam_date']) - strtotime($today)) / 86400); ?>
-      <tr data-href="/dashboard/orders.php?action=edit&amp;id=<?php echo (int)$x['id']; ?>">
+      <tr data-href="/dashboard/orders?action=edit&amp;id=<?php echo (int)$x['id']; ?>">
         <td><?php echo e($x['exam_date']); ?></td>
         <td><span class="<?php echo $d <= 3 ? 'due-over' : 'due-today'; ?>"><?php echo $d === 0 ? 'today' : $d . ' day' . ($d === 1 ? '' : 's'); ?></span></td>
-        <td><a href="/dashboard/clients.php?action=view&amp;id=<?php echo (int)$x['cid']; ?>"><?php echo e($x['name']); ?></a></td>
+        <td><a href="/dashboard/clients?action=view&amp;id=<?php echo (int)$x['cid']; ?>"><?php echo e($x['name']); ?></a></td>
         <td><?php echo e($x['course_code'] ?: $x['file_type']); ?></td>
         <td><span class="badge b-<?php echo e($x['status']); ?>"><?php echo e(ORDER_STATUSES[$x['status']] ?? $x['status']); ?></span></td>
         <td><span class="badge b-<?php echo e($x['payment_status']); ?>"><?php echo e($x['payment_status']); ?></span></td>
@@ -99,7 +99,7 @@ include __DIR__ . '/includes/layout_top.php';
 <?php endif; ?>
 
 <section class="card" style="margin-top:18px">
-  <div class="card-head"><h2>Recent orders</h2><a class="btn ghost sm" href="/dashboard/orders.php">All orders</a></div>
+  <div class="card-head"><h2>Recent orders</h2><a class="btn ghost sm" href="/dashboard/orders">All orders</a></div>
   <?php if (!$recent): ?>
     <div class="empty">No orders yet. Add your first client, then create an order for them.</div>
   <?php else: ?>
@@ -107,9 +107,9 @@ include __DIR__ . '/includes/layout_top.php';
     <thead><tr><th>Date</th><th>Client</th><th>Type</th><th class="num">Files</th><th class="num">Amount</th><th>Payment</th><th>Status</th></tr></thead>
     <tbody>
     <?php foreach ($recent as $o): ?>
-      <tr data-href="/dashboard/orders.php?action=edit&amp;id=<?php echo (int)$o['id']; ?>">
+      <tr data-href="/dashboard/orders?action=edit&amp;id=<?php echo (int)$o['id']; ?>">
         <td><?php echo e(substr($o['order_date'], 0, 10)); ?></td>
-        <td><a href="/dashboard/clients.php?action=view&amp;id=<?php echo (int)$o['client_id']; ?>"><?php echo e($o['client_name']); ?></a></td>
+        <td><a href="/dashboard/clients?action=view&amp;id=<?php echo (int)$o['client_id']; ?>"><?php echo e($o['client_name']); ?></a></td>
         <td><?php echo e($o['file_type']); ?></td>
         <td class="num"><?php echo (int)$o['file_count']; ?></td>
         <td class="num"><?php echo $o['amount'] !== null ? e(number_format($o['amount'])) : '-'; ?></td>

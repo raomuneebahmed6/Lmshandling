@@ -74,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $f = $_FILES['csv'] ?? null;
     if (!$f || $f['error'] !== UPLOAD_ERR_OK || $f['size'] > 5 * 1024 * 1024) {
         flash('Choose a .csv or .vcf file smaller than 5 MB.', 'err');
-        redirect('/dashboard/import.php');
+        redirect('/dashboard/import');
     }
     $isVcf = preg_match('/\.vcf$/i', $f['name']) || stripos((string)file_get_contents($f['tmp_name'], false, null, 0, 20), 'BEGIN:VCARD') === 0;
     $records = $isVcf ? parse_vcf((string)file_get_contents($f['tmp_name'])) : parse_csv_rows($f['tmp_name']);
@@ -133,7 +133,7 @@ include __DIR__ . '/includes/layout_top.php';
       <div><label for="src">Source for everyone in this file</label><input id="src" name="source" placeholder="e.g. WhatsApp" value="WhatsApp"></div>
       <div><label for="tg">Tag for everyone in this file</label><input id="tg" name="tag" placeholder="e.g. old-students"></div>
     </div>
-    <div style="display:flex;gap:10px"><button type="submit" class="gold">Import</button><a class="btn ghost" href="/dashboard/clients.php">Back to clients</a></div>
+    <div style="display:flex;gap:10px"><button type="submit" class="gold">Import</button><a class="btn ghost" href="/dashboard/clients">Back to clients</a></div>
   </form>
 </section>
 <section class="card">

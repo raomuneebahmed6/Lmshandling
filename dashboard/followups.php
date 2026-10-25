@@ -39,13 +39,13 @@ include __DIR__ . '/includes/layout_top.php';
     <?php foreach ($rows as $c): $wa = wa_number($c['whatsapp_number']); ?>
       <tr>
         <td class="<?php echo $label === 'Overdue' ? 'due-over' : ($label === 'Today' ? 'due-today' : ''); ?>"><?php echo e($c['next_followup']); ?></td>
-        <td><a href="/dashboard/clients.php?action=view&amp;id=<?php echo (int)$c['id']; ?>"><strong><?php echo e($c['name']); ?></strong></a></td>
+        <td><a href="/dashboard/clients?action=view&amp;id=<?php echo (int)$c['id']; ?>"><strong><?php echo e($c['name']); ?></strong></a></td>
         <td><?php echo e($c['course'] ?: '-'); ?></td>
         <td><span class="badge b-<?php echo e($c['stage']); ?>"><?php echo e(STAGES[$c['stage']] ?? $c['stage']); ?></span></td>
         <td style="display:flex;gap:6px">
           <?php if ($wa): ?><a class="btn wa sm" target="_blank" rel="noopener" href="https://wa.me/<?php echo e($wa); ?>?text=<?php echo rawurlencode('Assalam o Alaikum ' . $c['name'] . ', this is Nibaha Haq from lmshandling.com. '); ?>">WhatsApp</a><?php endif; ?>
-          <form method="post" action="/dashboard/clients.php" class="inline"><?php echo csrf_field(); ?><input type="hidden" name="do" value="snooze"><input type="hidden" name="id" value="<?php echo (int)$c['id']; ?>"><input type="hidden" name="back" value="followups"><button name="days" value="1" class="ghost sm" title="Move to tomorrow">+1d</button><button name="days" value="3" class="ghost sm">+3d</button><button name="days" value="7" class="ghost sm">+7d</button></form>
-          <form method="post" action="/dashboard/clients.php" class="inline"><?php echo csrf_field(); ?><input type="hidden" name="do" value="done"><input type="hidden" name="id" value="<?php echo (int)$c['id']; ?>"><input type="hidden" name="back" value="followups"><button type="submit" class="ghost sm">Done</button></form>
+          <form method="post" action="/dashboard/clients" class="inline"><?php echo csrf_field(); ?><input type="hidden" name="do" value="snooze"><input type="hidden" name="id" value="<?php echo (int)$c['id']; ?>"><input type="hidden" name="back" value="followups"><button name="days" value="1" class="ghost sm" title="Move to tomorrow">+1d</button><button name="days" value="3" class="ghost sm">+3d</button><button name="days" value="7" class="ghost sm">+7d</button></form>
+          <form method="post" action="/dashboard/clients" class="inline"><?php echo csrf_field(); ?><input type="hidden" name="do" value="done"><input type="hidden" name="id" value="<?php echo (int)$c['id']; ?>"><input type="hidden" name="back" value="followups"><button type="submit" class="ghost sm">Done</button></form>
         </td>
       </tr>
     <?php endforeach; ?>
@@ -62,10 +62,10 @@ include __DIR__ . '/includes/layout_top.php';
     <tbody>
     <?php foreach ($waitList as $w): $d = (int)floor((time() - (int)$w['last_ts']) / 86400); $wi = json_decode((string)$w['insights'], true) ?: []; $wa = wa_number($w['whatsapp_number']); ?>
       <tr>
-        <td><a href="/dashboard/clients.php?action=view&amp;id=<?php echo (int)$w['cid']; ?>"><strong><?php echo e($w['name']); ?></strong></a><?php echo !empty($wi['urgent']) ? ' <span class="badge b-unpaid">urgent</span>' : ''; ?></td>
+        <td><a href="/dashboard/clients?action=view&amp;id=<?php echo (int)$w['cid']; ?>"><strong><?php echo e($w['name']); ?></strong></a><?php echo !empty($wi['urgent']) ? ' <span class="badge b-unpaid">urgent</span>' : ''; ?></td>
         <td class="muted"><?php echo e(date('Y-m-d H:i', (int)$w['last_ts'])); ?><?php echo !empty($wi['questions']) ? '<br>' . e(end($wi['questions'])) : ''; ?></td>
         <td class="<?php echo $d >= 3 ? 'due-over' : 'due-today'; ?>"><?php echo $d; ?> day<?php echo $d === 1 ? '' : 's'; ?></td>
-        <td style="display:flex;gap:6px"><a class="btn ghost sm" href="/dashboard/chat.php?id=<?php echo (int)$w['chat_id']; ?>">Open chat</a><?php if ($wa): ?><a class="btn wa sm" target="_blank" rel="noopener" href="https://wa.me/<?php echo e($wa); ?>">WhatsApp</a><?php endif; ?></td>
+        <td style="display:flex;gap:6px"><a class="btn ghost sm" href="/dashboard/chat?id=<?php echo (int)$w['chat_id']; ?>">Open chat</a><?php if ($wa): ?><a class="btn wa sm" target="_blank" rel="noopener" href="https://wa.me/<?php echo e($wa); ?>">WhatsApp</a><?php endif; ?></td>
       </tr>
     <?php endforeach; ?>
     </tbody>
@@ -75,7 +75,7 @@ include __DIR__ . '/includes/layout_top.php';
 <?php endif; ?>
 
 <section class="card">
-  <div class="card-head"><h2>Payments to collect <span class="badge b-unpaid"><?php echo count($unpaid); ?></span></h2><a class="btn ghost sm" href="/dashboard/orders.php?payment=due">Open in Orders</a></div>
+  <div class="card-head"><h2>Payments to collect <span class="badge b-unpaid"><?php echo count($unpaid); ?></span></h2><a class="btn ghost sm" href="/dashboard/orders?payment=due">Open in Orders</a></div>
   <?php if (!$unpaid): ?><div class="empty">All orders are paid.</div><?php else: ?>
   <div class="tablewrap"><table>
     <thead><tr><th>Order date</th><th>Client</th><th>Type</th><th class="num">Owes</th><th></th></tr></thead>
@@ -83,7 +83,7 @@ include __DIR__ . '/includes/layout_top.php';
     <?php foreach ($unpaid as $o): $wa = wa_number($o['whatsapp_number']); ?>
       <tr>
         <td><?php echo e(substr($o['order_date'], 0, 10)); ?></td>
-        <td><a href="/dashboard/clients.php?action=view&amp;id=<?php echo (int)$o['cid']; ?>"><?php echo e($o['name']); ?></a></td>
+        <td><a href="/dashboard/clients?action=view&amp;id=<?php echo (int)$o['cid']; ?>"><?php echo e($o['name']); ?></a></td>
         <td><?php echo e($o['file_type']); ?></td>
         <td class="num"><?php echo $o['amount'] !== null ? e(number_format(owed($o))) : '-'; ?></td>
         <td><?php if ($wa): ?><a class="btn wa sm" target="_blank" rel="noopener" href="https://wa.me/<?php echo e($wa); ?>?text=<?php echo rawurlencode('Assalam o Alaikum ' . $o['name'] . ', a friendly reminder about the pending payment' . ($o['amount'] !== null ? ' of Rs. ' . number_format(owed($o)) : '') . ' for your ' . $o['file_type'] . ' order. JazakAllah.'); ?>">Remind</a><?php endif; ?></td>

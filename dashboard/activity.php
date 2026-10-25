@@ -78,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         audit('trash emptied item', $t['kind'] . ': ' . $t['label']);
         flash('Deleted for good.');
     }
-    redirect('/dashboard/activity.php?tab=trash');
+    redirect('/dashboard/activity?tab=trash');
 }
 
 $tab = ($_GET['tab'] ?? 'log') === 'trash' ? 'trash' : 'log';
@@ -90,8 +90,8 @@ $page = 'activity';
 include __DIR__ . '/includes/layout_top.php';
 ?>
 <div class="filters"><div class="tabs">
-  <a class="<?php echo $tab === 'log' ? 'on' : ''; ?>" href="/dashboard/activity.php">Who did what</a>
-  <a class="<?php echo $tab === 'trash' ? 'on' : ''; ?>" href="/dashboard/activity.php?tab=trash">Trash<b><?php echo count($trash); ?></b></a>
+  <a class="<?php echo $tab === 'log' ? 'on' : ''; ?>" href="/dashboard/activity">Who did what</a>
+  <a class="<?php echo $tab === 'trash' ? 'on' : ''; ?>" href="/dashboard/activity?tab=trash">Trash<b><?php echo count($trash); ?></b></a>
 </div></div>
 <?php if ($tab === 'log'): ?>
 <section class="card">

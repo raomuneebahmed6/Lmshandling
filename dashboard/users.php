@@ -15,11 +15,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $role = ($_POST['role'] ?? 'staff') === 'admin' ? 'admin' : 'staff';
         if (!preg_match('/^[a-z0-9._-]{3,30}$/', $username)) {
             flash('Username must be 3-30 letters, numbers, dot, dash or underscore.', 'err');
-        } elseif (strlen($password) < 10 || $password === DEFAULT_ADMIN_PASSWORD) {
-            flash('Password must be at least 10 characters.', 'err');
+        } elseif (($weak = weak_password($password, $username)) !== '') {
+            flash($weak, 'err');
         } else {
             try {
-                $pdo->prepare('INSERT INTO users (username, password_hash, role) VALUES (?,?,?)')->execute([$username, password_hash($password, PASSWORD_DEFAULT), $role]);
+                $pdo->prepare('INSERT INTO users (username, password_hash, role, must_change) VALUES (?,?,?,1)')->execute([$username, password_hash($password, PASSWORD_DEFAULT), $role]);
                 audit('user created', $username . ' (' . $role . ')');
                 flash('User "' . $username . '" created. Share the password privately and ask them to change it.');
             } catch (PDOException $ex) {
@@ -35,10 +35,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         flash('User updated.');
     } elseif ($do === 'reset' && $uid) {
         $password = (string)($_POST['password'] ?? '');
-        if (strlen($password) < 10 || $password === DEFAULT_ADMIN_PASSWORD) {
-            flash('Password must be at least 10 characters.', 'err');
+        if (($weak = weak_password($password)) !== '') {
+            flash($weak, 'err');
         } else {
-            $pdo->prepare('UPDATE users SET password_hash = ? WHERE id = ?')->execute([password_hash($password, PASSWORD_DEFAULT), $uid]);
+            $pdo->prepare('UPDATE users SET password_hash = ?, must_change = 1 WHERE id = ?')->execute([password_hash($password, PASSWORD_DEFAULT), $uid]);
             audit('password reset', 'user #' . $uid);
             flash('Password reset.');
         }
@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         audit('2FA cleared', 'user #' . $uid);
         flash('Two-step login cleared for that user.');
     }
-    redirect('/dashboard/users.php');
+    redirect('/dashboard/users');
 }
 
 $users = $pdo->query('SELECT * FROM users ORDER BY id')->fetchAll(PDO::FETCH_ASSOC);

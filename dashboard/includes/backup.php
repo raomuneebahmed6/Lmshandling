@@ -5,9 +5,9 @@ require_once __DIR__ . '/db.php';
 const BACKUP_KEEP = 14;
 
 function backup_dir() {
-    $d = __DIR__ . '/../data/backups';
+    $d = private_path('backups');
     if (!is_dir($d)) {
-        mkdir($d, 0755, true);
+        mkdir($d, 0700, true);
     }
     return $d;
 }
@@ -19,7 +19,7 @@ function make_backup() {
         // consistent snapshot (SQLite 3.27+)
         $pdo->exec("VACUUM INTO '" . str_replace("'", "''", $file) . "'");
     } catch (Throwable $e) {
-        copy(__DIR__ . '/../data/dashboard.sqlite', $file);
+        copy(db_path(), $file);
     }
     // keep only the newest BACKUP_KEEP files
     $all = glob(backup_dir() . '/dashboard-*.sqlite') ?: [];

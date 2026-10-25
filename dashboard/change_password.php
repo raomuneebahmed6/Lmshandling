@@ -25,32 +25,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $confirm = (string)($_POST['confirm_password'] ?? '');
         if (!password_verify($current, $user['password_hash'])) {
             $msg = 'Current password is incorrect.'; $msgType = 'err';
-        } elseif (strlen($new) < 10) {
-            $msg = 'New password must be at least 10 characters.'; $msgType = 'err';
-        } elseif ($new === DEFAULT_ADMIN_PASSWORD) {
-            $msg = 'Please choose a different password.'; $msgType = 'err';
+        } elseif (($weak = weak_password($new, $user['username'])) !== '') {
+            $msg = $weak; $msgType = 'err';
+        } elseif ($new === $current) {
+            $msg = 'The new password must be different from the current one.'; $msgType = 'err';
         } elseif ($new !== $confirm) {
             $msg = 'New password and confirmation do not match.'; $msgType = 'err';
         } else {
-            $pdo->prepare('UPDATE users SET password_hash = ? WHERE id = ?')->execute([password_hash($new, PASSWORD_DEFAULT), $uid]);
+            $pdo->prepare('UPDATE users SET password_hash = ?, must_change = 0 WHERE id = ?')->execute([password_hash($new, PASSWORD_DEFAULT), $uid]);
             $_SESSION['default_pw'] = false;
+            audit('password changed', $user['username']);
             session_regenerate_id(true);
             flash('Password updated.');
-            redirect('/dashboard/index.php');
+            redirect('/dashboard/');
         }
     } elseif ($do === '2fa_start') {
-        if (!empty($_SESSION['default_pw'])) { redirect('/dashboard/change_password.php'); }
+        if (!empty($_SESSION['default_pw'])) { redirect('/dashboard/change_password'); }
         $_SESSION['totp_setup'] = totp_new_secret();
-        redirect('/dashboard/change_password.php#twofa');
+        redirect('/dashboard/change_password#twofa');
     } elseif ($do === '2fa_cancel') {
         unset($_SESSION['totp_setup']);
-        redirect('/dashboard/change_password.php#twofa');
+        redirect('/dashboard/change_password#twofa');
     } elseif ($do === '2fa_confirm') {
         $secret = $_SESSION['totp_setup'] ?? '';
         if ($secret && totp_verify($secret, $_POST['code'] ?? '') !== false) {
             [$plain, $hashed] = new_recovery_codes();
             $pdo->prepare('UPDATE users SET totp_secret = ?, totp_enabled = 1, recovery_codes = ? WHERE id = ?')->execute([$secret, json_encode($hashed), $uid]);
             unset($_SESSION['totp_setup']);
+            $_SESSION['has2fa'] = true;
+            audit('2FA turned on', $user['username']);
             $newCodes = $plain;
             $msg = 'Two-step login is now ON.'; $msgType = 'ok';
         } else {
@@ -61,8 +64,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $msg = 'Password is incorrect, two-step login stays ON.'; $msgType = 'err';
         } else {
             $pdo->prepare('UPDATE users SET totp_secret = NULL, totp_enabled = 0, recovery_codes = NULL WHERE id = ?')->execute([$uid]);
+            $_SESSION['has2fa'] = false;
+            audit('2FA turned off', $user['username']);
             flash('Two-step login turned off.');
-            redirect('/dashboard/change_password.php#twofa');
+            redirect('/dashboard/change_password#twofa');
         }
     } elseif ($do === '2fa_codes') {
         if (!password_verify((string)($_POST['current_password'] ?? ''), $user['password_hash'])) {
@@ -83,6 +88,27 @@ $log = $pdo->prepare('SELECT * FROM login_log WHERE user_id = ? OR username = ? 
 $log->execute([$uid, $user['username']]);
 $history = $log->fetchAll(PDO::FETCH_ASSOC);
 
+$check = [];
+if (is_admin()) {
+    require_once __DIR__ . '/includes/backup.php';
+    $noTfa = (int)$pdo->query("SELECT COUNT(*) FROM users WHERE active = 1 AND totp_enabled = 0")->fetchColumn();
+    $failed = (int)$pdo->query("SELECT COUNT(*) FROM login_log WHERE ok = 0 AND ts > " . (time() - 86400))->fetchColumn();
+    $bk = list_backups();
+    $isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https');
+    $check = [
+        ['Your two-step login is on', !empty($user['totp_enabled']), 'Turn it on below.'],
+        ['Everyone with an account uses two-step login', $noTfa === 0, $noTfa . ' account(s) still without it (Team page).'],
+        ['Two-step login is required for all', two_factor_required(), 'Switch it on in Settings.'],
+        ['Database and backups are stored outside the public web folder', private_is_outside_web(), 'The host did not allow a private folder, so the protected data/ folder is used.'],
+        ['Chats are encrypted before they are saved', crypto_available(), 'This server has no encryption library; chats are stored as plain text.'],
+        ['Connection is HTTPS', $isHttps, 'Open the dashboard with https://.'],
+        ['No pending first-time setup code', !unclaimed_admin_exists(), 'An account is still waiting to be claimed.'],
+        ['Fewer than 10 failed logins in the last 24 hours', $failed < 10, $failed . ' failed attempts. Check Recent logins.'],
+        ['A backup exists from the last 7 days', $bk && $bk[0]['time'] > time() - 7 * 86400, 'Make one on the Backup page.'],
+        ['PHP version is current (8.1 or newer)', version_compare(PHP_VERSION, '8.1', '>='), 'PHP ' . PHP_VERSION . '. Update it in hosting settings.'],
+    ];
+}
+
 $pageTitle = 'Security';
 $page = 'settings';
 include __DIR__ . '/includes/layout_top.php';
@@ -90,6 +116,14 @@ include __DIR__ . '/includes/layout_top.php';
 <?php if (!empty($_SESSION['default_pw'])): ?><div class="msg msg-warn">You are using the starting password. Set your own password to continue.</div><?php endif; ?>
 <?php if ($msg): ?><div class="msg msg-<?php echo e($msgType); ?>"><?php echo e($msg); ?></div><?php endif; ?>
 
+<?php if ($check): $okN = count(array_filter($check, fn($c) => $c[1])); ?>
+<section class="card">
+  <div class="card-head"><h2>Security checklist</h2><span class="badge b-<?php echo $okN === count($check) ? 'paid' : 'pending'; ?>"><?php echo $okN; ?> of <?php echo count($check); ?> OK</span></div>
+  <ul class="list">
+    <?php foreach ($check as $c): ?><li><span><?php echo $c[1] ? '&#10003;' : '&#9888;'; ?> <?php echo e($c[0]); ?><?php echo $c[1] ? '' : '<br><span class="muted">' . e($c[2]) . '</span>'; ?></span><span class="badge b-<?php echo $c[1] ? 'paid' : 'unpaid'; ?>"><?php echo $c[1] ? 'OK' : 'Fix'; ?></span></li><?php endforeach; ?>
+  </ul>
+</section>
+<?php endif; ?>
 <div class="grid2">
 <div>
 <section class="card">

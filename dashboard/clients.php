@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         $pdo->prepare('DELETE FROM clients WHERE id=?')->execute([$cid]);
         flash('Client deleted. The admin can restore it from Activity > Trash for 90 days.');
-        redirect('/dashboard/clients.php');
+        redirect('/dashboard/clients');
     }
 
     if ($do === 'activity' && $cid) {
@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $pdo->prepare('INSERT INTO activities (client_id, kind, body) VALUES (?,?,?)')->execute([$cid, $kind, mb_substr($body, 0, 2000)]);
             flash('Activity logged.');
         }
-        redirect('/dashboard/clients.php?action=view&id=' . $cid);
+        redirect('/dashboard/clients?action=view&id=' . $cid);
     }
 
     if ($do === 'quick' && $cid) {
@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $fu = valid_date($fu) ? $fu : null;
         $pdo->prepare('UPDATE clients SET stage=?, next_followup=? WHERE id=?')->execute([$stage, $fu, $cid]);
         flash('Client updated.');
-        redirect('/dashboard/clients.php?action=view&id=' . $cid);
+        redirect('/dashboard/clients?action=view&id=' . $cid);
     }
 
     if ($do === 'snooze' && $cid) {
@@ -55,14 +55,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         audit('follow-up snoozed', '#' . $cid . ' +' . $days . 'd');
         flash("Follow-up moved by $days day(s).");
         $b = (string)($_POST['back'] ?? '');
-        redirect($b === 'followups' ? '/dashboard/followups.php' : ($b === 'home' ? '/dashboard/index.php' : '/dashboard/clients.php?action=view&id=' . $cid));
+        redirect($b === 'followups' ? '/dashboard/followups' : ($b === 'home' ? '/dashboard/' : '/dashboard/clients?action=view&id=' . $cid));
     }
 
     if ($do === 'done' && $cid) {
         $pdo->prepare('UPDATE clients SET next_followup=NULL WHERE id=?')->execute([$cid]);
         $pdo->prepare("INSERT INTO activities (client_id, kind, body) VALUES (?, 'note', 'Follow-up done')")->execute([$cid]);
         flash('Follow-up marked done.');
-        redirect(($_POST['back'] ?? '') === 'followups' ? '/dashboard/followups.php' : '/dashboard/clients.php?action=view&id=' . $cid);
+        redirect(($_POST['back'] ?? '') === 'followups' ? '/dashboard/followups' : '/dashboard/clients?action=view&id=' . $cid);
     }
 
     // save (create / update)
@@ -92,14 +92,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ->execute([$name, $whatsapp, $course, $source, $notes, $stage, $fu, $tags, $vuId, $cid]);
         audit('client updated', $name . ' (#' . $cid . ')');
         flash('Client saved.');
-        redirect('/dashboard/clients.php?action=view&id=' . $cid);
+        redirect('/dashboard/clients?action=view&id=' . $cid);
     } else {
         $pdo->prepare('INSERT INTO clients (name, whatsapp_number, course, source, notes, stage, next_followup, tags, vu_id) VALUES (?,?,?,?,?,?,?,?,?)')
             ->execute([$name, $whatsapp, $course, $source, $notes, $stage, $fu, $tags, $vuId]);
         $newCid = (int)$pdo->lastInsertId(); // read before audit() inserts its own row
         audit('client added', $name . ' (#' . $newCid . ')');
         flash('Client added.');
-        redirect('/dashboard/clients.php?action=view&id=' . $newCid);
+        redirect('/dashboard/clients?action=view&id=' . $newCid);
     }
 }
 
@@ -121,7 +121,7 @@ if ($action === 'new' || $action === 'edit') {
     include __DIR__ . '/includes/layout_top.php';
     ?>
 <div class="card" style="max-width:640px">
-  <?php if ($err): ?><div class="msg msg-err"><?php echo e($err); ?><?php if (!empty($dupeId)): ?> <a href="/dashboard/clients.php?action=view&amp;id=<?php echo (int)$dupeId; ?>">Open that client</a><?php endif; ?></div><?php endif; ?>
+  <?php if ($err): ?><div class="msg msg-err"><?php echo e($err); ?><?php if (!empty($dupeId)): ?> <a href="/dashboard/clients?action=view&amp;id=<?php echo (int)$dupeId; ?>">Open that client</a><?php endif; ?></div><?php endif; ?>
   <form method="post" class="stack">
     <?php echo csrf_field(); ?>
     <input type="hidden" name="do" value="save">
@@ -142,7 +142,7 @@ if ($action === 'new' || $action === 'edit') {
     <div><label for="tags">Tags (comma separated)</label><input id="tags" name="tags" value="<?php echo e($client['tags']); ?>" placeholder="e.g. FYP, VIP, late payer"></div>
     <?php if (!empty($dupeId)): ?><div><label style="display:flex;gap:8px;align-items:center"><input type="checkbox" name="allow_dupe" value="1" style="width:auto"> Save anyway (different person)</label></div><?php endif; ?>
     <div><label for="notes">Notes</label><textarea id="notes" name="notes"><?php echo e($client['notes']); ?></textarea></div>
-    <div style="display:flex;gap:10px"><button type="submit" class="gold">Save client</button><a class="btn ghost" href="/dashboard/clients.php<?php echo $client['id'] ? '?action=view&amp;id=' . (int)$client['id'] : ''; ?>">Cancel</a></div>
+    <div style="display:flex;gap:10px"><button type="submit" class="gold">Save client</button><a class="btn ghost" href="/dashboard/clients<?php echo $client['id'] ? '?action=view&amp;id=' . (int)$client['id'] : ''; ?>">Cancel</a></div>
   </form>
 </div>
 <?php
@@ -158,7 +158,7 @@ if ($action === 'view' && $id) {
     $pageTitle = $client ? $client['name'] : 'Client';
     include __DIR__ . '/includes/layout_top.php';
     if (!$client) {
-        echo '<div class="card empty">Client not found. <a href="/dashboard/clients.php">Back to clients</a></div>';
+        echo '<div class="card empty">Client not found. <a href="/dashboard/clients">Back to clients</a></div>';
         include __DIR__ . '/includes/layout_bottom.php';
         exit;
     }
@@ -189,8 +189,8 @@ if ($action === 'view' && $id) {
       <div class="muted">Added <?php echo e(substr($client['created_at'], 0, 10)); ?><?php echo $client['source'] ? ' &middot; via ' . e($client['source']) : ''; ?></div></div>
     <div style="display:flex;gap:8px;flex-wrap:wrap">
       <?php if ($wa): ?><a class="btn wa sm" target="_blank" rel="noopener" href="https://wa.me/<?php echo e($wa); ?>?text=<?php echo rawurlencode($msgText); ?>">WhatsApp</a><?php endif; ?>
-      <a class="btn ghost sm" href="/dashboard/statement.php?client=<?php echo $id; ?>" target="_blank">Statement</a>
-      <a class="btn ghost sm" href="/dashboard/clients.php?action=edit&amp;id=<?php echo $id; ?>">Edit</a>
+      <a class="btn ghost sm" href="/dashboard/statement?client=<?php echo $id; ?>" target="_blank">Statement</a>
+      <a class="btn ghost sm" href="/dashboard/clients?action=edit&amp;id=<?php echo $id; ?>">Edit</a>
       <?php if (is_admin()): ?><form method="post" class="inline" data-confirm="Delete this client and all their orders and history? This cannot be undone.">
         <?php echo csrf_field(); ?><input type="hidden" name="do" value="delete"><input type="hidden" name="id" value="<?php echo $id; ?>">
         <button type="submit" class="danger sm">Delete</button>
@@ -201,7 +201,7 @@ if ($action === 'view' && $id) {
     <dt>WhatsApp</dt><dd><?php echo e($client['whatsapp_number'] ?: '-'); ?></dd>
     <dt>VU ID</dt><dd><?php echo e($client['vu_id'] ?: '-'); ?></dd>
     <dt>Course</dt><dd><?php echo e($client['course'] ?: '-'); ?></dd>
-    <dt>Tags</dt><dd><?php if ($client['tags']): foreach (explode(', ', $client['tags']) as $tg): ?><a class="badge b-partial" style="margin-right:4px" href="/dashboard/clients.php?tag=<?php echo urlencode($tg); ?>"><?php echo e($tg); ?></a><?php endforeach; else: ?>-<?php endif; ?></dd>
+    <dt>Tags</dt><dd><?php if ($client['tags']): foreach (explode(', ', $client['tags']) as $tg): ?><a class="badge b-partial" style="margin-right:4px" href="/dashboard/clients?tag=<?php echo urlencode($tg); ?>"><?php echo e($tg); ?></a><?php endforeach; else: ?>-<?php endif; ?></dd>
     <dt>Files sent</dt><dd><?php echo (int)$fileTotal; ?></dd>
     <dt>Paid / Outstanding</dt><dd><?php echo e(money($paidTotal)); ?> / <strong<?php echo $dueTotal > 0 ? ' class="due-over"' : ''; ?>><?php echo e(money($dueTotal)); ?></strong></dd>
     <dt>Notes</dt><dd><?php echo $client['notes'] ? nl2br(e($client['notes'])) : '-'; ?></dd>
@@ -214,7 +214,7 @@ if ($action === 'view' && $id) {
 
 <div class="grid2">
   <section class="card">
-    <div class="card-head"><h2>Orders</h2><a href="/dashboard/orders.php?action=new&amp;client_id=<?php echo $id; ?>" class="btn gold sm">+ New order</a></div>
+    <div class="card-head"><h2>Orders</h2><a href="/dashboard/orders?action=new&amp;client_id=<?php echo $id; ?>" class="btn gold sm">+ New order</a></div>
     <?php if (!$orders): ?><div class="empty">No orders yet for this client.</div><?php else: ?>
     <div class="tablewrap"><table>
       <thead><tr><th>Date</th><th>Type</th><th class="num">Files</th><th class="num">Amount</th><th>Payment</th><th>Status</th><th></th></tr></thead>
@@ -227,7 +227,7 @@ if ($action === 'view' && $id) {
           <td class="num"><?php echo $o['amount'] !== null ? e(number_format($o['amount'])) : '-'; ?></td>
           <td><span class="badge b-<?php echo e($o['payment_status']); ?>"><?php echo e($o['payment_status']); ?></span></td>
           <td><span class="badge b-<?php echo e($o['status']); ?>"><?php echo e($o['status']); ?></span></td>
-          <td><a class="btn ghost sm" href="/dashboard/orders.php?action=edit&amp;id=<?php echo (int)$o['id']; ?>">Edit</a></td>
+          <td><a class="btn ghost sm" href="/dashboard/orders?action=edit&amp;id=<?php echo (int)$o['id']; ?>">Edit</a></td>
         </tr>
       <?php endforeach; ?>
       </tbody>
@@ -268,9 +268,9 @@ if ($action === 'view' && $id) {
     <?php endif; ?>
 
     <section class="card">
-      <div class="card-head"><h2>WhatsApp chats</h2><a class="btn ghost sm" href="/dashboard/chats.php?client=<?php echo $id; ?>">+ Add chat</a></div>
+      <div class="card-head"><h2>WhatsApp chats</h2><a class="btn ghost sm" href="/dashboard/chats?client=<?php echo $id; ?>">+ Add chat</a></div>
       <?php if (!$chatList): ?><div class="muted">No chat saved. Export it from WhatsApp and add it here.</div><?php else: ?>
-      <ul class="list"><?php foreach ($chatList as $cc): ?><li><span><a href="/dashboard/chat.php?id=<?php echo (int)$cc['id']; ?>"><strong>Open chat</strong></a> <span class="muted">&middot; <?php echo (int)$cc['msg_count']; ?> messages</span><br><span class="muted"><?php echo e($cc['first_at']); ?> &ndash; <?php echo e($cc['last_at']); ?><?php echo $cc['courses'] ? ' &middot; ' . e($cc['courses']) : ''; ?></span></span></li><?php endforeach; ?></ul>
+      <ul class="list"><?php foreach ($chatList as $cc): ?><li><span><a href="/dashboard/chat?id=<?php echo (int)$cc['id']; ?>"><strong>Open chat</strong></a> <span class="muted">&middot; <?php echo (int)$cc['msg_count']; ?> messages</span><br><span class="muted"><?php echo e($cc['first_at']); ?> &ndash; <?php echo e($cc['last_at']); ?><?php echo $cc['courses'] ? ' &middot; ' . e($cc['courses']) : ''; ?></span></span></li><?php endforeach; ?></ul>
       <?php endif; ?>
     </section>
 
@@ -331,7 +331,7 @@ include __DIR__ . '/includes/layout_top.php';
   <div class="filters">
     <div class="tabs">
       <?php foreach (['' => 'All'] + STAGES as $k => $v): ?>
-        <a class="<?php echo $stageF === (string)$k ? 'on' : ''; ?>" href="/dashboard/clients.php?<?php echo http_build_query(array_filter(['stage' => $k, 'q' => $search, 'tag' => $tagF])); ?>"><?php echo e($v); ?><b><?php echo $counts[$k] ?? 0; ?></b></a>
+        <a class="<?php echo $stageF === (string)$k ? 'on' : ''; ?>" href="/dashboard/clients?<?php echo http_build_query(array_filter(['stage' => $k, 'q' => $search, 'tag' => $tagF])); ?>"><?php echo e($v); ?><b><?php echo $counts[$k] ?? 0; ?></b></a>
       <?php endforeach; ?>
     </div>
     <form method="get" style="display:flex;gap:8px;margin-left:auto">
@@ -339,11 +339,11 @@ include __DIR__ . '/includes/layout_top.php';
       <input type="search" name="q" value="<?php echo e($search); ?>" placeholder="Search name, number, course..." aria-label="Search clients">
       <button type="submit" class="sm">Search</button>
     </form>
-    <?php if ($tagF !== ''): ?><a class="badge b-partial" href="/dashboard/clients.php">Tag: <?php echo e($tagF); ?> x</a><?php endif; ?>
-    <?php if (is_admin()): ?><a class="btn ghost sm" href="/dashboard/cleanup.php">Clean up</a><?php endif; ?>
-    <a class="btn ghost sm" href="/dashboard/import.php">Import contacts</a>
-    <a class="btn ghost sm" href="/dashboard/chats.php">Import chats</a>
-    <a class="btn ghost sm" href="/dashboard/export.php?type=clients">Export CSV</a>
+    <?php if ($tagF !== ''): ?><a class="badge b-partial" href="/dashboard/clients">Tag: <?php echo e($tagF); ?> x</a><?php endif; ?>
+    <?php if (is_admin()): ?><a class="btn ghost sm" href="/dashboard/cleanup">Clean up</a><?php endif; ?>
+    <a class="btn ghost sm" href="/dashboard/import">Import contacts</a>
+    <a class="btn ghost sm" href="/dashboard/chats">Import chats</a>
+    <a class="btn ghost sm" href="/dashboard/export?type=clients">Export CSV</a>
   </div>
   <?php if (!$clients): ?>
     <div class="empty"><?php echo ($search || $stageF) ? 'No clients match this filter.' : 'No clients yet. Click "+ Client" to add the first one.'; ?></div>
@@ -352,7 +352,7 @@ include __DIR__ . '/includes/layout_top.php';
     <thead><tr><th>Name</th><th>WhatsApp</th><th>Course</th><th>Stage</th><th class="num">Orders</th><th class="num">Owes</th><th>Follow-up</th></tr></thead>
     <tbody>
     <?php foreach ($clients as $c): $wa = wa_number($c['whatsapp_number']); ?>
-      <tr data-href="/dashboard/clients.php?action=view&amp;id=<?php echo (int)$c['id']; ?>">
+      <tr data-href="/dashboard/clients?action=view&amp;id=<?php echo (int)$c['id']; ?>">
         <td><strong><?php echo e($c['name']); ?></strong><?php if ($c['vu_id']): ?> <span class="muted"><?php echo e($c['vu_id']); ?></span><?php endif; ?><?php if ($c['tags']): ?><br><span class="muted"><?php echo e($c['tags']); ?></span><?php endif; ?></td>
         <td><?php echo $wa ? '<a target="_blank" rel="noopener" href="https://wa.me/' . e($wa) . '">' . e($c['whatsapp_number']) . '</a>' : '-'; ?></td>
         <td><?php echo e($c['course'] ?: '-'); ?></td>
