@@ -1,8 +1,32 @@
-# Block search engines and direct access to internal include files.
+# Dashboard: private area. Clean URLs, HTTPS only, never indexed, no direct access to data files.
+
+# Block search engines.
 <IfModule mod_headers.c>
-  Header set X-Robots-Tag "noindex, nofollow"
+  Header set X-Robots-Tag "noindex, nofollow, noarchive"
 </IfModule>
 
-<FilesMatch "\.(sqlite|db)$">
+<FilesMatch "\.(sqlite|db|log|key|flag)$">
   Require all denied
 </FilesMatch>
+
+# Sub-folder rules replace the site-wide ones, so HTTPS and the www redirect are repeated here.
+RewriteEngine On
+
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+RewriteCond %{HTTP_HOST} ^www\.lmshandling\.com$ [NC]
+RewriteRule ^(.*)$ https://lmshandling.com/dashboard/$1 [L,R=301]
+
+# /dashboard/index(.php) -> /dashboard/
+RewriteCond %{REQUEST_METHOD} ^(GET|HEAD)$
+RewriteRule ^index(\.php)?$ /dashboard/ [R=301,L]
+
+# /dashboard/clients.php -> /dashboard/clients (page views only; forms still work on either address)
+RewriteCond %{REQUEST_METHOD} ^(GET|HEAD)$
+RewriteCond %{THE_REQUEST} \s/dashboard/([a-z0-9_]+)\.php[\s?]
+RewriteRule ^(?!cron_)([a-z0-9_]+)\.php$ /dashboard/$1 [R=301,L]
+
+# /dashboard/clients -> clients.php
+RewriteCond %{REQUEST_FILENAME}.php -f
+RewriteRule ^(?!cron_)([a-z0-9_]+)$ $1.php [L,QSA]
