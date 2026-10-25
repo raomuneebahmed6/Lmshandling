@@ -18,8 +18,13 @@ function chat_parse($text) {
     $dt = '(\d{1,2}[\/\.\-]\d{1,2}[\/\.\-]\d{2,4}),?\s+(\d{1,2}[:.]\d{2}(?:[:.]\d{2})?(?:\s?[APap]\.?[Mm]\.?)?)';
     $android = '/^' . $dt . '\s+-\s+(.*)$/u';
     $ios = '/^\[' . $dt . '\]\s+(.*)$/u';
+    // text copied straight from WhatsApp Web: "[7:57 AM, 10/24/2026] Name: message"
+    $web = '/^\[(\d{1,2}[:.]\d{2}(?:[:.]\d{2})?(?:\s?[APap]\.?[Mm]\.?)?),\s*(\d{1,2}[\/\.\-]\d{1,2}[\/\.\-]\d{2,4})\]\s+(.*)$/u';
     foreach (explode("\n", $text) as $line) {
-        if (preg_match($android, $line, $m) || preg_match($ios, $line, $m)) {
+        $m = null; $ok = false;
+        if (preg_match($web, $line, $w)) { $m = [$line, $w[2], $w[1], $w[3]]; $ok = true; } // normalise to date, time, rest
+        elseif (preg_match($android, $line, $m) || preg_match($ios, $line, $m)) { $ok = true; }
+        if ($ok) {
             if ($cur) $msgs[] = $cur;
             $rest = $m[3];
             $cur = null;
@@ -37,6 +42,24 @@ function chat_parse($text) {
         $x['media'] = (bool)preg_match('/^(<Media omitted>|\(file attached\)|image omitted|video omitted|audio omitted|sticker omitted|document omitted|<attached:)/i', trim($x['text']));
     }
     return $msgs;
+}
+
+// Hides anything that looks like a login password before a chat is stored. Returns [clean text, number of places hidden].
+function chat_redact($text) {
+    $n = 0;
+    // "password: xyz", "pass - xyz", "pss xyz"
+    $text = preg_replace_callback('/\b(password|passcode|passwd|pass|pwd|pss)\b(\s*[:=\-\x{2013}\x{2014}]*\s*)(\S+)/iu', function ($m) use (&$n) { $n++; return $m[1] . $m[2] . '[hidden]'; }, $text);
+    // a line that holds a VU login ID plus another password-like token
+    $lines = explode("\n", $text);
+    foreach ($lines as &$line) {
+        if (!preg_match('/\b(?:bc|zs|mc|ms)\d{9,10}\b/i', $line)) continue;
+        $line = preg_replace_callback('/(?<![\w@.\/])(?=[^\s]*[A-Za-z])(?=[^\s]*\d)(?=[^\s]*[^\w\s])[^\s]{8,28}(?![\w])/u', function ($m) use (&$n) {
+            if (preg_match('/https?:|www\.|\.com|\.pk|\.edu/i', $m[0])) return $m[0];
+            $n++; return '[hidden]';
+        }, $line);
+    }
+    unset($line);
+    return [implode("\n", $lines), $n];
 }
 
 // "WhatsApp Chat with Ali Khan.txt" / "WhatsApp Chat - Ali Khan.zip" / "Chat with +92 300 1234567.txt" -> "Ali Khan"

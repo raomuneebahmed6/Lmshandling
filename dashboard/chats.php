@@ -20,12 +20,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             foreach ($got as $g) $items[] = $g;
         }
     }
-    if (!$items && !$report) { flash('Choose one or more exported chat files (.txt or .zip).', 'err'); redirect('/dashboard/chats.php' . ($target ? '?client=' . $target : '')); }
+    $paste = trim((string)($_POST['paste'] ?? ''));
+    if ($paste !== '') {
+        $target = (int)($_POST['paste_client'] ?? 0);
+        if (!$target) { flash('Choose the client for the pasted chat.', 'err'); redirect('/dashboard/chats.php'); }
+        if (strlen($paste) > CHAT_MAX_BYTES) { flash('The pasted text is too long. Paste a shorter part.', 'err'); redirect('/dashboard/chats.php'); }
+        $items[] = ['name' => 'Pasted chat', 'text' => $paste];
+    }
+    if (!$items && !$report) { flash('Choose chat files (.txt or .zip) or paste a copied chat.', 'err'); redirect('/dashboard/chats.php' . ($target ? '?client=' . $target : '')); }
 
     foreach ($items as $it) {
         $title = chat_title_from_filename($it['name']);
-        $msgs = chat_parse($it['text']);
-        if (count($msgs) < 1) { $report[] = ['file' => $it['name'], 'status' => 'err', 'note' => 'No messages found. Is this an exported WhatsApp chat?']; continue; }
+        [$clean, $hidden] = chat_redact(chat_normalise($it['text']));
+        $msgs = chat_parse($clean);
+        if (count($msgs) < 1) { $report[] = ['file' => $it['name'], 'status' => 'err', 'note' => 'No messages found. Is this a WhatsApp chat (exported or copied from WhatsApp Web)?']; continue; }
 
         // which client?
         $client = null; $created = false;
@@ -50,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $created = true;
         }
 
-        $body = chat_normalise($it['text']);
+        $body = $clean;
         $sha = sha1($body);
         $dup = $pdo->prepare('SELECT COUNT(*) FROM chats WHERE client_id = ? AND sha = ?'); $dup->execute([$client['id'], $sha]);
         if ($dup->fetchColumn()) { $report[] = ['file' => $it['name'], 'status' => 'skip', 'client' => $client, 'note' => 'This exact chat is already saved for this client.']; continue; }
@@ -63,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($courses && trim((string)$client['course']) === '') $pdo->prepare('UPDATE clients SET course = ? WHERE id = ?')->execute([implode(', ', array_slice($courses, 0, 3)), $client['id']]);
         $pdo->prepare("INSERT INTO activities (client_id, kind, body) VALUES (?, 'whatsapp', ?)")->execute([$client['id'], 'WhatsApp chat imported: ' . count($msgs) . ' messages (' . $msgs[0]['at'] . ' to ' . $msgs[count($msgs) - 1]['at'] . ')']);
         audit('chat imported', $client['name'] . ' (#' . $client['id'] . '), ' . count($msgs) . ' messages');
-        $report[] = ['file' => $it['name'], 'status' => $created ? 'new' : 'ok', 'client' => $client, 'n' => count($msgs), 'courses' => $courses];
+        $report[] = ['file' => $it['name'], 'status' => $created ? 'new' : 'ok', 'client' => $client, 'n' => count($msgs), 'courses' => $courses, 'hidden' => $hidden];
     }
 }
 
@@ -88,6 +96,7 @@ include __DIR__ . '/includes/layout_top.php';
         elseif ($r['status'] === 'new') echo '<span class="badge b-active">new client created</span>';
         elseif ($r['status'] === 'skip') echo '<span class="badge b-pending">skipped</span> <span class="muted">' . e($r['note']) . '</span>';
         else echo '<span class="badge b-unpaid">failed</span> <span class="muted">' . e($r['note']) . '</span>';
+        if (!empty($r['hidden'])) echo '<br><span class="muted">' . (int)$r['hidden'] . ' password-like text(s) were hidden before saving.</span>';
         if (!empty($r['courses'])) echo '<br><span class="muted">Courses mentioned: ' . e(implode(', ', $r['courses'])) . '</span>';
       ?></td></tr><?php endforeach; ?>
   </tbody></table></div>
@@ -106,6 +115,21 @@ include __DIR__ . '/includes/layout_top.php';
   </form>
   <p class="muted" style="margin-bottom:0">Chats are matched by the name in the file name ("WhatsApp Chat with Ali Khan") or by phone number when the contact is not saved. Order details, amounts and course codes stay in your own words in Orders; the chat is kept as a private record on the client's page.</p>
 </section>
+<div>
+<section class="card">
+  <div class="card-head"><h2>Or paste a copied chat (faster)</h2></div>
+  <p class="muted" style="margin-top:0">On WhatsApp Web open the chat, drag to select the last 20-50 messages, press <strong>Ctrl+C</strong>, and paste below. This takes seconds per client and needs no export.</p>
+  <form method="post" class="stack">
+    <?php echo csrf_field(); ?>
+    <div><label for="pc">Client</label>
+      <select id="pc" name="paste_client"><option value="">Choose client...</option>
+        <?php foreach ($pdo->query('SELECT id, name, vu_id FROM clients ORDER BY name COLLATE NOCASE LIMIT 2000') as $pcl): ?><option value="<?php echo (int)$pcl['id']; ?>"<?php echo $targetClient && (int)$targetClient['id'] === (int)$pcl['id'] ? ' selected' : ''; ?>><?php echo e($pcl['name'] . ($pcl['vu_id'] ? ' (' . $pcl['vu_id'] . ')' : '')); ?></option><?php endforeach; ?>
+      </select></div>
+    <div><label for="pt">Copied messages</label><textarea id="pt" name="paste" rows="7" placeholder="[7:57 AM, 10/24/2026] Ali Khan: Files kab milengi?&#10;[8:02 AM, 10/24/2026] Nibaha Haq: Kal bhej deta hun"></textarea></div>
+    <div><button type="submit" class="gold">Save pasted chat</button></div>
+  </form>
+  <p class="muted" style="margin-bottom:0">Password-like text (after "password", "pass" or next to a VU ID) is hidden automatically before saving.</p>
+</section>
 <section class="card">
   <div class="card-head"><h2>Recently imported</h2></div>
   <?php if (!$recent): ?><div class="empty">Nothing yet.</div><?php else: ?>
@@ -114,5 +138,6 @@ include __DIR__ . '/includes/layout_top.php';
   <?php endforeach; ?></ul>
   <?php endif; ?>
 </section>
+</div>
 </div>
 <?php include __DIR__ . '/includes/layout_bottom.php'; ?>
