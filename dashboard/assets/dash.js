@@ -56,5 +56,10 @@
     });
   });
 
+  var allBox = document.getElementById("all");
+  if (allBox) allBox.addEventListener("change", function () {
+    document.querySelectorAll(".pick").forEach(function (c) { c.checked = allBox.checked; });
+  });
+
   if ("serviceWorker" in navigator) { window.addEventListener("load", function () { navigator.serviceWorker.register("/dashboard/sw.js", { scope: "/dashboard/" }).catch(function () {}); }); }
 })();
