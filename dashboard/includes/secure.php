@@ -150,6 +150,7 @@ function reset_admin_account() {
     if (!$id) return false;
     $pdo->prepare('UPDATE users SET password_hash = ?, must_change = 1, totp_secret = NULL, totp_enabled = 0, recovery_codes = NULL, active = 1 WHERE id = ?')
         ->execute([password_hash(bin2hex(random_bytes(16)), PASSWORD_DEFAULT), $id]);
+    $pdo->prepare('DELETE FROM totp_devices WHERE user_id = ?')->execute([$id]);
     issue_setup_code();
     return true;
 }

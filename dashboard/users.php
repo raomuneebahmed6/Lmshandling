@@ -44,6 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     } elseif ($do === 'reset2fa' && $uid) {
         $pdo->prepare('UPDATE users SET totp_secret = NULL, totp_enabled = 0, recovery_codes = NULL WHERE id = ?')->execute([$uid]);
+        $pdo->prepare('DELETE FROM totp_devices WHERE user_id = ?')->execute([$uid]);
         audit('2FA cleared', 'user #' . $uid);
         flash('Two-step login cleared for that user.');
     }

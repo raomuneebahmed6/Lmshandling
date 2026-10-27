@@ -142,6 +142,16 @@ function get_db() {
         FOREIGN KEY (client_id) REFERENCES clients(id) ON DELETE CASCADE
     )");
 
+    $pdo->exec("CREATE TABLE IF NOT EXISTS totp_devices (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        name TEXT NOT NULL,
+        secret TEXT NOT NULL,
+        last_counter INTEGER NOT NULL DEFAULT 0,
+        created_at INTEGER NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    )");
+
     // ---- additive columns ----
     $added = db_add_columns($pdo, 'clients', [
         'stage' => "TEXT NOT NULL DEFAULT 'lead'",
@@ -184,6 +194,12 @@ function get_db() {
         'must_change' => 'INTEGER NOT NULL DEFAULT 0',
     ]);
 
+    // Accounts set up before several phones were supported get their existing phone as "Phone 1".
+    $pdo->exec("INSERT INTO totp_devices (user_id, name, secret, last_counter, created_at)
+        SELECT u.id, 'Phone 1', u.totp_secret, 0, strftime('%s','now') FROM users u
+        WHERE u.totp_enabled = 1 AND u.totp_secret IS NOT NULL AND u.totp_secret != ''
+        AND NOT EXISTS (SELECT 1 FROM totp_devices d WHERE d.user_id = u.id)");
+
     // One-time sweep: the old public starting password must not keep working. Any account that still uses it
     // gets an unknown random password and has to be claimed with a setup code.
     if (settings_get('default_sweep') !== '1') {
@@ -192,6 +208,7 @@ function get_db() {
             if (password_verify(LEGACY_DEFAULT_PASSWORD, $u['password_hash'])) {
                 $pdo->prepare('UPDATE users SET password_hash = ?, must_change = 1, totp_secret = NULL, totp_enabled = 0, recovery_codes = NULL WHERE id = ?')
                     ->execute([password_hash(bin2hex(random_bytes(16)), PASSWORD_DEFAULT), $u['id']]);
+                $pdo->prepare('DELETE FROM totp_devices WHERE user_id = ?')->execute([$u['id']]);
                 $swept++;
             }
         }

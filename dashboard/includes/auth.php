@@ -297,10 +297,14 @@ function new_recovery_codes() {
 function second_factor_ok($user, $input) {
     $pdo = get_db();
     $input = trim((string)$input);
-    $c = totp_verify($user['totp_secret'], $input, (int)settings_get('totp_last_' . $user['id'], 0));
-    if ($c !== false) {
-        settings_set('totp_last_' . $user['id'], $c);
-        return true;
+    $devs = $pdo->prepare('SELECT id, secret, last_counter FROM totp_devices WHERE user_id = ?');
+    $devs->execute([$user['id']]);
+    foreach ($devs->fetchAll(PDO::FETCH_ASSOC) as $d) {
+        $c = totp_verify($d['secret'], $input, (int)$d['last_counter']);
+        if ($c !== false) { // a code can be used only once per phone
+            $pdo->prepare('UPDATE totp_devices SET last_counter = ? WHERE id = ?')->execute([$c, $d['id']]);
+            return true;
+        }
     }
     $codes = json_decode((string)$user['recovery_codes'], true) ?: [];
     foreach ($codes as $i => $h) {
