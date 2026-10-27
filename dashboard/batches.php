@@ -31,6 +31,35 @@ $tag = trim($_GET['tag'] ?? '');
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     csrf_check();
     $tag = trim($_POST['tag'] ?? '');
+    if (($_POST['do'] ?? '') === 'fee') {
+        $fee = max(0, min(1000000, (int)preg_replace('/\D/', '', (string)($_POST['fee'] ?? ''))));
+        if ($tag !== '') settings_set('batchfee_' . strtolower($tag), (string)$fee);
+        flash('Fee per person saved.');
+        redirect('/dashboard/batches?tag=' . urlencode($tag));
+    }
+    if (($_POST['do'] ?? '') === 'renew') {
+        $newTag = clean_tags($_POST['new_tag'] ?? '');
+        $ids = array_slice(array_values(array_unique(array_map('intval', (array)($_POST['ids'] ?? [])))), 0, 500);
+        if ($newTag === '' || strpos($newTag, ',') !== false) { flash('Type one new batch name, for example finals-2026-27.', 'err'); redirect('/dashboard/batches?tag=' . urlencode($tag)); }
+        if (!$ids) { flash('Tick at least one person first.', 'err'); redirect('/dashboard/batches?tag=' . urlencode($tag)); }
+        $sel = $pdo->prepare('SELECT id, tags FROM clients WHERE id = ?');
+        $upd = $pdo->prepare('UPDATE clients SET tags = ? WHERE id = ?');
+        $n = 0;
+        $pdo->beginTransaction();
+        foreach ($ids as $cid) {
+            $sel->execute([$cid]);
+            $row = $sel->fetch(PDO::FETCH_ASSOC);
+            if (!$row) continue;
+            $t = tag_list(with_pay_tag($row['tags'], '')); // new batch starts with payment not set
+            if (!in_array(strtolower($newTag), array_map('strtolower', $t), true)) $t[] = $newTag;
+            $upd->execute([clean_tags(implode(',', $t)), $cid]);
+            $n++;
+        }
+        $pdo->commit();
+        audit('batch renewed', $n . ' client(s) added to ' . $newTag . ' from ' . $tag);
+        flash($n . ' added to "' . $newTag . '". Payment status is kept per person, so it was cleared for them (not set) and you can mark the new batch fresh.');
+        redirect('/dashboard/batches?tag=' . urlencode($newTag));
+    }
     $status = $_POST['status'] ?? '';
     if (!in_array($status, ['paid', 'unpaid', 'payment-unknown'], true)) { flash('Choose paid or unpaid.', 'err'); redirect('/dashboard/batches?tag=' . urlencode($tag)); }
     $ids = array_values(array_unique(array_map('intval', (array)($_POST['ids'] ?? []))));
@@ -118,6 +147,13 @@ include __DIR__ . '/includes/layout_top.php';
     <a href="?tag=<?php echo urlencode($tag); ?>&amp;show=unpaid"<?php echo $show === 'unpaid' ? ' class="on"' : ''; ?>>Unpaid <?php echo $cnt['unpaid']; ?></a>
     <a href="?tag=<?php echo urlencode($tag); ?>&amp;show=unknown"<?php echo $show === 'unknown' ? ' class="on"' : ''; ?>>Not set <?php echo $cnt['unknown']; ?></a>
   </div>
+  <?php $fee = (int)settings_get('batchfee_' . strtolower($tag), '0'); ?>
+  <form method="post" style="display:flex;gap:8px;align-items:end;flex-wrap:wrap;margin-bottom:12px">
+    <?php echo csrf_field(); ?><input type="hidden" name="do" value="fee"><input type="hidden" name="tag" value="<?php echo e($tag); ?>">
+    <div><label for="fee">Fee per person (Rs.)</label><input id="fee" name="fee" inputmode="numeric" value="<?php echo $fee ? (int)$fee : ''; ?>" placeholder="e.g. 2500" style="width:140px"></div>
+    <button class="ghost sm" type="submit">Save</button>
+    <?php if ($fee): ?><span class="muted">Collected <strong><?php echo e(money($fee * $cnt['paid'])); ?></strong> &middot; still to collect <strong class="due-over"><?php echo e(money($fee * $cnt['unpaid'])); ?></strong><?php echo $cnt['unknown'] ? ' &middot; ' . $cnt['unknown'] . ' not set' : ''; ?></span><?php endif; ?>
+  </form>
   <?php if ($nophone): ?><p class="muted" style="margin-top:0"><?php echo $nophone; ?> of them have no WhatsApp number saved yet, so the reminder button is missing for them. Open the person and add the number.</p><?php endif; ?>
   <?php if (!$members): ?><div class="empty">Nobody here.</div><?php else: ?>
   <form method="post">
@@ -126,6 +162,10 @@ include __DIR__ . '/includes/layout_top.php';
       <label style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="all" style="width:auto"> Select all</label>
       <button class="gold sm" type="submit" name="status" value="paid">Mark selected PAID</button>
       <button class="ghost sm" type="submit" name="status" value="unpaid">Mark selected UNPAID</button>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;align-items:center">
+      <input name="new_tag" placeholder="New batch, e.g. finals-2026-27" maxlength="40" style="max-width:260px" aria-label="New batch name">
+      <button class="ghost sm" type="submit" name="do" value="renew">Add selected to new batch</button>
     </div>
     <div class="tablewrap"><table>
       <thead><tr><th></th><th>#</th><th>Name</th><th>VU ID</th><th>Payment</th><th></th></tr></thead>

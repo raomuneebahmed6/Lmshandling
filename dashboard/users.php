@@ -107,4 +107,20 @@ include __DIR__ . '/includes/layout_top.php';
   </form>
 </section>
 </div>
+<?php
+$attempts = $pdo->query('SELECT username, ip, ok, note, ts FROM login_log ORDER BY ts DESC, id DESC LIMIT 25')->fetchAll(PDO::FETCH_ASSOC);
+?>
+<section class="card">
+  <div class="card-head"><h2>Recent sign-in attempts</h2><span class="muted">Use this when someone says they cannot log in</span></div>
+  <?php if (!$attempts): ?><div class="empty">Nothing yet.</div><?php else: ?>
+  <div class="tablewrap"><table>
+    <thead><tr><th>When</th><th>Username typed</th><th>Result</th><th>Address</th></tr></thead>
+    <tbody><?php foreach ($attempts as $at): ?>
+      <tr><td><?php echo e(date('Y-m-d H:i', (int)$at['ts'])); ?></td><td><?php echo e($at['username']); ?></td>
+        <td><?php echo $at['ok'] ? '<span class="badge b-paid">OK</span>' : '<span class="badge b-unpaid">Failed</span> ' . e($at['note']); ?></td>
+        <td><?php echo e($at['ip']); ?></td></tr>
+    <?php endforeach; ?></tbody>
+  </table></div>
+  <?php endif; ?>
+</section>
 <?php include __DIR__ . '/includes/layout_bottom.php'; ?>

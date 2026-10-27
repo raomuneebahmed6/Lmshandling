@@ -77,6 +77,20 @@ include __DIR__ . '/includes/layout_top.php';
   </section>
 </div>
 
+<?php
+$dl = $pdo->prepare('SELECT * FROM deadlines WHERE due_date >= ? AND due_date <= ? ORDER BY due_date, id LIMIT 12');
+$dl->execute([$today, date('Y-m-d', strtotime('+14 days'))]);
+$dlRows = $dl->fetchAll(PDO::FETCH_ASSOC);
+if ($dlRows): ?>
+<section class="card" style="margin-top:18px">
+  <div class="card-head"><h2>Deadlines (next 14 days) <span class="badge b-pending"><?php echo count($dlRows); ?></span></h2><a class="btn ghost sm" href="/dashboard/deadlines">All deadlines</a></div>
+  <ul class="list"><?php foreach ($dlRows as $d): $left = (int)((strtotime($d['due_date']) - strtotime($today)) / 86400); ?>
+    <li><span><strong><?php echo e($d['title']); ?></strong><?php echo $d['course'] ? ' &middot; ' . e($d['course']) : ''; ?><br><span class="muted"><?php echo e($d['due_date']); ?> &middot; <?php echo e($d['kind']); ?></span></span>
+      <span class="badge <?php echo $left <= 2 ? 'b-unpaid' : 'b-pending'; ?>"><?php echo $left === 0 ? 'today' : ($left === 1 ? 'tomorrow' : $left . ' days'); ?></span></li>
+  <?php endforeach; ?></ul>
+</section>
+<?php endif; ?>
+
 <?php if ($exams): ?>
 <section class="card" style="margin-top:18px">
   <div class="card-head"><h2>Upcoming exams (next 14 days) <span class="badge b-pending"><?php echo count($exams); ?></span></h2><a class="btn ghost sm" href="/dashboard/orders?status=pending">Open orders</a></div>

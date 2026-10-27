@@ -8,6 +8,7 @@ $nav = [
     'orders' => ['/dashboard/orders', 'Orders', '<path d="M6 2l-3 4v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18M16 10a4 4 0 0 1-8 0"/>', false],
     'files' => ['/dashboard/files', 'Files', '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h6"/>', false],
     'batches' => ['/dashboard/batches', 'Batches', '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 17.5h7M17.5 14v7"/>', false],
+    'deadlines' => ['/dashboard/deadlines', 'Deadlines', '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>', false],
     'followups' => ['/dashboard/followups', 'Follow-ups', '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M9 16l2 2 4-4"/>', false],
     'board' => ['/dashboard/board', 'Board', '<rect x="3" y="3" width="5" height="18" rx="1"/><rect x="10" y="3" width="5" height="12" rx="1"/><rect x="17" y="3" width="4" height="8" rx="1"/>', false],
     'reports' => ['/dashboard/reports', 'Reports', '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>', true],

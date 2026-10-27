@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $error = 'That code is not correct. Try the newest code from your app, or a recovery code.';
         }
     } else {
-        $username = trim($_POST['username'] ?? '');
+        $username = strtolower(trim($_POST['username'] ?? '')); // phones capitalise the first letter; usernames are stored in lowercase
         $password = (string)($_POST['password'] ?? '');
         if (login_blocked($username)) {
             $error = 'Too many attempts. Please wait 15 minutes and try again.';

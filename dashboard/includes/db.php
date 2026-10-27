@@ -124,6 +124,17 @@ function get_db() {
     )");
     $pdo->exec("CREATE INDEX IF NOT EXISTS idx_client_files_client ON client_files (client_id)");
 
+    $pdo->exec("CREATE TABLE IF NOT EXISTS deadlines (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        due_date TEXT NOT NULL,
+        kind TEXT NOT NULL DEFAULT 'other',
+        title TEXT NOT NULL,
+        course TEXT,
+        note TEXT,
+        created_by TEXT,
+        created_at INTEGER NOT NULL
+    )");
+
     $pdo->exec("CREATE TABLE IF NOT EXISTS audit_log (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         ts INTEGER NOT NULL,
