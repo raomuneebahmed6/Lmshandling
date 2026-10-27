@@ -316,7 +316,7 @@ if ($tagF !== '') { $where[] = "(',' || REPLACE(COALESCE(c.tags,''), ', ', ',') 
 $sql = "SELECT c.*,
   (SELECT COUNT(*) FROM orders o WHERE o.client_id=c.id) AS order_count,
   (SELECT COALESCE(SUM(MAX(COALESCE(o.amount,0)-COALESCE(o.paid_amount,0),0)),0) FROM orders o WHERE o.client_id=c.id) AS owed
-  FROM clients c" . ($where ? ' WHERE ' . implode(' AND ', $where) : '') . ' ORDER BY c.created_at DESC, c.id DESC';
+  FROM clients c" . ($where ? ' WHERE ' . implode(' AND ', $where) : '') . ($tagF !== '' ? ' ORDER BY c.id ASC' : ' ORDER BY c.created_at DESC, c.id DESC');
 $s = $pdo->prepare($sql);
 $s->execute($params);
 $clients = $s->fetchAll(PDO::FETCH_ASSOC);
