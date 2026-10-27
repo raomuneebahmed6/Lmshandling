@@ -4,6 +4,17 @@ require_login();
 $pdo = get_db();
 
 // Parse a .vcf (vCard) contact export (phone contacts, Google Contacts, iCloud) into name + phone records.
+// Refresh a client that already exists (matched by VU ID): name, stage, notes and tags from the file.
+// Payment tags (paid / unpaid / payment-unknown) are replaced, every other tag is kept.
+function import_update_existing($pdo, $ex, $name, $r, $tag) {
+    $q = $pdo->prepare('SELECT * FROM clients WHERE id = ?'); $q->execute([$ex['id']]); $ex = $q->fetch(PDO::FETCH_ASSOC) ?: $ex;
+    $keep = array_filter(array_map('trim', explode(',', (string)($ex['tags'] ?? ''))), function ($t) { return $t !== '' && !in_array(strtolower($t), ['paid', 'unpaid', 'payment-unknown'], true); });
+    $tags = clean_tags(implode(',', $keep) . ',' . ($r['tags'] ?? '') . ',' . $tag);
+    $stg = array_key_exists($r['stage'] ?? '', STAGES) ? $r['stage'] : ($ex['stage'] ?? 'lead');
+    $notes = ($r['notes'] ?? '') !== '' ? mb_substr($r['notes'], 0, 1000) : ($ex['notes'] ?? '');
+    $pdo->prepare('UPDATE clients SET name = ?, stage = ?, notes = ?, tags = ? WHERE id = ?')->execute([$name, $stg, $notes, $tags, $ex['id']]);
+}
+
 function parse_vcf($text) {
     $text = preg_replace("/\r\n|\r/", "\n", $text);
     $text = preg_replace("/\n[ \t]/", '', $text); // unfold long lines
@@ -82,6 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $source = trim($_POST['source'] ?? '');
     $tag = clean_tags($_POST['tag'] ?? '');
+    $update = !empty($_POST['update']); $updated = 0;
     $added = 0; $skipped = []; $seen = []; $seenId = []; $seenName = [];
     $ins = $pdo->prepare("INSERT INTO clients (name, whatsapp_number, course, source, notes, stage, tags, vu_id) VALUES (?,?,?,?,?,?,?,?)");
     $pdo->beginTransaction();
@@ -92,6 +104,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($name === '') continue;
         $norm = wa_number($phone);
         $vid = clean_vu_id($r['vu_id'] ?? '');
+        if ($vid !== '' && !isset($seenId[$vid]) && $update && ($ex = find_client_by_vu_id($pdo, $vid))) {
+            import_update_existing($pdo, $ex, $name, $r, $tag); $seenId[$vid] = 1; $updated++; continue;
+        }
         if ($vid !== '' && (isset($seenId[$vid]) || find_client_by_vu_id($pdo, $vid))) { $skipped[] = $name . ': VU ID already exists'; continue; }
         if ($vid !== '') $seenId[$vid] = 1;
         if ($norm === '' && $vid === '') { // nothing to match on except the name
@@ -110,8 +125,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $added++;
     }
     $pdo->commit();
-    audit('clients imported', ($isVcf ? 'vcf' : 'csv') . ': ' . $added . ' added, ' . count($skipped) . ' skipped');
-    $report = ['added' => $added, 'skipped' => $skipped];
+    audit('clients imported', ($isVcf ? 'vcf' : 'csv') . ': ' . $added . ' added, ' . count($skipped) . ' skipped, ' . $updated . ' updated');
+    $report = ['added' => $added, 'updated' => $updated, 'skipped' => $skipped];
 }
 
 $pageTitle = 'Import clients';
@@ -119,7 +134,7 @@ $page = 'clients';
 include __DIR__ . '/includes/layout_top.php';
 ?>
 <?php if ($report): ?>
-<div class="msg msg-ok"><?php echo (int)$report['added']; ?> client(s) added as leads. <?php echo count($report['skipped']); ?> skipped.</div>
+<div class="msg msg-ok"><?php echo (int)$report['added']; ?> client(s) added<?php echo $report['updated'] ? ', ' . (int)$report['updated'] . ' updated' : ''; ?>. <?php echo count($report['skipped']); ?> skipped.</div>
 <?php if ($report['skipped']): ?><section class="card"><div class="card-head"><h2>Skipped</h2></div><ul class="list"><?php foreach (array_slice($report['skipped'], 0, 60) as $s): ?><li><?php echo e($s); ?></li><?php endforeach; ?></ul></section><?php endif; ?>
 <?php endif; ?>
 <div class="grid2">
@@ -133,6 +148,7 @@ include __DIR__ . '/includes/layout_top.php';
       <div><label for="src">Source for everyone in this file</label><input id="src" name="source" placeholder="e.g. WhatsApp" value="WhatsApp"></div>
       <div><label for="tg">Tag for everyone in this file</label><input id="tg" name="tag" placeholder="e.g. old-students"></div>
     </div>
+    <div><label style="display:flex;gap:8px;align-items:center;font-weight:500"><input type="checkbox" name="update" value="1" style="width:auto"> Also update people who already exist (matched by VU ID): name, stage and tags come from the file</label></div>
     <div style="display:flex;gap:10px"><button type="submit" class="gold">Import</button><a class="btn ghost" href="/dashboard/clients">Back to clients</a></div>
   </form>
 </section>
