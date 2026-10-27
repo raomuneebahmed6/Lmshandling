@@ -52,6 +52,11 @@ function money($v) {
     return 'Rs. ' . number_format((float)$v);
 }
 
+function human_size($b) {
+    if ($b >= 1048576) return number_format($b / 1048576, 1) . ' MB';
+    return max(1, (int)round($b / 1024)) . ' KB';
+}
+
 function current_user() {
     return $_SESSION['user'] ?? null;
 }

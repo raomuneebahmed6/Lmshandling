@@ -6,6 +6,7 @@ $nav = [
     'home' => ['/dashboard/', 'Home', '<path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>', false],
     'clients' => ['/dashboard/clients', 'Clients', '<circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-6 7-6s7 2 7 6"/><path d="M16 4a4 4 0 0 1 0 8M22 21c0-3-2-5-5-5.7"/>', false],
     'orders' => ['/dashboard/orders', 'Orders', '<path d="M6 2l-3 4v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18M16 10a4 4 0 0 1-8 0"/>', false],
+    'files' => ['/dashboard/files', 'Files', '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h6"/>', false],
     'followups' => ['/dashboard/followups', 'Follow-ups', '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M9 16l2 2 4-4"/>', false],
     'board' => ['/dashboard/board', 'Board', '<rect x="3" y="3" width="5" height="18" rx="1"/><rect x="10" y="3" width="5" height="12" rx="1"/><rect x="17" y="3" width="4" height="8" rx="1"/>', false],
     'reports' => ['/dashboard/reports', 'Reports', '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>', true],

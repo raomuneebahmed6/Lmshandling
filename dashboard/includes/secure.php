@@ -111,6 +111,19 @@ function secret_decrypt($s) {
     return $p === false ? '[unreadable: wrong key]' : $p;
 }
 
+// Files (PDFs) are stored as nonce + secretbox so a copy of the private folder alone is unreadable.
+function file_encrypt_bytes($plain) {
+    $n = random_bytes(SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
+    return $n . sodium_crypto_secretbox((string)$plain, $n, secret_key());
+}
+
+function file_decrypt_bytes($raw) {
+    if (!crypto_available()) return false;
+    $nl = SODIUM_CRYPTO_SECRETBOX_NONCEBYTES;
+    if (strlen($raw) <= $nl) return false;
+    return sodium_crypto_secretbox_open(substr($raw, $nl), substr($raw, 0, $nl), secret_key());
+}
+
 // ---------- settings (tiny key/value store) ----------
 function settings_get($k, $default = '') {
     $s = get_db()->prepare('SELECT v FROM settings WHERE k = ?');

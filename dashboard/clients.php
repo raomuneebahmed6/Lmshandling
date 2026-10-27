@@ -212,6 +212,18 @@ if ($action === 'view' && $id) {
   <?php endif; ?>
 </div>
 
+<?php
+$fq = $pdo->prepare('SELECT id, name, size, created_at FROM client_files WHERE client_id = ? AND deleted_at IS NULL ORDER BY created_at DESC, id DESC LIMIT 20');
+$fq->execute([$id]);
+$clientFiles = $fq->fetchAll(PDO::FETCH_ASSOC);
+?>
+<section class="card">
+  <div class="card-head"><h2>PDF files</h2><a href="/dashboard/files?client=<?php echo $id; ?>" class="btn gold sm">+ Upload PDF</a></div>
+  <?php if (!$clientFiles): ?><div class="empty">No PDFs saved for this client.</div><?php else: ?>
+  <ul class="list"><?php foreach ($clientFiles as $cfile): ?><li><span><a href="/dashboard/file_get?id=<?php echo (int)$cfile['id']; ?>" target="_blank" rel="noopener"><?php echo e($cfile['name']); ?></a><br><span class="muted"><?php echo e(date('Y-m-d', (int)$cfile['created_at'])); ?> &middot; <?php echo e(human_size((int)$cfile['size'])); ?></span></span></li><?php endforeach; ?></ul>
+  <?php endif; ?>
+</section>
+
 <div class="grid2">
   <section class="card">
     <div class="card-head"><h2>Orders</h2><a href="/dashboard/orders?action=new&amp;client_id=<?php echo $id; ?>" class="btn gold sm">+ New order</a></div>

@@ -110,6 +110,20 @@ function get_db() {
         created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
     )");
 
+    $pdo->exec("CREATE TABLE IF NOT EXISTS client_files (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        client_id INTEGER NOT NULL,
+        name TEXT NOT NULL,
+        stored_name TEXT NOT NULL,
+        size INTEGER NOT NULL DEFAULT 0,
+        enc INTEGER NOT NULL DEFAULT 0,
+        note TEXT,
+        uploaded_by TEXT,
+        created_at INTEGER NOT NULL,
+        deleted_at INTEGER
+    )");
+    $pdo->exec("CREATE INDEX IF NOT EXISTS idx_client_files_client ON client_files (client_id)");
+
     $pdo->exec("CREATE TABLE IF NOT EXISTS audit_log (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         ts INTEGER NOT NULL,
