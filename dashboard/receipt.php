@@ -28,7 +28,7 @@ $summary = "Receipt $no\n" . $o['file_type'] . ' x ' . (int)$o['file_count'] . "
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap">
-<link rel="stylesheet" href="/dashboard/assets/dash.css?v=8">
+<link rel="stylesheet" href="/dashboard/assets/dash.css?v=9">
 <script src="/dashboard/assets/dash.js?v=7" defer></script>
 </head>
 <body class="receipt-page">

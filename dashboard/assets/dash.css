@@ -9,7 +9,9 @@ h1,h2,h3{color:var(--ink);margin:0;line-height:1.25}
 img{max-width:100%}
 
 /* sidebar */
-.side{position:fixed;inset:0 auto 0 0;width:248px;background:linear-gradient(180deg,var(--ink),#06407e);color:#fff;display:flex;flex-direction:column;padding:18px 14px;z-index:40;transition:transform .25s}
+.side{position:fixed;inset:0 auto 0 0;width:248px;background:linear-gradient(180deg,var(--ink),#06407e);color:#fff;display:flex;flex-direction:column;padding:18px 14px;z-index:40;transition:transform .25s;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.35) transparent}
+.side::-webkit-scrollbar{width:8px}.side::-webkit-scrollbar-thumb{background:rgba(255,255,255,.3);border-radius:8px}
+.side nav,.side-foot{flex-shrink:0}
 .brand{display:flex;align-items:center;gap:11px;padding:6px 8px 20px;color:#fff;text-decoration:none!important}
 .brand img{border-radius:50%;background:#fff}
 .brand strong{display:block;font-size:15px;font-weight:600;line-height:1.2}
