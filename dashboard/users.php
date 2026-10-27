@@ -42,6 +42,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             audit('password reset', 'user #' . $uid);
             flash('Password reset.');
         }
+    } elseif ($do === 'rename' && $uid) {
+        $new = strtolower(trim((string)($_POST['new_username'] ?? '')));
+        $mePw = $pdo->prepare('SELECT password_hash FROM users WHERE id = ?'); $mePw->execute([$me]);
+        if (!password_verify((string)($_POST['current_password'] ?? ''), (string)$mePw->fetchColumn())) {
+            flash('Your password is incorrect. The name was not changed.', 'err');
+        } elseif (!preg_match('/^[a-z0-9._-]{3,30}$/', $new)) {
+            flash('Username: 3-30 letters, numbers, dot, dash or underscore.', 'err');
+        } else {
+            $dup = $pdo->prepare('SELECT COUNT(*) FROM users WHERE lower(username) = ? AND id != ?'); $dup->execute([$new, $uid]);
+            if ($dup->fetchColumn()) {
+                flash('That username is already taken.', 'err');
+            } else {
+                $old = $pdo->prepare('SELECT username FROM users WHERE id = ?'); $old->execute([$uid]); $oldName = (string)$old->fetchColumn();
+                $pdo->prepare('UPDATE users SET username = ? WHERE id = ?')->execute([$new, $uid]);
+                if ($uid === (int)$me && isset($_SESSION['user'])) $_SESSION['user']['username'] = $new;
+                audit('username changed', $oldName . ' -> ' . $new);
+                flash('Username changed to "' . $new . '". Use it from the next login.');
+            }
+        }
     } elseif ($do === 'reset2fa' && $uid) {
         $pdo->prepare('UPDATE users SET totp_secret = NULL, totp_enabled = 0, recovery_codes = NULL WHERE id = ?')->execute([$uid]);
         $pdo->prepare('DELETE FROM totp_devices WHERE user_id = ?')->execute([$uid]);
@@ -107,6 +126,18 @@ include __DIR__ . '/includes/layout_top.php';
   </form>
 </section>
 </div>
+<section class="card" style="max-width:640px">
+  <div class="card-head"><h2>Rename an account</h2></div>
+  <form method="post" class="stack">
+    <?php echo csrf_field(); ?><input type="hidden" name="do" value="rename">
+    <div class="row2">
+      <div><label for="rn">Account</label><select id="rn" name="id"><?php foreach ($users as $u): ?><option value="<?php echo (int)$u['id']; ?>"><?php echo e($u['username']); ?></option><?php endforeach; ?></select></div>
+      <div><label for="rnn">New username</label><input id="rnn" name="new_username" required pattern="[A-Za-z0-9._-]{3,30}" autocomplete="off"></div>
+    </div>
+    <div><label for="rnp">Your password (to confirm)</label><input id="rnp" type="password" name="current_password" required autocomplete="current-password" style="max-width:300px"></div>
+    <div><button type="submit" class="ghost">Change username</button></div>
+  </form>
+</section>
 <?php
 $attempts = $pdo->query('SELECT username, ip, ok, note, ts FROM login_log ORDER BY ts DESC, id DESC LIMIT 25')->fetchAll(PDO::FETCH_ASSOC);
 ?>
