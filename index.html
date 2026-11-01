@@ -617,6 +617,72 @@ h3{font-size:1.12rem;font-weight:700}
 
 </style>
 <style id="home-polish">:root{--glass:rgba(255,255,255,.66);--glass-strong:rgba(255,255,255,.82);--glass-line:rgba(255,255,255,.75);--glass-shadow:0 14px 38px -16px rgba(3,43,87,.30),inset 0 1px 0 rgba(255,255,255,.95);--ease:cubic-bezier(.2,.7,.2,1)}html body{background-color:var(--paper,#F4F8FD);background-image:radial-gradient(900px 540px at 6% -8%,rgba(0,68,139,.11),transparent 62%),radial-gradient(760px 480px at 98% 2%,rgba(245,179,1,.14),transparent 62%),radial-gradient(720px 520px at 72% 48%,rgba(123,47,247,.05),transparent 64%),radial-gradient(520px 420px at 4% 80%,rgba(0,68,139,.06),transparent 64%),radial-gradient(rgba(0,68,139,.04) 1px,transparent 1px);background-size:auto,auto,auto,auto,30px 30px}html body .site-header{background:var(--glass);-webkit-backdrop-filter:blur(16px) saturate(1.6);backdrop-filter:blur(16px) saturate(1.6);border:1px solid var(--glass-line);box-shadow:var(--glass-shadow)}html body .site-header.scrolled{background:var(--glass-strong)}.main-nav>a,.main-nav .nav-item>a{position:relative}.main-nav>a::after,.main-nav .nav-item>a::after{content:"";position:absolute;left:.6rem;right:.6rem;bottom:.15rem;height:2px;border-radius:2px;background:linear-gradient(90deg,#F7971E,#ED4E96,#7B2FF7);transform:scaleX(0);transform-origin:left;transition:transform .35s var(--ease)}.main-nav>a:hover::after,.main-nav .nav-item>a:hover::after{transform:scaleX(1)}.main-nav .dropdown{background:var(--glass-strong);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border:1px solid var(--glass-line);box-shadow:var(--glass-shadow);border-radius:16px}html body .hero-quick-services a,html body .service-card,html body .blog-card,html body .info-card,html body .calc-card,html body .faq-list details{background:var(--glass);border:1px solid var(--glass-line);box-shadow:var(--glass-shadow);transition:transform .35s var(--ease),box-shadow .35s var(--ease),background .35s}html body .hero-quick-services a,html body .service-card{-webkit-backdrop-filter:blur(10px) saturate(1.4);backdrop-filter:blur(10px) saturate(1.4)}html body .hero-quick-services a:hover,html body .blog-card:hover,html body .service-card:hover{transform:translateY(-6px);background:var(--glass-strong);box-shadow:0 22px 46px -18px rgba(0,68,139,.40),inset 0 1px 0 #fff}@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){html body .site-header,html body .hero-quick-services a,html body .service-card,.main-nav .dropdown{background:#fff}}@media (min-width:861px){#services .grid-4{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:1.1rem}#services .service-card{min-height:230px;padding:1.8rem 1.7rem}#services .service-card:nth-child(1){grid-column:span 4}#services .service-card:nth-child(2){grid-column:span 2}#services .service-card:nth-child(3){grid-column:span 2}#services .service-card:nth-child(4){grid-column:span 4}#services .service-card:nth-child(1){background:linear-gradient(135deg,#032B57,#1a5fb0);border-color:rgba(255,255,255,.15);-webkit-backdrop-filter:none;backdrop-filter:none}#services .service-card:nth-child(1) h3,#services .service-card:nth-child(1) p{color:#fff}#services .service-card:nth-child(1) p{opacity:.92}#services .service-card:nth-child(1) .read-more{color:#FFD86B}#services .service-card:nth-child(1) .icon{background:rgba(255,255,255,.14);color:#fff}#services .service-card:nth-child(4){background:linear-gradient(135deg,#FFF3D1,#FFD86B);border-color:rgba(245,179,1,.5);-webkit-backdrop-filter:none;backdrop-filter:none}#services .service-card:nth-child(4) h3{color:#032B57}#services .service-card:nth-child(4) p{color:#4a3a05}}html body .btn.primary{background:linear-gradient(135deg,var(--ink-2,#00448B),#1f6fc7);color:#fff;box-shadow:0 14px 28px -14px rgba(0,68,139,.7)}html body .btn.soft{background:var(--glass-strong);border:1px solid var(--glass-line);color:var(--ink,#032B57);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}.btn.primary::before{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.35) 50%,transparent 70%);transform:translateX(-120%);transition:transform .7s var(--ease);pointer-events:none}.btn.primary:hover::before{transform:translateX(120%)}.btn:hover{transform:translateY(-2px)}.hero-banner-card{animation:lmhFloat 7s ease-in-out infinite}@keyframes lmhFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}.section-label{letter-spacing:.14em}img,svg,video,iframe{max-width:100%}@media (max-width:860px){html body .site-header{border-radius:18px}.menu-toggle{min-width:44px;min-height:44px}.main-nav a{min-height:44px;display:flex;align-items:center}.top-bar a,.top-bar-link,.nav-social a,.top-bar-social a,.social-links a,.footer-col a{position:relative}.top-bar a::after,.nav-social a::after,.top-bar-social a::after,.social-links a::after{content:"";position:absolute;inset:-9px}}@media (prefers-reduced-motion:reduce){.btn.primary::before{display:none}}</style>
+<style id="home-compact">
+/* Compact homepage: same content, far less scrolling. Sliders instead of long stacks. */
+html body main>.section:not(.hero),html body main>.journey{padding-top:clamp(1.4rem,3vw,2.2rem);padding-bottom:clamp(1.4rem,3vw,2.2rem)}
+html body main .section-head{margin-bottom:1rem}
+html body main .section-head p{margin-top:.4rem}
+@media (min-width:861px){.hero{min-height:auto;padding-bottom:2.2rem}.hero .scroll-hint{display:none}}
+@media (max-width:860px){.hero{min-height:auto;padding-bottom:1.6rem;gap:1.4rem}.hero .scroll-hint{display:none}.hero-banner-card{display:none}}
+/* proof screenshots: one slider row per block, smaller cards */
+#reviews .shot-rail-wrap~.shot-rail-wrap,#finals-reviews .shot-rail-wrap~.shot-rail-wrap{display:none}
+#reviews .shot-card,#finals-reviews .shot-card{flex-basis:140px}
+#reviews .trust-chips,#finals-reviews .trust-chips{display:none}
+#reviews .trust-banner,#finals-reviews .trust-banner{padding:.7rem 1rem;margin-bottom:.8rem}
+/* results blocks: side by side, small cards */
+html body #achievements .achieve-section,html body #achievements-2026 .achieve-section{padding:1.4rem clamp(1rem,3vw,2rem)}
+html body #achievements-2026{padding-top:0}
+.achieve-grid{grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:1.1rem;margin-top:1rem}
+.achieve-section h2{font-size:clamp(1.3rem,2.6vw,1.8rem)}
+.achieve-section>p{font-size:.92rem;margin-top:.4rem}
+.result-poster img{max-height:300px;object-fit:contain;background:#0b1f3d}
+.cgpa-highlight{grid-template-columns:repeat(2,minmax(0,1fr));gap:.45rem}
+.cgpa-highlight>p,.cgpa-highlight>.achieve-formula,.cgpa-highlight>.achieve-cta{grid-column:1/-1}
+.cgpa-card{padding:.45rem .8rem;gap:.6rem}
+.cgpa-card:hover{transform:none}
+.cgpa-card .cgpa-detail{display:none}
+.cgpa-card .cgpa-score{font-size:1.05rem}
+.achieve-cta{margin-top:.6rem}
+@media (max-width:900px){.achieve-grid{grid-template-columns:1fr}.cgpa-highlight{grid-template-columns:repeat(2,minmax(0,1fr))}}
+/* journey: six short cards instead of a long vertical timeline */
+html body .journey{padding-left:clamp(1rem,4vw,2.4rem);padding-right:clamp(1rem,4vw,2.4rem)}
+.journey .timeline{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.9rem;margin-top:1.2rem;padding-left:0}
+.journey .timeline::before,.journey .timeline-fill{display:none}
+.journey .step{padding:1rem 1.1rem;opacity:1;transform:none;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:14px}
+.journey .step::before{display:none}
+.journey .step h3{font-size:1.02rem}
+.journey .step p{font-size:.88rem}
+@media (max-width:860px){.journey .timeline{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:78%;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:.5rem}.journey .step{scroll-snap-align:start}}
+/* blog: one slider row */
+#blog-preview .blog-grid{display:flex;gap:1rem;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:.7rem;grid-template-columns:none}
+#blog-preview .blog-card{flex:0 0 min(310px,80vw);scroll-snap-align:start}
+#blog-preview .blog-card-link p{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+#blog-preview .blog-card:hover{transform:none}
+/* services and code library a little tighter */
+#services .service-card{min-height:0!important;padding:1.2rem 1.3rem!important}
+#about .section-head,#about p{font-size:.95rem}
+[hidden]{display:none!important}
+/* results area: one tab visible at a time (all content stays in the page) */
+.proof-tabs{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center;max-width:1200px;margin:0 auto;padding:1.4rem clamp(1.1rem,5vw,4rem) 0}
+.proof-tabs button{font:inherit;font-weight:700;font-size:.92rem;padding:.55rem 1.1rem;border-radius:999px;border:1px solid var(--line);background:var(--white);color:var(--ink);cursor:pointer;min-height:44px}
+.proof-tabs button[aria-selected="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.proof-tabs-label{width:100%;text-align:center;font-family:var(--mono);font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-dark,#946200)}
+.achieve-grid>div:first-child{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;align-content:start}
+.achieve-grid>div:first-child .result-poster{margin-top:0!important}
+.achieve-grid>div:first-child:has(.result-poster:only-child){grid-template-columns:1fr}
+.result-poster img{max-height:250px}
+@media (max-width:700px){
+#services .service-card{padding:.9rem 1rem!important}
+#services .service-card p{font-size:.9rem;margin:.3rem 0 .5rem}
+#services .service-card .icon{display:none}
+#about .feature-media,#about picture,#about img{display:none}
+.store-preview-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:.6rem}
+.store-preview-grid>*{padding:.8rem!important}
+#faq details{padding:.7rem .9rem}
+.hero-quick-services{grid-template-columns:1fr 1fr}
+.hero-text{margin:.7rem 0 1rem}
+}
+</style>
 </head>
 <body>
 
@@ -643,14 +709,13 @@ h3{font-size:1.12rem;font-weight:700}
   <button class="menu-toggle" id="menuToggle" aria-label="Open menu" aria-expanded="false" aria-controls="mainNav"><span></span><span></span><span></span></button>
   <nav class="main-nav" id="mainNav" aria-label="Main navigation">
     <a href="/">Home</a>
-    <a href="/about">About</a>
-    <a href="/vu-admission-portal">Admission</a>
     <div class="nav-item"><a href="/services/">Services ▾</a>
       <div class="dropdown">
         <a href="/services/lms-services">LMS Services</a>
         <a href="/services/midterm-files">Midterm Files</a>
         <a href="/services/finalterm-files">Finalterm Files</a>
         <a href="/services/final-year-project">Final Year Project</a>
+        <a href="/services/">All Services</a>
       </div>
     </div>
     <div class="nav-item"><a href="/degrees/">Degrees ▾</a>
@@ -666,14 +731,23 @@ h3{font-size:1.12rem;font-weight:700}
         <a href="/degrees/">View All Degrees</a>
       </div>
     </div>
-    <a href="/results">Results</a>
-    <a href="/reviews">Reviews</a>
-    <a href="/vu-notes">VU Notes</a>
-    <a href="/blog/">Blog</a>
-    <a href="/scheme">Study Scheme</a>
-    <a href="/cgpa-calculator">CGPA Calculator</a>
+    <div class="nav-item"><a href="/vu-notes">Study Help ▾</a>
+      <div class="dropdown">
+        <a href="/vu-notes">VU Notes</a>
+        <a href="/blog/">Blog &amp; Guides</a>
+        <a href="/vu-admission-portal">Admission</a>
+        <a href="/cgpa-calculator">CGPA Calculator</a>
+        <a href="/scheme">Study Scheme</a>
+      </div>
+    </div>
+    <div class="nav-item"><a href="/results">Results ▾</a>
+      <div class="dropdown">
+        <a href="/results">Student Results</a>
+        <a href="/reviews">Reviews</a>
+      </div>
+    </div>
+    <a href="/about">About</a>
     <a href="/contact">Contact</a>
-    
   </nav>
 </header>
 
@@ -755,9 +829,9 @@ h3{font-size:1.12rem;font-weight:700}
 <!-- ================= JOURNEY (scrollytelling) ================= -->
 <section class="journey" id="journey" aria-labelledby="journey-heading">
   <div class="section-head reveal">
-    <p class="section-label">Your Semester, One Scroll</p>
+    <p class="section-label">Your Semester, Step by Step</p>
     <h2 id="journey-heading">From enrollment to graduation, supported at every step.</h2>
-    <p>Keep scrolling. This is how a semester with Nibaha Haq feels: each stage handled, on time, in order.</p>
+    <p>This is how a semester with Nibaha Haq feels: each stage handled, on time, in order.</p>
   </div>
   <div class="timeline" id="timeline">
     <div class="timeline-fill" id="timelineFill"></div>
@@ -1479,5 +1553,18 @@ safe("footer-year", () => {
 });
 </script>
 <script src="/assets/chat-widget.js" defer></script>
+<script id="home-tabs">
+(function(){
+  var ids=["reviews","finals-reviews","achievements","achievements-2026"],labels=["WhatsApp reviews","Finals 2026 reviews","CGPA results","Spring 2026 results"];
+  var secs=ids.map(function(i){return document.getElementById(i);});
+  if(secs.some(function(x){return !x;}))return;
+  var bar=document.createElement("div");bar.className="proof-tabs";bar.setAttribute("role","tablist");bar.setAttribute("aria-label","Student results and reviews");
+  var lab=document.createElement("p");lab.className="proof-tabs-label";lab.textContent="Real results and reviews";bar.appendChild(lab);
+  var btns=labels.map(function(t,i){var b=document.createElement("button");b.type="button";b.setAttribute("role","tab");b.textContent=t;b.addEventListener("click",function(){show(i);});bar.appendChild(b);return b;});
+  secs[0].parentNode.insertBefore(bar,secs[0]);
+  function show(n){secs.forEach(function(s,i){s.hidden=i!==n;});btns.forEach(function(b,i){b.setAttribute("aria-selected",i===n?"true":"false");});}
+  show(0);
+})();
+</script>
 </body>
 </html>
