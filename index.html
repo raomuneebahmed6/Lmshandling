@@ -683,6 +683,7 @@ html body .journey{padding-left:clamp(1rem,4vw,2.4rem);padding-right:clamp(1rem,
 .hero-text{margin:.7rem 0 1rem}
 }
 </style>
+<style id="nav-center">@media (min-width:861px){.site-header{display:grid;grid-template-columns:minmax(max-content,1fr) auto minmax(0,1fr);align-items:center;column-gap:1rem}.site-header .brand{justify-self:start}.site-header .main-nav{justify-self:center}.site-header .menu-toggle{display:none}}</style>
 </head>
 <body>
 
@@ -1552,7 +1553,7 @@ safe("footer-year", () => {
   if (y) y.textContent = new Date().getFullYear();
 });
 </script>
-<script src="/assets/chat-widget.js" defer></script>
+<script src="/assets/chat-widget.js?v=2" defer></script>
 <script id="home-tabs">
 (function(){
   var ids=["reviews","finals-reviews","achievements","achievements-2026"],labels=["WhatsApp reviews","Finals 2026 reviews","CGPA results","Spring 2026 results"];

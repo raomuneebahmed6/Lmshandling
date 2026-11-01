@@ -576,6 +576,7 @@ h3{font-size:1.12rem;font-weight:700}
 @media(max-width:900px){.achieve-grid{grid-template-columns:1fr}}
 @media(max-width:600px){.achieve-grid{gap:1.2rem}}
 </style>
+<style id="nav-center">@media (min-width:861px){.site-header{display:grid;grid-template-columns:minmax(max-content,1fr) auto minmax(0,1fr);align-items:center;column-gap:1rem}.site-header .brand{justify-self:start}.site-header .main-nav{justify-self:center}.site-header .menu-toggle{display:none}}</style>
 </head>
 <body>
 
@@ -1136,6 +1137,6 @@ safe("footer-year", () => {
   if (y) y.textContent = new Date().getFullYear();
 });
 </script>
-<script src="/assets/chat-widget.js" defer></script>
+<script src="/assets/chat-widget.js?v=2" defer></script>
 </body>
 </html>

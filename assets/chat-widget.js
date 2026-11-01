@@ -86,17 +86,22 @@
     "animation:lms-pulse-ring 2.4s ease-out infinite}" +
     "#lms-chat-toggle:hover{transform:scale(1.07)}" +
     "#lms-chat-toggle.lms-hide{transform:scale(0);opacity:0;pointer-events:none}" +
+    "#lms-chat-dismiss{position:fixed;bottom:calc(5.4rem + 44px);right:.9rem;z-index:92;width:24px;height:24px;border-radius:50%;border:2px solid #fff;" +
+    "background:#475569;color:#fff;font-size:12px;line-height:1;display:grid;place-items:center;cursor:pointer;padding:0;box-shadow:0 4px 10px rgba(0,0,0,.25)}" +
+    "#lms-chat-dismiss:hover{background:#B91C1C}" +
+    "#lms-chat-dismiss.lms-hide{display:none}" +
+    "@media (max-width:600px){#lms-chat-dismiss{bottom:calc(4.7rem + 38px);right:.55rem}}" +
     "#lms-chat-toggle .lms-badge{position:absolute;top:-2px;right:-2px;width:16px;height:16px;border-radius:50%;background:#F5B301;" +
     "border:2px solid #fff}" +
     "@keyframes lms-pulse-ring{0%{transform:scale(.9);opacity:.7}70%{transform:scale(1.25);opacity:0}100%{opacity:0}}" +
     "@media (max-width:600px){#lms-chat-toggle{bottom:4.7rem;right:1rem;width:52px;height:52px;font-size:22px}}" +
-    "#lms-chat-panel{position:fixed;bottom:5.4rem;right:1.3rem;z-index:95;width:372px;max-width:calc(100vw - 2rem);" +
-    "height:min(560px,calc(100vh - 9rem));background:#FFFFFF;border-radius:22px;box-shadow:0 22px 60px -16px rgba(0,68,139,.45);" +
+    "#lms-chat-panel{position:fixed;bottom:5.4rem;right:1.3rem;z-index:130;width:372px;max-width:calc(100vw - 2rem);" +
+    "height:min(560px,calc(100vh - 13rem));background:#FFFFFF;border-radius:22px;box-shadow:0 22px 60px -16px rgba(0,68,139,.45);" +
     "display:none;flex-direction:column;overflow:hidden;font-family:'Poppins',system-ui,sans-serif;border:1px solid rgba(0,68,139,.14);" +
     "opacity:0;transform:translateY(14px) scale(.97);transition:opacity .22s ease,transform .22s ease}" +
     "#lms-chat-panel.lms-open{display:flex}" +
     "#lms-chat-panel.lms-show{opacity:1;transform:translateY(0) scale(1)}" +
-    "@media (max-width:600px){#lms-chat-panel{right:.6rem;left:.6rem;width:auto;bottom:4.7rem;height:min(72vh,calc(100vh - 7.5rem))}}" +
+    "@media (max-width:600px){#lms-chat-panel{right:.6rem;left:.6rem;width:auto;bottom:4.7rem;height:min(72vh,calc(100vh - 12rem))}}" +
     "#lms-chat-accent{height:4px;flex:0 0 auto;background:linear-gradient(90deg,#F5B301,#F7971E,#ED4E96,#00448B)}" +
     "#lms-chat-head{background:linear-gradient(90deg,#032B57,#00448B);color:#fff;padding:1rem 1.1rem;display:flex;align-items:center;gap:.7rem;flex:0 0 auto}" +
     "#lms-chat-head .lms-avatar{width:40px;height:40px;border-radius:50%;flex:0 0 auto;padding:2px;" +
@@ -165,6 +170,13 @@
     toggle.setAttribute("aria-label", "Chat with us");
     toggle.innerHTML = "💬<span class=\"lms-badge\"></span>";
     document.body.appendChild(toggle);
+    var dismiss = document.createElement("button");
+    dismiss.id = "lms-chat-dismiss";
+    dismiss.type = "button";
+    dismiss.setAttribute("aria-label", "Hide the chat button");
+    dismiss.title = "Hide chat";
+    dismiss.innerHTML = "&#10005;";
+    document.body.appendChild(dismiss);
 
     var panel = document.createElement("div");
     panel.id = "lms-chat-panel";
@@ -183,7 +195,7 @@
       "</form>";
     document.body.appendChild(panel);
 
-    return { toggle: toggle, panel: panel, body: panel.querySelector("#lms-chat-body"),
+    return { toggle: toggle, dismiss: dismiss, panel: panel, body: panel.querySelector("#lms-chat-body"),
       chips: panel.querySelector("#lms-chat-chips"), form: panel.querySelector("#lms-chat-form"),
       input: panel.querySelector("#lms-chat-input"), close: panel.querySelector("#lms-chat-close") };
   }
@@ -222,7 +234,13 @@
     return out;
   }
 
+  var HIDE_KEY = "lmsChatHiddenUntil";
+  function chatHidden() {
+    try { return Number(localStorage.getItem(HIDE_KEY) || 0) > Date.now(); } catch (e) { return false; }
+  }
+
   function init() {
+    if (chatHidden()) return;
     injectStyle();
     var dom = buildDom();
     var faqs = null;
@@ -236,16 +254,23 @@
         dom.panel.classList.add("lms-open");
         requestAnimationFrame(function () { dom.panel.classList.add("lms-show"); });
         dom.toggle.classList.add("lms-hide");
+        dom.dismiss.classList.add("lms-hide");
         dom.input.focus();
       } else {
         dom.panel.classList.remove("lms-show");
         dom.toggle.classList.remove("lms-hide");
+        dom.dismiss.classList.remove("lms-hide");
         setTimeout(function () { dom.panel.classList.remove("lms-open"); }, 220);
       }
     }
 
     dom.toggle.addEventListener("click", function () { if (loadFaqsRef) loadFaqsRef(); setOpen(!isOpen); });
     dom.close.addEventListener("click", function () { setOpen(false); });
+    dom.dismiss.addEventListener("click", function () {
+      try { localStorage.setItem(HIDE_KEY, String(Date.now() + 3 * 86400000)); } catch (e) {}
+      dom.toggle.remove(); dom.dismiss.remove(); dom.panel.remove();
+    });
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape" && isOpen) setOpen(false); });
 
     function sendQuery(text) {
       dom.input.value = "";
