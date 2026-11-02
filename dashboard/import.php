@@ -139,7 +139,7 @@ include __DIR__ . '/includes/layout_top.php';
 <?php endif; ?>
 <div class="grid2">
 <section class="card">
-  <div class="card-head"><h2>Import contacts</h2></div>
+  <div class="card-head"><h2>Import contacts</h2><a class="btn ghost sm" href="/dashboard/import_services">Import services (CSV)</a></div>
   <p class="muted" style="margin-top:0">Upload a <strong>.vcf</strong> (phone contacts export) or a <strong>.csv</strong> (Google Contacts, Excel, Sheets). Names and phone numbers are read automatically. Numbers that already exist (even written differently, like 0300-1234567 and +92 300 1234567) are skipped. New people come in as <em>Leads</em>, unless the file has a <strong>stage</strong> column (lead, active, completed, lost). A <strong>VU ID</strong> column is also read.</p>
   <form method="post" enctype="multipart/form-data" class="stack">
     <?php echo csrf_field(); ?>
