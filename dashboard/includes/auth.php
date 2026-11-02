@@ -325,6 +325,29 @@ function second_factor_ok($user, $input) {
 // ---------- CRM helpers ----------
 const STAGES = ['lead' => 'Lead', 'active' => 'Active', 'completed' => 'Completed', 'lost' => 'Lost'];
 const FILE_TYPES = ['Midterm Files', 'Finalterm Files', 'Notes', 'FYP / GDB', 'LMS Handling', 'Other'];
+const SERVICE_PLANS = ['one-time' => 'One-time', 'monthly' => 'Monthly', 'midterm' => 'Mid-term package', 'finalterm' => 'Final-term package', 'semester' => 'Full semester'];
+
+// whole months between two dates, counting both end months (2026-10-05 .. 2026-12-20 = 3)
+function months_between($start, $end) {
+    if (!valid_date($start) || !valid_date($end) || $end < $start) return 0;
+    $a = explode('-', $start); $b = explode('-', $end);
+    return (((int)$b[0] - (int)$a[0]) * 12) + ((int)$b[1] - (int)$a[1]) + 1;
+}
+
+// month-by-month schedule of a monthly plan; payments are applied to the oldest month first
+function monthly_schedule($start, $months, $fee, $paid) {
+    $rows = [];
+    $left = (float)$paid;
+    if (!valid_date($start) || $months < 1 || $fee <= 0) return $rows;
+    $y = (int)substr($start, 0, 4); $m = (int)substr($start, 5, 2);
+    for ($i = 0; $i < min($months, 60); $i++) {
+        $take = min($left, (float)$fee);
+        $left -= $take;
+        $rows[] = ['month' => sprintf('%04d-%02d', $y, $m), 'due' => (float)$fee, 'paid' => $take, 'state' => $take >= $fee ? 'paid' : ($take > 0 ? 'partial' : 'unpaid')];
+        if (++$m > 12) { $m = 1; $y++; }
+    }
+    return $rows;
+}
 const ACTIVITY_KINDS = ['note' => 'Note', 'call' => 'Call', 'whatsapp' => 'WhatsApp', 'payment' => 'Payment'];
 const ORDER_STATUSES = ['pending' => 'Pending', 'preparing' => 'Preparing', 'sent' => 'Sent', 'completed' => 'Completed'];
 const PAY_METHODS = ['Cash', 'JazzCash', 'Easypaisa', 'Bank transfer', 'Other'];

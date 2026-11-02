@@ -191,7 +191,7 @@ if ($action === 'view' && $id) {
       <?php if ($wa): ?><a class="btn wa sm" target="_blank" rel="noopener" href="https://wa.me/<?php echo e($wa); ?>?text=<?php echo rawurlencode($msgText); ?>">WhatsApp</a><?php endif; ?>
       <a class="btn ghost sm" href="/dashboard/statement?client=<?php echo $id; ?>" target="_blank">Statement</a>
       <a class="btn ghost sm" href="/dashboard/clients?action=edit&amp;id=<?php echo $id; ?>">Edit</a>
-      <?php if (is_admin()): ?><form method="post" class="inline" data-confirm="Delete this client and all their orders and history? This cannot be undone.">
+      <?php if (is_admin()): ?><form method="post" class="inline" data-confirm="Delete this client and all their services and history? This cannot be undone.">
         <?php echo csrf_field(); ?><input type="hidden" name="do" value="delete"><input type="hidden" name="id" value="<?php echo $id; ?>">
         <button type="submit" class="danger sm">Delete</button>
       </form><?php endif; ?>
@@ -226,17 +226,17 @@ $clientFiles = $fq->fetchAll(PDO::FETCH_ASSOC);
 
 <div class="grid2">
   <section class="card">
-    <div class="card-head"><h2>Orders</h2><a href="/dashboard/orders?action=new&amp;client_id=<?php echo $id; ?>" class="btn gold sm">+ New order</a></div>
-    <?php if (!$orders): ?><div class="empty">No orders yet for this client.</div><?php else: ?>
+    <div class="card-head"><h2>Services taken</h2><a href="/dashboard/orders?action=new&amp;client_id=<?php echo $id; ?>" class="btn gold sm">+ Add service</a></div>
+    <?php if (!$orders): ?><div class="empty">No services added yet. Use "+ Add service" for what this client took (monthly, mid-term, final-term or one-time).</div><?php else: ?>
     <div class="tablewrap"><table>
-      <thead><tr><th>Date</th><th>Type</th><th class="num">Files</th><th class="num">Amount</th><th>Payment</th><th>Status</th><th></th></tr></thead>
+      <thead><tr><th>Service</th><th>Plan / dates</th><th class="num">Amount</th><th class="num">Received</th><th>Payment</th><th>Work</th><th></th></tr></thead>
       <tbody>
       <?php foreach ($orders as $o): ?>
         <tr>
-          <td><?php echo e(substr($o['order_date'], 0, 10)); ?></td>
-          <td><?php echo e($o['file_type']); ?></td>
-          <td class="num"><?php echo (int)$o['file_count']; ?></td>
+          <td><strong><?php echo e($o['course_code'] ?: $o['file_type']); ?></strong><?php echo $o['course_code'] ? '<br><span class="muted">' . e($o['file_type']) . '</span>' : ''; ?></td>
+          <td><?php echo e(SERVICE_PLANS[$o['plan'] ?? 'one-time'] ?? 'One-time'); ?><br><span class="muted"><?php echo ($o['plan'] ?? '') === 'monthly' && $o['start_date'] ? e($o['start_date']) . ' to ' . e($o['end_date'] ?: 'open') . ' &middot; ' . (int)$o['months'] . ' mo' : ($o['exam_date'] ? 'Exam ' . e($o['exam_date']) : e(substr($o['order_date'], 0, 10))); ?></span></td>
           <td class="num"><?php echo $o['amount'] !== null ? e(number_format($o['amount'])) : '-'; ?></td>
+          <td class="num"><?php echo e(number_format($o['paid_amount'])); ?></td>
           <td><span class="badge b-<?php echo e($o['payment_status']); ?>"><?php echo e($o['payment_status']); ?></span></td>
           <td><span class="badge b-<?php echo e($o['status']); ?>"><?php echo e($o['status']); ?></span></td>
           <td><a class="btn ghost sm" href="/dashboard/orders?action=edit&amp;id=<?php echo (int)$o['id']; ?>">Edit</a></td>
@@ -361,7 +361,7 @@ include __DIR__ . '/includes/layout_top.php';
     <div class="empty"><?php echo ($search || $stageF) ? 'No clients match this filter.' : 'No clients yet. Click "+ Client" to add the first one.'; ?></div>
   <?php else: ?>
   <div class="tablewrap"><table>
-    <thead><tr><th>Name</th><th>WhatsApp</th><th>Course</th><th>Stage</th><th class="num">Orders</th><th class="num">Owes</th><th>Follow-up</th></tr></thead>
+    <thead><tr><th>Name</th><th>WhatsApp</th><th>Course</th><th>Stage</th><th class="num">Services</th><th class="num">Owes</th><th>Follow-up</th></tr></thead>
     <tbody>
     <?php foreach ($clients as $c): $wa = wa_number($c['whatsapp_number']); ?>
       <tr data-href="/dashboard/clients?action=view&amp;id=<?php echo (int)$c['id']; ?>">

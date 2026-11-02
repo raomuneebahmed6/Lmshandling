@@ -38,19 +38,28 @@ arsort($byCat);
 $s = $pdo->prepare('SELECT COALESCE(SUM(amount),0) FROM payments WHERE substr(paid_at,1,7) = ?'); $s->execute([$m]);
 $received = (float)$s->fetchColumn();
 $profit = $received - $total;
+// monthly plans running in this month: what should come in
+$exp = 0.0; $expN = 0;
+foreach ($pdo->query("SELECT monthly_fee, start_date, end_date, months FROM orders WHERE plan = 'monthly' AND monthly_fee > 0 AND start_date IS NOT NULL") as $mp) {
+    $startM = substr($mp['start_date'], 0, 7);
+    $endM = $mp['end_date'] ? substr($mp['end_date'], 0, 7) : null;
+    if (!$endM && (int)$mp['months'] > 0) { $endM = date('Y-m', strtotime($mp['start_date'] . ' +' . ((int)$mp['months'] - 1) . ' months')); }
+    if ($m >= $startM && ($endM === null || $m <= $endM)) { $exp += (float)$mp['monthly_fee']; $expN++; }
+}
 
-$pageTitle = 'Expenses';
+$pageTitle = 'Accounts';
 $page = 'expenses';
 include __DIR__ . '/includes/layout_top.php';
 ?>
 <div class="stats">
-  <div class="stat"><div class="num"><?php echo e(money($received)); ?></div><div class="label">Received in <?php echo e($m); ?></div></div>
+  <div class="stat"><div class="num"><?php echo e(money($received)); ?></div><div class="label">Received from clients in <?php echo e($m); ?></div></div>
   <div class="stat"><div class="num"><?php echo e(money($total)); ?></div><div class="label">Spent in <?php echo e($m); ?></div></div>
   <div class="stat<?php echo $profit < 0 ? ' alert' : ''; ?>"><div class="num"><?php echo e(money($profit)); ?></div><div class="label">Profit (received minus spent)</div></div>
+  <div class="stat"><div class="num"><?php echo e(money($exp)); ?></div><div class="label">Monthly fees due this month (<?php echo (int)$expN; ?> clients)</div></div>
 </div>
 <div class="grid2">
   <section class="card">
-    <div class="card-head"><h2>Expenses</h2><form method="get" class="inline"><input type="month" name="m" value="<?php echo e($m); ?>" data-autosubmit aria-label="Month" style="width:auto"></form></div>
+    <div class="card-head"><h2>Money out (expenses)</h2><form method="get" class="inline"><input type="month" name="m" value="<?php echo e($m); ?>" data-autosubmit aria-label="Month" style="width:auto"></form></div>
     <?php if (!$rows): ?><div class="empty">No expenses recorded for this month.</div><?php else: ?>
     <div class="tablewrap"><table><thead><tr><th>Date</th><th>Category</th><th>Note</th><th class="num">Amount</th><th></th></tr></thead><tbody>
       <?php foreach ($rows as $r): ?><tr><td><?php echo e($r['spent_at']); ?></td><td><?php echo e($r['category']); ?></td><td class="muted"><?php echo e($r['note']); ?></td><td class="num"><?php echo e(number_format($r['amount'])); ?></td>

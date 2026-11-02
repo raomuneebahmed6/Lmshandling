@@ -44,7 +44,7 @@ include __DIR__ . '/includes/layout_top.php';
 ?>
 <div class="stats">
   <div class="stat"><div class="num"><?php echo $totalClients; ?></div><div class="label">Clients (<?php echo $activeClients; ?> active, <?php echo $leads; ?> leads)</div></div>
-  <div class="stat"><div class="num"><?php echo $pendingOrders; ?></div><div class="label">Pending orders</div></div>
+  <div class="stat"><div class="num"><?php echo $pendingOrders; ?></div><div class="label">Services pending</div></div>
   <div class="stat"><div class="num"><?php echo e(money($monthRevenue)); ?></div><div class="label">Paid this month</div></div>
   <div class="stat<?php echo $outstanding > 0 ? ' alert' : ''; ?>"><div class="num"><?php echo e(money($outstanding)); ?></div><div class="label">Outstanding (<?php echo $unpaidCount; ?> orders)</div></div>
   <div class="stat"><div class="num"><?php echo $filesTotal; ?></div><div class="label">Files sent in total</div></div>
@@ -113,9 +113,9 @@ if ($dlRows): ?>
 <?php endif; ?>
 
 <section class="card" style="margin-top:18px">
-  <div class="card-head"><h2>Recent orders</h2><a class="btn ghost sm" href="/dashboard/orders">All orders</a></div>
+  <div class="card-head"><h2>Recent services</h2><a class="btn ghost sm" href="/dashboard/orders">All services</a></div>
   <?php if (!$recent): ?>
-    <div class="empty">No orders yet. Add your first client, then create an order for them.</div>
+    <div class="empty">No services yet. Open a client and use "+ Add service".</div>
   <?php else: ?>
   <div class="tablewrap"><table>
     <thead><tr><th>Date</th><th>Client</th><th>Type</th><th class="num">Files</th><th class="num">Amount</th><th>Payment</th><th>Status</th></tr></thead>

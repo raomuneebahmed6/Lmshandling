@@ -5,14 +5,13 @@ $flash = take_flash();
 $nav = [
     'home' => ['/dashboard/', 'Home', '<path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>', false],
     'clients' => ['/dashboard/clients', 'Clients', '<circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-6 7-6s7 2 7 6"/><path d="M16 4a4 4 0 0 1 0 8M22 21c0-3-2-5-5-5.7"/>', false],
-    'orders' => ['/dashboard/orders', 'Orders', '<path d="M6 2l-3 4v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18M16 10a4 4 0 0 1-8 0"/>', false],
     'files' => ['/dashboard/files', 'Files', '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h6"/>', false],
     'batches' => ['/dashboard/batches', 'Batches', '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 17.5h7M17.5 14v7"/>', false],
     'deadlines' => ['/dashboard/deadlines', 'Deadlines', '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>', false],
     'followups' => ['/dashboard/followups', 'Follow-ups', '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M9 16l2 2 4-4"/>', false],
     'board' => ['/dashboard/board', 'Board', '<rect x="3" y="3" width="5" height="18" rx="1"/><rect x="10" y="3" width="5" height="12" rx="1"/><rect x="17" y="3" width="4" height="8" rx="1"/>', false],
     'reports' => ['/dashboard/reports', 'Reports', '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>', true],
-    'expenses' => ['/dashboard/expenses', 'Expenses', '<path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>', true],
+    'expenses' => ['/dashboard/expenses', 'Accounts', '<path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>', true],
     'activity' => ['/dashboard/activity', 'Activity', '<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>', true],
     'users' => ['/dashboard/users', 'Team', '<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>', true],
     'backup' => ['/dashboard/backup', 'Backup', '<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/>', true],
@@ -65,7 +64,6 @@ $nav = [
     <form class="topsearch" method="get" action="/dashboard/search" role="search"><input type="search" name="q" placeholder="Search clients, orders..." aria-label="Search" value="<?php echo e($_GET['q'] ?? ''); ?>"></form>
     <div class="top-actions">
       <a class="btn ghost sm" href="/dashboard/clients?action=new">+ Client</a>
-      <a class="btn sm" href="/dashboard/orders?action=new">+ Order</a>
     </div>
   </header>
   <main class="wrap">

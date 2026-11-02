@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $oid = (int)($_POST['id'] ?? 0);
 
     if ($do === 'delete' && $oid) {
-        if (!is_admin()) { http_response_code(403); exit('Only the admin can delete orders.'); }
+        if (!is_admin()) { http_response_code(403); exit('Only the admin can delete services.'); }
         $s = $pdo->prepare('SELECT client_id FROM orders WHERE id=?');
         $s->execute([$oid]);
         $cid = $s->fetchColumn();
@@ -27,10 +27,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($orow) {
             $ps = $pdo->prepare('SELECT * FROM payments WHERE order_id=?'); $ps->execute([$oid]);
             trash_put('order', ($orow['course_code'] ?: $orow['file_type']) . ' #' . $oid, ['order' => $orow, 'payments' => $ps->fetchAll(PDO::FETCH_ASSOC)]);
-            audit('order deleted', '#' . $oid . ' ' . ($orow['course_code'] ?: $orow['file_type']));
+            audit('service deleted', '#' . $oid . ' ' . ($orow['course_code'] ?: $orow['file_type']));
         }
         $pdo->prepare('DELETE FROM orders WHERE id=?')->execute([$oid]);
-        flash('Order deleted. The admin can restore it from Activity > Trash for 90 days.');
+        flash('Service deleted. The admin can restore it from Activity > Trash for 90 days.');
         redirect($cid ? '/dashboard/clients?action=view&id=' . $cid : '/dashboard/orders');
     }
 
@@ -46,8 +46,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $pdo->prepare('UPDATE orders SET status=? WHERE id=?')->execute([$do, $oid]);
         }
-        audit('order ' . $do, '#' . $oid);
-        flash('Order updated.');
+        audit('service ' . $do, '#' . $oid);
+        flash('Service updated.');
         $b = (string)($_POST['back'] ?? '');
         redirect(strpos($b, '/dashboard/') === 0 ? $b : '/dashboard/orders');
     }
@@ -78,6 +78,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $course = clean_course($_POST['course_code'] ?? '');
     $exam = valid_date($_POST['exam_date'] ?? '') ? $_POST['exam_date'] : null;
     $filesNote = mb_substr(trim($_POST['files_note'] ?? ''), 0, 500);
+    $plan = array_key_exists($_POST['plan'] ?? '', SERVICE_PLANS) ? $_POST['plan'] : 'one-time';
+    $startD = valid_date($_POST['start_date'] ?? '') ? $_POST['start_date'] : null;
+    $endD = valid_date($_POST['end_date'] ?? '') ? $_POST['end_date'] : null;
+    $mfee = ($_POST['monthly_fee'] ?? '') !== '' ? max(0, (float)$_POST['monthly_fee']) : null;
+    $months = null;
+    if ($plan === 'monthly') {
+        $months = ($startD && $endD) ? months_between($startD, $endD) : max(1, (int)($_POST['months'] ?? 1));
+        if ($amount === null && $mfee !== null && $months > 0) $amount = $mfee * $months; // total = monthly fee x months, unless you typed your own total
+    }
 
     $exists = $pdo->prepare('SELECT COUNT(*) FROM clients WHERE id=?');
     $exists->execute([$clientId]);
@@ -85,41 +94,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $err = 'Please choose a client.';
         $action = $oid ? 'edit' : 'new';
         $id = $oid;
+    } elseif ($plan === 'monthly' && ($startD === null || $mfee === null || $mfee <= 0)) {
+        $err = 'A monthly plan needs a start date and a monthly fee.';
+        $action = $oid ? 'edit' : 'new';
+        $id = $oid;
     } elseif ($fileType === '') {
-        $err = 'Please choose a file type.';
+        $err = 'Please choose a service.';
         $action = $oid ? 'edit' : 'new';
         $id = $oid;
     } elseif ($oid) {
-        $pdo->prepare('UPDATE orders SET client_id=?, file_type=?, file_count=?, amount=?, status=?, notes=?, order_date=?, course_code=?, exam_date=?, files_note=? WHERE id=?')
-            ->execute([$clientId, $fileType, $fileCount, $amount, $st, $notes, $orderDate, $course, $exam, $filesNote, $oid]);
+        $pdo->prepare('UPDATE orders SET client_id=?, file_type=?, file_count=?, amount=?, status=?, notes=?, order_date=?, course_code=?, exam_date=?, files_note=?, plan=?, start_date=?, end_date=?, monthly_fee=?, months=? WHERE id=?')
+            ->execute([$clientId, $fileType, $fileCount, $amount, $st, $notes, $orderDate, $course, $exam, $filesNote, $plan, $startD, $endD, $mfee, $months, $oid]);
         recalc_order($pdo, $oid);
-        audit('order updated', '#' . $oid);
-        flash('Order saved.');
+        audit('service updated', '#' . $oid);
+        flash('Service saved.');
         redirect('/dashboard/orders?action=edit&id=' . $oid);
     } else {
-        $pdo->prepare('INSERT INTO orders (client_id, file_type, file_count, amount, status, notes, order_date, course_code, exam_date, files_note) VALUES (?,?,?,?,?,?,?,?,?,?)')
-            ->execute([$clientId, $fileType, $fileCount, $amount, $st, $notes, $orderDate, $course, $exam, $filesNote]);
+        $pdo->prepare('INSERT INTO orders (client_id, file_type, file_count, amount, status, notes, order_date, course_code, exam_date, files_note, plan, start_date, end_date, monthly_fee, months) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)')
+            ->execute([$clientId, $fileType, $fileCount, $amount, $st, $notes, $orderDate, $course, $exam, $filesNote, $plan, $startD, $endD, $mfee, $months]);
         $newId = (int)$pdo->lastInsertId();
         $got = ($_POST['paid_now'] ?? '') !== '' ? (float)$_POST['paid_now'] : 0;
         if ($got > 0) add_payment($pdo, $newId, $got, $_POST['method'] ?? '', $orderDate, 'Received with the order');
         else recalc_order($pdo, $newId);
         // a new order turns a lead into an active client
         $pdo->prepare("UPDATE clients SET stage='active' WHERE id=? AND stage='lead'")->execute([$clientId]);
-        audit('order added', '#' . $newId . ' ' . ($course ?: $fileType));
-        flash('Order added.');
+        audit('service added', '#' . $newId . ' ' . ($course ?: $fileType));
+        flash('Service added.');
         redirect('/dashboard/clients?action=view&id=' . $clientId);
     }
 }
 
 $clients = $pdo->query('SELECT id, name FROM clients ORDER BY name COLLATE NOCASE')->fetchAll(PDO::FETCH_ASSOC);
 $courseList = $pdo->query("SELECT DISTINCT course_code FROM orders WHERE course_code IS NOT NULL AND course_code != '' ORDER BY course_code")->fetchAll(PDO::FETCH_COLUMN);
-$pageTitle = 'Orders';
+$pageTitle = 'Services';
 $page = 'orders';
 
 if ($action === 'new' || $action === 'edit') {
     $order = ['id' => '', 'client_id' => (int)($_GET['client_id'] ?? 0), 'file_type' => FILE_TYPES[0], 'file_count' => 1, 'amount' => '',
         'payment_status' => 'unpaid', 'paid_amount' => 0, 'status' => 'pending', 'notes' => '', 'order_date' => date('Y-m-d'),
-        'course_code' => '', 'exam_date' => '', 'files_note' => ''];
+        'course_code' => '', 'exam_date' => '', 'files_note' => '', 'plan' => 'one-time', 'start_date' => '', 'end_date' => '', 'monthly_fee' => '', 'months' => ''];
     $pays = [];
     if ($id) {
         $s = $pdo->prepare('SELECT * FROM orders WHERE id=?');
@@ -133,9 +146,9 @@ if ($action === 'new' || $action === 'edit') {
         }
     }
     if ($err) {
-        foreach (['client_id', 'file_type', 'file_count', 'amount', 'status', 'notes', 'order_date', 'course_code', 'exam_date', 'files_note'] as $f) $order[$f] = $_POST[$f] ?? $order[$f];
+        foreach (['client_id', 'file_type', 'file_count', 'amount', 'status', 'notes', 'order_date', 'course_code', 'exam_date', 'files_note', 'plan', 'start_date', 'end_date', 'monthly_fee'] as $f) $order[$f] = $_POST[$f] ?? $order[$f];
     }
-    $pageTitle = $order['id'] ? 'Edit order' : 'New order';
+    $pageTitle = $order['id'] ? 'Edit service' : 'New service';
     include __DIR__ . '/includes/layout_top.php';
     ?>
 <div class="grid2">
@@ -149,20 +162,30 @@ if ($action === 'new' || $action === 'edit') {
         <?php foreach ($clients as $c): ?><option value="<?php echo (int)$c['id']; ?>"<?php echo (int)$order['client_id'] === (int)$c['id'] ? ' selected' : ''; ?>><?php echo e($c['name']); ?></option><?php endforeach; ?>
       </select></div>
     <div class="row2">
-      <div><label for="ft">File type</label>
+      <div><label for="ft">Service</label>
         <select id="ft" name="file_type"><?php foreach (FILE_TYPES as $ft): ?><option<?php echo $order['file_type'] === $ft ? ' selected' : ''; ?>><?php echo e($ft); ?></option><?php endforeach; ?></select></div>
       <div><label for="cc">Course code</label><input id="cc" name="course_code" list="courses" value="<?php echo e($order['course_code']); ?>" placeholder="e.g. STA301" autocomplete="off">
         <datalist id="courses"><?php foreach ($courseList as $cl): ?><option value="<?php echo e($cl); ?>"><?php endforeach; ?></datalist></div>
     </div>
     <div class="row2">
+      <div><label for="pl">Plan</label>
+        <select id="pl" name="plan"><?php foreach (SERVICE_PLANS as $k => $v): ?><option value="<?php echo e($k); ?>"<?php echo ($order['plan'] ?? 'one-time') === $k ? ' selected' : ''; ?>><?php echo e($v); ?></option><?php endforeach; ?></select></div>
+      <div><label for="mf">Monthly fee (Rs.) <span class="muted">for monthly plans</span></label><input id="mf" type="number" name="monthly_fee" min="0" step="1" value="<?php echo e($order['monthly_fee'] ?? ''); ?>"></div>
+    </div>
+    <div class="row2">
+      <div><label for="sd">Start date</label><input id="sd" type="date" name="start_date" value="<?php echo e($order['start_date'] ?? ''); ?>"></div>
+      <div><label for="en">End date</label><input id="en" type="date" name="end_date" value="<?php echo e($order['end_date'] ?? ''); ?>"></div>
+    </div>
+    <p class="muted" style="margin:-4px 0 0">Monthly: the total is monthly fee x months between the two dates, unless you type your own amount below. Mid-term / final-term packages use the exam date.</p>
+    <div class="row2">
       <div><label for="fc">Number of files</label><input id="fc" type="number" name="file_count" min="0" value="<?php echo e($order['file_count']); ?>"></div>
       <div><label for="amt">Amount (Rs.)</label><input id="amt" type="number" name="amount" min="0" step="1" value="<?php echo e($order['amount']); ?>"></div>
     </div>
     <div class="row2">
-      <div><label for="od">Order date</label><input id="od" type="date" name="order_date" value="<?php echo e($order['order_date']); ?>"></div>
+      <div><label for="od">Booking date</label><input id="od" type="date" name="order_date" value="<?php echo e($order['order_date']); ?>"></div>
       <div><label for="ed">Exam date (if known)</label><input id="ed" type="date" name="exam_date" value="<?php echo e($order['exam_date']); ?>"></div>
     </div>
-    <div><label for="st">Order status</label>
+    <div><label for="st">Work status</label>
       <select id="st" name="status"><?php foreach ($STAT as $k => $v): ?><option value="<?php echo $k; ?>"<?php echo $order['status'] === $k ? ' selected' : ''; ?>><?php echo $v; ?></option><?php endforeach; ?></select></div>
     <?php if (!$order['id']): ?>
     <div class="row2">
@@ -172,11 +195,11 @@ if ($action === 'new' || $action === 'edit') {
     <?php endif; ?>
     <div><label for="fn">Files sent (names or Google Drive link)</label><textarea id="fn" name="files_note" placeholder="e.g. STA301 midterm MCQs.pdf, drive link..."><?php echo e($order['files_note']); ?></textarea></div>
     <div><label for="on">Notes</label><textarea id="on" name="notes"><?php echo e($order['notes']); ?></textarea></div>
-    <div style="display:flex;gap:10px;flex-wrap:wrap"><button type="submit" class="gold">Save order</button><a class="btn ghost" href="/dashboard/orders">Back to orders</a>
+    <div style="display:flex;gap:10px;flex-wrap:wrap"><button type="submit" class="gold">Save service</button><a class="btn ghost" href="<?php echo (int)$order['client_id'] ? '/dashboard/clients?action=view&amp;id=' . (int)$order['client_id'] : '/dashboard/clients'; ?>">Back to client</a>
       <?php if ($order['id']): ?><a class="btn ghost" href="/dashboard/receipt?id=<?php echo (int)$order['id']; ?>" target="_blank">Receipt</a><?php endif; ?></div>
   </form>
   <?php if ($order['id'] && is_admin()): ?>
-  <form method="post" data-confirm="Delete this order and its payments?" style="margin-top:14px"><?php echo csrf_field(); ?><input type="hidden" name="do" value="delete"><input type="hidden" name="id" value="<?php echo (int)$order['id']; ?>"><button type="submit" class="danger sm">Delete order</button></form>
+  <form method="post" data-confirm="Delete this service and its payments?" style="margin-top:14px"><?php echo csrf_field(); ?><input type="hidden" name="do" value="delete"><input type="hidden" name="id" value="<?php echo (int)$order['id']; ?>"><button type="submit" class="danger sm">Delete service</button></form>
   <?php endif; ?>
 </div>
 
@@ -207,6 +230,22 @@ if ($action === 'new' || $action === 'edit') {
     </div>
     <div><button type="submit" class="gold sm">Record payment</button></div>
   </form>
+</div>
+<?php endif; ?>
+<?php if ($order['id'] && ($order['plan'] ?? '') === 'monthly'):
+    $sched = monthly_schedule($order['start_date'] ?? '', (int)($order['months'] ?? 0), (float)($order['monthly_fee'] ?? 0), (float)$order['paid_amount']); ?>
+<div class="card">
+  <div class="card-head"><h2>Month by month</h2><span class="muted"><?php echo e($order['start_date'] ?? ''); ?> to <?php echo e($order['end_date'] ?: 'open'); ?></span></div>
+  <?php if (!$sched): ?><div class="empty">Add a start date and a monthly fee to see the months.</div><?php else: ?>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Month</th><th class="num">Fee</th><th class="num">Received</th><th>Status</th></tr></thead>
+    <tbody><?php foreach ($sched as $r): ?>
+      <tr><td><?php echo e($r['month']); ?></td><td class="num"><?php echo e(number_format($r['due'])); ?></td><td class="num"><?php echo e(number_format($r['paid'])); ?></td>
+        <td><span class="badge b-<?php echo e($r['state']); ?>"><?php echo e($r['state']); ?></span></td></tr>
+    <?php endforeach; ?></tbody>
+  </table></div>
+  <p class="muted" style="margin-bottom:0">Payments are counted against the oldest month first.</p>
+  <?php endif; ?>
 </div>
 <?php endif; ?>
 </div>
@@ -256,16 +295,16 @@ include __DIR__ . '/includes/layout_top.php';
     <a class="btn ghost sm" href="/dashboard/export?type=orders" style="margin-left:auto">Export CSV</a>
   </form>
   <?php if (!$orders): ?>
-    <div class="empty">No orders match. <a href="/dashboard/orders?action=new">Create an order</a></div>
+    <div class="empty">No services match. Open a client and add a service there.</div>
   <?php else: ?>
   <div class="tablewrap"><table>
-    <thead><tr><th>Date</th><th>Client</th><th>Course / type</th><th>Exam</th><th class="num">Amount</th><th>Payment</th><th>Status</th><th></th></tr></thead>
+    <thead><tr><th>Date</th><th>Client</th><th>Service / plan</th><th>Exam</th><th class="num">Amount</th><th>Payment</th><th>Status</th><th></th></tr></thead>
     <tbody>
     <?php foreach ($orders as $o): ?>
       <tr>
         <td><?php echo e(substr($o['order_date'], 0, 10)); ?></td>
         <td><a href="/dashboard/clients?action=view&amp;id=<?php echo (int)$o['client_id']; ?>"><?php echo e($o['client_name']); ?></a></td>
-        <td><?php echo $o['course_code'] ? '<strong>' . e($o['course_code']) . '</strong><br>' : ''; ?><span class="muted"><?php echo e($o['file_type']); ?> &middot; <?php echo (int)$o['file_count']; ?> file(s)</span></td>
+        <td><?php echo $o['course_code'] ? '<strong>' . e($o['course_code']) . '</strong><br>' : ''; ?><span class="muted"><?php echo e($o['file_type']); ?> &middot; <?php echo e(SERVICE_PLANS[$o['plan'] ?? 'one-time'] ?? 'One-time'); ?><?php echo ($o['plan'] ?? '') === 'monthly' && $o['start_date'] ? ' (' . e($o['start_date']) . ' to ' . e($o['end_date'] ?: 'open') . ')' : ''; ?> &middot; <?php echo (int)$o['file_count']; ?> file(s)</span></td>
         <td><?php if ($o['exam_date']): $d = (int)((strtotime($o['exam_date']) - strtotime($today)) / 86400); ?><span class="<?php echo $d < 0 ? 'muted' : ($d <= 3 ? 'due-over' : ($d <= 7 ? 'due-today' : '')); ?>"><?php echo e($o['exam_date']); ?></span><?php else: ?>-<?php endif; ?></td>
         <td class="num"><?php echo $o['amount'] !== null ? e(number_format($o['amount'])) : '-'; ?><?php if ($o['payment_status'] === 'partial'): ?><br><span class="muted">got <?php echo e(number_format($o['paid_amount'])); ?></span><?php endif; ?></td>
         <td><span class="badge b-<?php echo e($o['payment_status']); ?>"><?php echo e($o['payment_status']); ?></span></td>
@@ -280,7 +319,7 @@ include __DIR__ . '/includes/layout_top.php';
       </tr>
     <?php endforeach; ?>
     </tbody>
-    <tfoot><tr><td colspan="3"><?php echo count($orders); ?> orders &middot; <?php echo $files; ?> files</td><td></td><td class="num"><?php echo e(number_format($sumAll)); ?></td><td colspan="3">Still to collect: <?php echo e(money($sumDue)); ?></td></tr></tfoot>
+    <tfoot><tr><td colspan="3"><?php echo count($orders); ?> services &middot; <?php echo $files; ?> files</td><td></td><td class="num"><?php echo e(number_format($sumAll)); ?></td><td colspan="3">Still to collect: <?php echo e(money($sumDue)); ?></td></tr></tfoot>
   </table></div>
   <?php endif; ?>
 </section>

@@ -195,6 +195,11 @@ function get_db() {
         'course_code' => 'TEXT',
         'exam_date' => 'TEXT',
         'files_note' => 'TEXT',
+        'plan' => "TEXT NOT NULL DEFAULT 'one-time'",
+        'start_date' => 'TEXT',
+        'end_date' => 'TEXT',
+        'monthly_fee' => 'REAL',
+        'months' => 'INTEGER',
     ]);
     if (isset($added['paid_amount'])) {
         $pdo->exec("UPDATE orders SET paid_amount = COALESCE(amount, 0) WHERE payment_status = 'paid'");
