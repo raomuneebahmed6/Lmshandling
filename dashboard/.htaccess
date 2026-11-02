@@ -18,6 +18,10 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 RewriteCond %{HTTP_HOST} ^www\.lmshandling\.com$ [NC]
 RewriteRule ^(.*)$ https://lmshandling.com/dashboard/$1 [L,R=301]
 
+# Styling, scripts, manifest and service worker go through asset.php, so hidden mode covers them too.
+RewriteRule ^assets/([A-Za-z0-9._-]+)$ asset.php?f=assets/$1 [L,QSA]
+RewriteRule ^(manifest\.webmanifest|sw\.js)$ asset.php?f=$1 [L,QSA]
+
 # /dashboard/index(.php) -> /dashboard/
 RewriteCond %{REQUEST_METHOD} ^(GET|HEAD)$
 RewriteRule ^index(\.php)?$ /dashboard/ [R=301,L]
