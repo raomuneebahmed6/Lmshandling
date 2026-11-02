@@ -8,6 +8,7 @@ const SESSION_MAX_SECONDS = 43200;   // 12 hours is the longest a login lasts
 ini_set('display_errors', '0');
 ini_set('log_errors', '1');
 @ini_set('error_log', private_path('php-errors.log'));
+gate_enforce();
 set_exception_handler(function ($ex) {
     error_log('Uncaught: ' . $ex->getMessage() . ' in ' . $ex->getFile() . ':' . $ex->getLine());
     if (!headers_sent()) http_response_code(500);

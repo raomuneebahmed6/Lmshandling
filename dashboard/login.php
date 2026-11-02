@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <title>Login | Nibaha Haq</title>
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="/assets/favicon-32x32.png" type="image/png">
-<link rel="manifest" href="/dashboard/manifest.webmanifest">
+<link rel="manifest" href="/dashboard/manifest.webmanifest" crossorigin="use-credentials">
 <meta name="theme-color" content="#032B57">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

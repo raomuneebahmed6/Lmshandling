@@ -124,6 +124,51 @@ function file_decrypt_bytes($raw) {
     return sodium_crypto_secretbox_open(substr($raw, $nl), substr($raw, 0, $nl), secret_key());
 }
 
+// ---------- hidden dashboard (404 for strangers) ----------
+// While gate.key exists in the private folder, every dashboard page answers "404 Not Found" unless the
+// browser holds the gate cookie. The cookie is given by opening the private link once:
+//   https://lmshandling.com/dashboard/login?k=<the key>
+// Turn it off by deleting gate.key from the private folder (hPanel > File Manager) if you ever lose the link.
+function gate_key() {
+    $f = private_path('gate.key');
+    return is_file($f) ? trim((string)@file_get_contents($f)) : '';
+}
+
+function gate_cookie_value($key) {
+    return hash_hmac('sha256', 'lmh-dashboard-gate', $key);
+}
+
+function gate_set_cookie($key) {
+    $secure = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https');
+    setcookie('lmh_gate', gate_cookie_value($key), ['expires' => time() + 365 * 86400, 'path' => '/dashboard/', 'secure' => $secure, 'httponly' => true, 'samesite' => 'Lax']);
+}
+
+function gate_not_found() {
+    http_response_code(404);
+    header('Content-Type: text/html; charset=UTF-8');
+    header('Cache-Control: no-store');
+    header('X-Robots-Tag: noindex, nofollow');
+    echo "<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">\n<html><head>\n<title>404 Not Found</title>\n</head><body>\n<h1>Not Found</h1>\n<p>The requested URL was not found on this server.</p>\n</body></html>\n";
+    exit;
+}
+
+function gate_enforce() {
+    $key = gate_key();
+    if ($key === '') return;
+    $script = basename((string)($_SERVER['SCRIPT_NAME'] ?? ''));
+    if (strpos($script, 'cron_') === 0) return; // scheduled jobs carry their own secret
+    $have = (string)($_COOKIE['lmh_gate'] ?? '');
+    if ($have !== '' && hash_equals(gate_cookie_value($key), $have)) return;
+    $try = (string)($_GET['k'] ?? '');
+    if ($try !== '' && hash_equals($key, $try)) {
+        gate_set_cookie($key);
+        header('Cache-Control: no-store');
+        header('Location: /dashboard/login');
+        exit;
+    }
+    gate_not_found();
+}
+
 // ---------- settings (tiny key/value store) ----------
 function settings_get($k, $default = '') {
     $s = get_db()->prepare('SELECT v FROM settings WHERE k = ?');

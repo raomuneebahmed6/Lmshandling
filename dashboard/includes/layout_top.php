@@ -27,7 +27,7 @@ $nav = [
 <title><?php echo e($pageTitle ?? 'Dashboard'); ?> | Nibaha Haq</title>
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="/assets/favicon-32x32.png" type="image/png">
-<link rel="manifest" href="/dashboard/manifest.webmanifest">
+<link rel="manifest" href="/dashboard/manifest.webmanifest" crossorigin="use-credentials">
 <meta name="theme-color" content="#032B57">
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">

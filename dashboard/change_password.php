@@ -11,6 +11,7 @@ function load_user($pdo, $uid) {
 }
 
 $msg = '';
+$gateLink = '';
 $msgType = '';
 $newCodes = null;
 
@@ -103,6 +104,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 flash('Phone removed.');
             }
             redirect('/dashboard/change_password#twofa');
+        }
+    } elseif (in_array($do, ['gate_on', 'gate_show', 'gate_off'], true) && is_admin()) {
+        if (!password_verify((string)($_POST['current_password'] ?? ''), $user['password_hash'])) {
+            $msg = 'Password is incorrect. Nothing was changed.'; $msgType = 'err';
+        } elseif ($do === 'gate_on') {
+            if (gate_key() === '') {
+                $k = bin2hex(random_bytes(16));
+                @file_put_contents(private_path('gate.key'), $k);
+                @chmod(private_path('gate.key'), 0600);
+            }
+            gate_set_cookie(gate_key());
+            audit('hidden dashboard turned on', $user['username']);
+            $gateLink = 'https://lmshandling.com/dashboard/login?k=' . gate_key();
+            $msg = 'Done. The dashboard now shows "404 Not Found" to everybody except browsers that opened your private link.'; $msgType = 'ok';
+        } elseif ($do === 'gate_show') {
+            $gateLink = gate_key() !== '' ? 'https://lmshandling.com/dashboard/login?k=' . gate_key() : '';
+        } else {
+            @unlink(private_path('gate.key'));
+            audit('hidden dashboard turned off', $user['username']);
+            $msg = 'The dashboard is visible again (login page open to everyone).'; $msgType = 'ok';
         }
     } elseif ($do === '2fa_codes') {
         if (!password_verify((string)($_POST['current_password'] ?? ''), $user['password_hash'])) {
@@ -229,6 +250,25 @@ $user = load_user($pdo, $uid); // the layout reuses $user for the signed-in acco
   <?php endif; ?>
 </section>
 </div>
+
+<?php if (is_admin()): $gateOn = gate_key() !== ''; ?>
+<section class="card" id="hide-dashboard">
+  <div class="card-head"><h2>Hide the dashboard from strangers</h2><span class="badge b-<?php echo $gateOn ? 'paid' : 'unpaid'; ?>"><?php echo $gateOn ? 'ON' : 'OFF'; ?></span></div>
+  <?php if ($gateLink): ?>
+    <div class="msg msg-warn"><strong>Your private link. Save it now.</strong> Open it once on each phone or computer that should reach the dashboard. Anybody holding this link can see the login page, so share it only with your team.</div>
+    <pre class="codes" style="white-space:pre-wrap;word-break:break-all"><?php echo e($gateLink); ?></pre>
+  <?php endif; ?>
+  <p class="muted" style="margin-top:0">When this is ON, anyone who opens <em>lmshandling.com/dashboard</em> without your private link sees a plain "404 Not Found". They cannot even see that a login page exists. Your team opens the private link once per browser and then uses the dashboard as usual. If you ever lose the link, delete the file <code>gate.key</code> in the <code>lmh_private</code> folder from hPanel &gt; File Manager.</p>
+  <form method="post" class="stack" style="max-width:420px">
+    <?php echo csrf_field(); ?>
+    <div><label for="gp">Your password (to confirm)</label><input id="gp" type="password" name="current_password" required autocomplete="current-password"></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <?php if (!$gateOn): ?><button type="submit" name="do" value="gate_on" class="gold">Turn ON (show 404 to strangers)</button>
+      <?php else: ?><button type="submit" name="do" value="gate_show" class="ghost">Show my private link</button><button type="submit" name="do" value="gate_off" class="danger sm">Turn OFF</button><?php endif; ?>
+    </div>
+  </form>
+</section>
+<?php endif; ?>
 
 <section class="card">
   <div class="card-head"><h2>Recent logins</h2></div>
