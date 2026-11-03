@@ -647,6 +647,24 @@ a,button,.btn{transition-property:color,background-color,border-color,box-shadow
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 </style>
 <style id="img-dims">:where(img[width][height]){height:auto}</style>
+<style id="notes-results-css">
+.nr-wrap{max-width:1200px;margin:0 auto;padding:clamp(1.2rem,3vw,2rem) clamp(1.1rem,5vw,4rem)}
+.nr-box{background:linear-gradient(135deg,#032B57,#0a4a8f);border-radius:24px;padding:clamp(1.4rem,3vw,2.2rem);color:#fff;position:relative;overflow:hidden}
+.nr-box h2{color:#fff;font-size:clamp(1.35rem,3vw,2rem);line-height:1.2;max-width:760px}
+.nr-label{font-family:var(--mono,monospace);font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:#FFD86B;margin:0 0 .5rem;font-weight:700}
+.nr-sub{color:#CFE0F5;max-width:64ch;margin:.5rem 0 0;font-size:.97rem}
+.nr-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.9rem;margin-top:1.3rem}
+.nr-card{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);border-radius:16px;padding:1.1rem 1.2rem;transition:transform .25s,background .25s,border-color .25s}
+.nr-card:hover{transform:translateY(-4px);background:rgba(255,255,255,.13);border-color:rgba(255,216,107,.6)}
+.nr-where{font-weight:700;color:#FFD86B;font-size:.9rem;letter-spacing:.02em}
+.nr-score{font-family:var(--display,inherit);font-weight:800;font-size:1.7rem;margin:.15rem 0 .3rem;color:#fff}
+.nr-card p{margin:0;color:#DDE6F2;font-size:.93rem}
+.nr-cta{display:flex;gap:.7rem;flex-wrap:wrap;margin-top:1.2rem}
+.nr-cta .btn.soft{background:rgba(255,255,255,.14)!important;color:#fff!important;border:1px solid rgba(255,255,255,.5)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}.nr-cta .btn.soft:hover{background:rgba(255,255,255,.26)!important}
+#midterm-guide .service-card{display:block}
+.nr-note{margin:1rem 0 0;color:#A9B8CF;font-size:.8rem}
+@media (max-width:860px){.nr-grid{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:82%;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:.4rem}.nr-card{scroll-snap-align:start}}
+</style>
 </head>
 <body>
 
@@ -734,6 +752,43 @@ a,button,.btn{transition-property:color,background-color,border-color,box-shadow
     <article class="service-card reveal" data-delay="1"><h3>✍️ Subjective Files</h3><p>Short and long question preparation with easy-to-understand concepts.</p></article>
     <article class="service-card reveal" data-delay="2"><h3>🎯 4 CGPA Focus</h3><p>Files organized for maximum marks, so you study what matters most.</p></article>
     <article class="service-card reveal" data-delay="3"><h3>📊 Exam Coverage Target</h3><p>Coverage-focused preparation to walk into exams with confidence.</p></article>
+  </div>
+</section>
+
+<section class="section" id="midterm-guide" aria-labelledby="midterm-guide-heading">
+  <div class="section-head reveal"><p class="section-label">Midterm Examination Guide</p><h2 id="midterm-guide-heading">Sample midterm guide: CS620, STA301 and MTH501.</h2>
+    <p>Each subject follows an Objective plus Subjective exam pattern. These are the main topics our notes cover for each course.</p></div>
+  <div class="grid-4" style="grid-template-columns:repeat(3,minmax(0,1fr))">
+    <article class="service-card reveal"><h3>CS620: Modelling and Simulation</h3><p><strong>Exam pattern:</strong> Objective + Subjective.</p><p><strong>Topics covered:</strong> Introduction to Modelling and Simulation, System Concepts, Types of Models, Discrete and Continuous Systems, Discrete Event Simulation, Simulation Study, Model Development, Data Collection, Model Verification and Validation, Queuing Models and Statistical Analysis.</p></article>
+    <article class="service-card reveal" data-delay="1"><h3>STA301: Statistics and Probability</h3><p><strong>Exam pattern:</strong> Objective + Subjective.</p><p><strong>Topics covered:</strong> Introduction to Statistics, Data Presentation, Frequency Distribution, Measures of Central Tendency, Measures of Dispersion, Probability, Conditional Probability, Random Variables, Probability Distributions, Regression, Correlation and Statistical Calculations.</p></article>
+    <article class="service-card reveal" data-delay="2"><h3>MTH501: Linear Algebra</h3><p><strong>Exam pattern:</strong> Objective + Subjective.</p><p><strong>Topics covered:</strong> Matrices, Systems of Linear Equations, Row Reduction, Matrix Algebra, Inverse of Matrices, Determinants, Vector Spaces, Linear Independence, Linear Transformations, Basis and Dimension.</p></article>
+  </div>
+  <div class="section-head reveal" style="margin-top:1.6rem"><h3>Nibaha Haq 4.0 GPA notes include</h3></div>
+  <ul class="list" style="max-width:760px">
+    <li><span>Objective notes with important MCQs</span></li>
+    <li><span>Subjective notes with short and long questions and answers</span></li>
+    <li><span>Topic-wise study material</span></li>
+    <li><span>Numerical practice, where applicable</span></li>
+    <li><span>Midterm and Finalterm preparation notes</span></li>
+  </ul>
+  <p class="muted" style="margin-top:1rem">The topic lists show what our notes cover. Your exact midterm lecture range is set by VU for your semester, so confirm it on VULMS. Contact us on WhatsApp at <a class="inline-link" data-whatsapp="Hello Nibaha Haq, I need the midterm notes for CS620, STA301 or MTH501." target="_blank" rel="noopener" href="https://wa.me/923295209868?text=Hello%20Nibaha%20Haq%2C%20I%20need%20the%20midterm%20notes%20for%20CS620%2C%20STA301%20or%20MTH501.">03295209868</a> or visit lmshandling.com.</p>
+</section>
+
+<section class="nr-wrap" id="notes-results" aria-labelledby="notes-results-heading">
+  <div class="nr-box reveal">
+    <p class="nr-label">Results from Nibaha Haq notes</p>
+    <h2 id="notes-results-heading">Overseas students are scoring 3+ CGPA by preparing from our notes.</h2>
+    <p class="nr-sub">Students studying from the UAE, Iran and Saudi Arabia prepare for Midterm and Finalterm with the same Nibaha Haq notes: objective MCQs, short and long questions with answers, and topic-wise study material.</p>
+    <div class="nr-grid">
+      <article class="nr-card"><div class="nr-where">UAE student</div><div class="nr-score">3+ CGPA</div><p>Prepared from Nibaha Haq notes and secured a 3+ CGPA.</p></article>
+      <article class="nr-card"><div class="nr-where">Iran student</div><div class="nr-score">3+ CGPA</div><p>Used Nibaha Haq notes in previous semesters and secured a 3+ CGPA.</p></article>
+      <article class="nr-card"><div class="nr-where">Saudi Arabia student</div><div class="nr-score">3.16 CGPA</div><p>Prepared for finals from the 4 CGPA notes and secured 3.16. Preparing the same way again this semester.</p></article>
+    </div>
+    <div class="nr-cta">
+      <a class="btn primary" data-whatsapp="Hello Nibaha Haq, I want the notes for my VU subjects." target="_blank" rel="noopener" href="https://wa.me/923295209868?text=Hello%20Nibaha%20Haq%2C%20I%20want%20the%20notes%20for%20my%20VU%20subjects.">Get the notes on WhatsApp</a>
+      <a class="btn soft" href="/services/midterm-files#midterm-guide">See the midterm guide</a>
+    </div>
+    <p class="nr-note">Results shared by students and recorded by Nibaha Haq. Your result depends on your own preparation.</p>
   </div>
 </section>
 
