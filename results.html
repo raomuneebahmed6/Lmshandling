@@ -579,6 +579,37 @@ img { max-width:100%; height:auto; }
 }
 </style>
 <style id="nav-center">@media (min-width:861px){.site-header{display:grid;grid-template-columns:minmax(max-content,1fr) auto minmax(0,1fr);align-items:center;column-gap:1rem}.site-header .brand{justify-self:start}.site-header .main-nav{justify-self:center}.site-header .menu-toggle{display:none}}</style>
+<style id="nav-polish">
+/* menu dropdown: solid card, clear shadow, hover bridge, staggered items */
+@media (min-width:861px){
+html body .main-nav .dropdown{background:#fff;-webkit-backdrop-filter:none;backdrop-filter:none;border:1px solid rgba(3,43,87,.13);box-shadow:0 26px 50px -14px rgba(3,43,87,.32),0 6px 16px -6px rgba(3,43,87,.16);border-radius:18px;padding:.6rem;min-width:250px;top:calc(100% + .55rem);transform-origin:top center;transform:translateX(-50%) translateY(10px) scale(.97);transition:opacity .22s ease,transform .26s cubic-bezier(.2,.7,.2,1),visibility .22s}
+html body .nav-item:hover .dropdown,html body .nav-item:focus-within .dropdown{transform:translateX(-50%) translateY(0) scale(1)}
+.main-nav .dropdown::before{content:"";position:absolute;left:0;right:0;top:-.7rem;height:.7rem}
+.main-nav .dropdown::after{content:"";position:absolute;top:-7px;left:50%;width:13px;height:13px;background:#fff;border-left:1px solid rgba(3,43,87,.13);border-top:1px solid rgba(3,43,87,.13);transform:translateX(-50%) rotate(45deg);border-radius:3px 0 0 0}
+html body .main-nav .dropdown a{position:relative;padding:.62rem .9rem;border-radius:11px;font-weight:600;font-size:.92rem;color:#032B57;transition:background .2s,color .2s,padding-left .2s,transform .2s}
+html body .main-nav .dropdown a::after{display:none}
+html body .main-nav .dropdown a::before{content:"";position:absolute;left:.35rem;top:50%;width:3px;height:0;border-radius:3px;background:linear-gradient(#F7971E,#ED4E96);transform:translateY(-50%);transition:height .2s}
+html body .main-nav .dropdown a:hover,html body .main-nav .dropdown a:focus-visible{background:linear-gradient(90deg,#FFF3D1,#FFFFFF);color:#032B57;padding-left:1.3rem}
+html body .main-nav .dropdown a:hover::before,html body .main-nav .dropdown a:focus-visible::before{height:60%}
+.nav-item:hover .dropdown a,.nav-item:focus-within .dropdown a{animation:ddItem .3s both}
+.nav-item .dropdown a:nth-child(1){animation-delay:.02s}.nav-item .dropdown a:nth-child(2){animation-delay:.05s}.nav-item .dropdown a:nth-child(3){animation-delay:.08s}.nav-item .dropdown a:nth-child(4){animation-delay:.11s}.nav-item .dropdown a:nth-child(5){animation-delay:.14s}.nav-item .dropdown a:nth-child(6){animation-delay:.17s}.nav-item .dropdown a:nth-child(7){animation-delay:.2s}.nav-item .dropdown a:nth-child(8){animation-delay:.23s}.nav-item .dropdown a:nth-child(9){animation-delay:.26s}
+@keyframes ddItem{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+html body .main-nav>a:hover,html body .main-nav .nav-item:hover>a{color:#00448B}
+}
+@media (max-width:860px){html body .main-nav .dropdown{background:rgba(3,43,87,.04);border-radius:12px;box-shadow:none}html body .main-nav .dropdown a{border-radius:10px;font-weight:600}html body .main-nav .dropdown a:active{background:#FFF3D1}}
+/* small, calm motion everywhere */
+html{scroll-behavior:smooth}
+a,button,.btn{transition-property:color,background-color,border-color,box-shadow,transform,opacity;transition-duration:.2s}
+.btn:active{transform:translateY(0) scale(.98)}
+:focus-visible{outline:3px solid rgba(245,179,1,.75);outline-offset:2px;border-radius:6px}
+.blog-card img,.service-card img,.info-card img{transition:transform .5s cubic-bezier(.2,.7,.2,1)}
+.blog-card:hover img,.service-card:hover img{transform:scale(1.04)}
+.faq-list details{transition:box-shadow .25s,background .25s}
+.faq-list details[open]{box-shadow:0 14px 30px -16px rgba(3,43,87,.35)}
+.footer-col a{transition:color .2s,transform .2s}.footer-col a:hover{transform:translateX(3px)}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+<style id="img-dims">:where(img[width][height]){height:auto}</style>
 </head>
 <body>
 
@@ -665,10 +696,10 @@ img { max-width:100%; height:auto; }
     <span class="chip">Spring 2025 + Fall 2025 + Spring 2026</span>
   </div>
   <div class="org-strip reveal" data-delay="2">
-    <img src="results-img/logos/ubl-bank-logo.jpg" alt="UBL, United Bank Limited">
-    <img src="results-img/logos/chenab-limited-logo.jpg" alt="Chenab Limited">
-    <img src="results-img/logos/nestle-logo.jpg" alt="Nestlé">
-    <img src="results-img/logos/meezan-bank-logo.png" alt="Meezan Bank">
+    <img loading="lazy" decoding="async" width="399" height="276" src="results-img/logos/ubl-bank-logo.webp" alt="UBL, United Bank Limited">
+    <img loading="lazy" decoding="async" width="709" height="236" src="results-img/logos/chenab-limited-logo.webp" alt="Chenab Limited">
+    <img loading="lazy" decoding="async" width="709" height="412" src="results-img/logos/nestle-logo.webp" alt="Nestlé">
+    <img loading="lazy" decoding="async" width="1080" height="1080" src="results-img/logos/meezan-bank-logo.webp" alt="Meezan Bank">
     <span class="org-strip-label">Real organizations our students' reports were based on</span>
   </div>
 </section>
@@ -687,19 +718,19 @@ img { max-width:100%; height:auto; }
         <!-- screenshots -->
         <div class="fyp-screenshots">
           <figure class="fyp-card shot-card" data-idx="9100">
-            <img src="/results-img/hrm620-01.jpg" alt="HRM620 OAR Report UBL Bank, approved by Nibaha Haq (screenshot 1)" draggable="false">
+            <img loading="lazy" decoding="async" width="399" height="900" src="/results-img/hrm620-01.webp" alt="HRM620 OAR Report UBL Bank, approved by Nibaha Haq (screenshot 1)" draggable="false">
             <div class="fyp-label">Approval confirmed ✓</div>
           </figure>
           <figure class="fyp-card shot-card" data-idx="9101">
-            <img src="/results-img/hrm620-02.jpg" alt="HRM620 OAR Report UBL Bank, Final Year Project approved (screenshot 2)" draggable="false">
+            <img loading="lazy" decoding="async" width="399" height="900" src="/results-img/hrm620-02.webp" alt="HRM620 OAR Report UBL Bank, Final Year Project approved (screenshot 2)" draggable="false">
             <div class="fyp-label">Final project approved ✓</div>
           </figure>
           <figure class="fyp-card shot-card" data-idx="9102">
-            <img src="/results-img/hrm620-03.jpg" alt="UBL Bank, United Bank Limited logo for OAR Report" draggable="false">
+            <img loading="lazy" decoding="async" width="399" height="900" src="/results-img/hrm620-03.webp" alt="UBL Bank, United Bank Limited logo for OAR Report" draggable="false">
             <div class="fyp-label">UBL Bank: report topic</div>
           </figure>
           <figure class="fyp-card shot-card" data-idx="9103">
-            <img src="/results-img/hrm620-04.jpg" alt="HRM620 OAR Report Nibaha Haq, approved WhatsApp conversation" draggable="false">
+            <img loading="lazy" decoding="async" width="399" height="900" src="/results-img/hrm620-04.webp" alt="HRM620 OAR Report Nibaha Haq, approved WhatsApp conversation" draggable="false">
             <div class="fyp-label">HRM620 OAR: Approved ✓</div>
           </figure>
         </div>
@@ -708,7 +739,7 @@ img { max-width:100%; height:auto; }
         <div class="fyp-details">
           <div class="fyp-highlight">
             <div class="fh-tag">Subject</div>
-            <div class="org-logo-row"><img class="org-logo" src="results-img/logos/ubl-bank-logo.jpg" alt="UBL, United Bank Limited"></div>
+            <div class="org-logo-row"><img loading="lazy" decoding="async" width="399" height="276" class="org-logo" src="results-img/logos/ubl-bank-logo.webp" alt="UBL, United Bank Limited"></div>
             <h3>HRM620: Human Resource Management</h3>
             <p>Organizational Attachment Report (OAR) on United Bank Limited (UBL), a real private sector bank.</p>
             <span class="approved-pill">✓ Report Approved</span>
@@ -754,19 +785,19 @@ img { max-width:100%; height:auto; }
         <!-- screenshots -->
         <div class="fyp-screenshots">
           <figure class="fyp-card shot-card" data-idx="9110">
-            <img src="results-img/mgit662-01.jpg" alt="MGIT662 Internship Report, Chenab Limited reference by Shahzaib sir, intern Iqra" loading="lazy" draggable="false">
+            <img decoding="async" width="709" height="1600" src="results-img/mgit662-01.webp" alt="MGIT662 Internship Report, Chenab Limited reference by Shahzaib sir, intern Iqra" loading="lazy" draggable="false">
             <div class="fyp-label">Project details confirmed</div>
           </figure>
           <figure class="fyp-card shot-card" data-idx="9111">
-            <img src="results-img/mgit662-02.jpg" alt="Instructor Javed Ali, Accepted, MGIT662 internship report" loading="lazy" draggable="false">
+            <img decoding="async" width="709" height="1600" src="results-img/mgit662-02.webp" alt="Instructor Javed Ali, Accepted, MGIT662 internship report" loading="lazy" draggable="false">
             <div class="fyp-label">Instructor accepted ✓</div>
           </figure>
           <figure class="fyp-card shot-card" data-idx="9112">
-            <img src="results-img/mgit662-03.jpg" alt="MGIT662 Internship Report, Chenab Limited, approved by Nibaha Haq" loading="lazy" draggable="false">
+            <img decoding="async" width="709" height="1600" src="results-img/mgit662-03.webp" alt="MGIT662 Internship Report, Chenab Limited, approved by Nibaha Haq" loading="lazy" draggable="false">
             <div class="fyp-label">Final report approved ✓</div>
           </figure>
           <figure class="fyp-card shot-card" data-idx="9113">
-            <img src="results-img/mgit662-04.jpg" alt="MGIT662 Internship Report: 0% plagiarism, report delivered" loading="lazy" draggable="false">
+            <img decoding="async" width="709" height="1600" src="results-img/mgit662-04.webp" alt="MGIT662 Internship Report: 0% plagiarism, report delivered" loading="lazy" draggable="false">
             <div class="fyp-label">Report delivered · 0% plagiarism ✓</div>
           </figure>
         </div>
@@ -775,7 +806,7 @@ img { max-width:100%; height:auto; }
         <div class="fyp-details">
           <div class="fyp-highlight">
             <div class="fh-tag">Subject</div>
-            <div class="org-logo-row"><img class="org-logo" src="results-img/logos/chenab-limited-logo.jpg" alt="Chenab Limited"></div>
+            <div class="org-logo-row"><img loading="lazy" decoding="async" width="709" height="236" class="org-logo" src="results-img/logos/chenab-limited-logo.webp" alt="Chenab Limited"></div>
             <h3>MGIT662: Internship Report</h3>
             <p>Internship Report on Chenab Limited, Faisalabad, a real textile sector organization.</p>
             <span class="approved-pill">✓ Report Accepted</span>
@@ -821,19 +852,19 @@ img { max-width:100%; height:auto; }
         <!-- screenshots -->
         <div class="fyp-screenshots">
           <figure class="fyp-card shot-card" data-idx="9120">
-            <img src="results-img/mgit661-01.jpg" alt="MGIT661 OAR Report by Nibaha Haq, final report file delivered" loading="lazy" draggable="false">
+            <img decoding="async" width="709" height="1600" src="results-img/mgit661-01.webp" alt="MGIT661 OAR Report by Nibaha Haq, final report file delivered" loading="lazy" draggable="false">
             <div class="fyp-label">Report prepared &amp; delivered</div>
           </figure>
           <figure class="fyp-card shot-card" data-idx="9121">
-            <img src="results-img/mgit661-02.jpg" alt="Dr. Imran Sarmad: PASS, MGIT661 OAR Report approved by Nibaha Haq" loading="lazy" draggable="false">
+            <img decoding="async" width="709" height="1600" src="results-img/mgit661-02.webp" alt="Dr. Imran Sarmad: PASS, MGIT661 OAR Report approved by Nibaha Haq" loading="lazy" draggable="false">
             <div class="fyp-label">Instructor: PASS ✓</div>
           </figure>
           <figure class="fyp-card shot-card" data-idx="9122">
-            <img src="results-img/mgit661-03.jpg" alt="MGIT661 Organizational Analysis Report, pass and approved by Nibaha Haq" loading="lazy" draggable="false">
+            <img decoding="async" width="709" height="1600" src="results-img/mgit661-03.webp" alt="MGIT661 Organizational Analysis Report, pass and approved by Nibaha Haq" loading="lazy" draggable="false">
             <div class="fyp-label">Final report approved ✓</div>
           </figure>
           <figure class="fyp-card shot-card" data-idx="9123">
-            <img src="results-img/mgit661-04.jpg" alt="MGIT661 OAR submission: Unzila, reference Humza, Nestle organization" loading="lazy" draggable="false">
+            <img decoding="async" width="709" height="1600" src="results-img/mgit661-04.webp" alt="MGIT661 OAR submission: Unzila, reference Humza, Nestle organization" loading="lazy" draggable="false">
             <div class="fyp-label">Submitted · Nestle Organization</div>
           </figure>
         </div>
@@ -842,7 +873,7 @@ img { max-width:100%; height:auto; }
         <div class="fyp-details">
           <div class="fyp-highlight">
             <div class="fh-tag">Subject</div>
-            <div class="org-logo-row"><img class="org-logo" src="results-img/logos/nestle-logo.jpg" alt="Nestlé"></div>
+            <div class="org-logo-row"><img loading="lazy" decoding="async" width="709" height="412" class="org-logo" src="results-img/logos/nestle-logo.webp" alt="Nestlé"></div>
             <h3>MGIT661: Organizational Analysis Report (OAR)</h3>
             <p>Organizational Analysis Report on Nestle, a real multinational FMCG company.</p>
             <span class="approved-pill">✓ Declared PASS</span>
@@ -888,19 +919,19 @@ img { max-width:100%; height:auto; }
         <!-- screenshots -->
         <div class="fyp-screenshots">
           <figure class="fyp-card shot-card" data-idx="9130">
-            <img src="results-img/fin619-01.jpg" alt="FIN619 OAR Report on Meezan Bank by Nibaha Haq, human-checked report" loading="lazy" draggable="false">
+            <img decoding="async" width="709" height="1600" src="results-img/fin619-01.webp" alt="FIN619 OAR Report on Meezan Bank by Nibaha Haq, human-checked report" loading="lazy" draggable="false">
             <div class="fyp-label">Report prepared &amp; delivered</div>
           </figure>
           <figure class="fyp-card shot-card" data-idx="9131">
-            <img src="results-img/fin619-02.jpg" alt="FIN619 Final Project Finance, Instructor Comments: Conditionally accepted" loading="lazy" draggable="false">
+            <img decoding="async" width="709" height="1600" src="results-img/fin619-02.webp" alt="FIN619 Final Project Finance, Instructor Comments: Conditionally accepted" loading="lazy" draggable="false">
             <div class="fyp-label">Conditionally accepted ✓</div>
           </figure>
           <figure class="fyp-card shot-card" data-idx="9132">
-            <img src="results-img/fin619-03.jpg" alt="FIN619: OAR, ratio analysis, PPTs and viva all approved in one go" loading="lazy" draggable="false">
+            <img decoding="async" width="709" height="1600" src="results-img/fin619-03.webp" alt="FIN619: OAR, ratio analysis, PPTs and viva all approved in one go" loading="lazy" draggable="false">
             <div class="fyp-label">Full FYP approved ✓</div>
           </figure>
           <figure class="fyp-card shot-card" data-idx="9133">
-            <img src="results-img/fin619-04.jpg" alt="Student testimonial: FIN619 Meezan Bank project guided by Nibaha Haq" loading="lazy" draggable="false">
+            <img decoding="async" width="709" height="1600" src="results-img/fin619-04.webp" alt="Student testimonial: FIN619 Meezan Bank project guided by Nibaha Haq" loading="lazy" draggable="false">
             <div class="fyp-label">Student testimonial</div>
           </figure>
         </div>
@@ -909,7 +940,7 @@ img { max-width:100%; height:auto; }
         <div class="fyp-details">
           <div class="fyp-highlight">
             <div class="fh-tag">Subject</div>
-            <div class="org-logo-row"><img class="org-logo" src="results-img/logos/meezan-bank-logo.png" alt="Meezan Bank"></div>
+            <div class="org-logo-row"><img loading="lazy" decoding="async" width="1080" height="1080" class="org-logo" src="results-img/logos/meezan-bank-logo.webp" alt="Meezan Bank"></div>
             <h3>FIN619: Final Project (Finance)</h3>
             <p>OAR report and ratio analysis on Meezan Bank, a real commercial bank in Pakistan.</p>
             <span class="approved-pill">✓ Report Approved</span>
@@ -961,7 +992,7 @@ img { max-width:100%; height:auto; }
       <div>
         <div class="sem-badge-row"><span class="sem-year-badge">Spring 2025</span><span style="font-size:.82rem;color:var(--muted)">7 students · 1 campus topper</span></div>
         <div style="border-radius:20px;overflow:hidden;box-shadow:var(--shadow);border:2px solid var(--line);cursor:zoom-in" class="shot-card" data-idx="9200">
-          <img src="/results-img/cgpa-spring2025.jpg" alt="Spring 2025 CGPA results poster, Nibaha Haq students including Misbah 4.00/4 campus topper" style="width:100%;display:block;pointer-events:none;-webkit-user-select:none" draggable="false">
+          <img loading="lazy" decoding="async" width="1024" height="1536" src="/results-img/cgpa-spring2025.webp" alt="Spring 2025 CGPA results poster, Nibaha Haq students including Misbah 4.00/4 campus topper" style="width:100%;display:block;pointer-events:none;-webkit-user-select:none" draggable="false">
         </div>
       </div>
       <div class="cgpa-cards-col">
@@ -1017,7 +1048,7 @@ img { max-width:100%; height:auto; }
       <div>
         <div class="sem-badge-row"><span class="sem-year-badge">Fall 2025</span><span style="font-size:.82rem;color:var(--muted)">6 students · Misbah 4.00/4 again</span></div>
         <div style="border-radius:20px;overflow:hidden;box-shadow:var(--shadow);border:2px solid var(--line);cursor:zoom-in" class="shot-card" data-idx="9201">
-          <img src="/results-img/cgpa-fall2025.jpg" alt="Fall 2025 CGPA results, Misbah 4.00/4 and more Nibaha Haq students" style="width:100%;display:block;pointer-events:none;-webkit-user-select:none" draggable="false">
+          <img loading="lazy" decoding="async" width="1024" height="1536" src="/results-img/cgpa-fall2025.webp" alt="Fall 2025 CGPA results, Misbah 4.00/4 and more Nibaha Haq students" style="width:100%;display:block;pointer-events:none;-webkit-user-select:none" draggable="false">
         </div>
       </div>
       <div class="cgpa-cards-col">
@@ -1079,7 +1110,7 @@ img { max-width:100%; height:auto; }
         <div>
           <div class="sem-badge-row"><span class="sem-year-badge">Spring 2026</span><span style="font-size:.82rem;color:var(--muted)">12 students · a Masters degree completed</span></div>
           <div style="border-radius:20px;overflow:hidden;box-shadow:var(--shadow);border:2px solid var(--line);cursor:zoom-in" class="shot-card" data-idx="9202">
-            <img src="/results-img/cgpa-spring2026.jpg" alt="Spring 2026 Finals CGPA results, 12 Nibaha Haq students including a completed Masters degree" style="width:100%;display:block;pointer-events:none;-webkit-user-select:none" draggable="false">
+            <img loading="lazy" decoding="async" width="1024" height="1536" src="/results-img/cgpa-spring2026.webp" alt="Spring 2026 Finals CGPA results, 12 Nibaha Haq students including a completed Masters degree" style="width:100%;display:block;pointer-events:none;-webkit-user-select:none" draggable="false">
           </div>
         </div>
         <div class="cgpa-cards-col">
@@ -1182,7 +1213,7 @@ img { max-width:100%; height:auto; }
 <footer class="footer">
   <div class="footer-top">
     <div class="footer-brand">
-      <img src="/assets/logo.webp" alt="Nibaha Haq logo" loading="lazy">
+      <img decoding="async" width="259" height="260" src="/assets/logo.webp" alt="Nibaha Haq logo" loading="lazy">
       <div><strong>Nibaha Haq | Academic Support Services</strong><p>Structured VULMS support, Midterm files, Finalterm files, degree-wise pages and Final Year Project guidance for Virtual University students.</p></div>
     </div>
     <nav class="footer-col" aria-label="Quick links"><h3>Quick Links</h3><a href="/">Home</a><a href="/about">About</a><a href="/services/">Services</a><a href="/degrees/">Degrees</a><a href="/contact">Contact</a></nav>
@@ -1220,7 +1251,7 @@ img { max-width:100%; height:auto; }
     <button class="lb-close" id="lbClose" aria-label="Close">×</button>
     <button class="lb-nav lb-prev" id="lbPrev" aria-label="Previous">‹</button>
     <button class="lb-nav lb-next" id="lbNext" aria-label="Next">›</button>
-    <img id="lightboxImg" src="" alt="">
+    <img loading="lazy" decoding="async" id="lightboxImg" src="" alt="">
     <p class="lb-caption"></p>
   </div>
 </div>

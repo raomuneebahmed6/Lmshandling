@@ -672,6 +672,37 @@ img { max-width:100%; height:auto; }
 }
 </script>
 <style id="nav-center">@media (min-width:861px){.site-header{display:grid;grid-template-columns:minmax(max-content,1fr) auto minmax(0,1fr);align-items:center;column-gap:1rem}.site-header .brand{justify-self:start}.site-header .main-nav{justify-self:center}.site-header .menu-toggle{display:none}}</style>
+<style id="nav-polish">
+/* menu dropdown: solid card, clear shadow, hover bridge, staggered items */
+@media (min-width:861px){
+html body .main-nav .dropdown{background:#fff;-webkit-backdrop-filter:none;backdrop-filter:none;border:1px solid rgba(3,43,87,.13);box-shadow:0 26px 50px -14px rgba(3,43,87,.32),0 6px 16px -6px rgba(3,43,87,.16);border-radius:18px;padding:.6rem;min-width:250px;top:calc(100% + .55rem);transform-origin:top center;transform:translateX(-50%) translateY(10px) scale(.97);transition:opacity .22s ease,transform .26s cubic-bezier(.2,.7,.2,1),visibility .22s}
+html body .nav-item:hover .dropdown,html body .nav-item:focus-within .dropdown{transform:translateX(-50%) translateY(0) scale(1)}
+.main-nav .dropdown::before{content:"";position:absolute;left:0;right:0;top:-.7rem;height:.7rem}
+.main-nav .dropdown::after{content:"";position:absolute;top:-7px;left:50%;width:13px;height:13px;background:#fff;border-left:1px solid rgba(3,43,87,.13);border-top:1px solid rgba(3,43,87,.13);transform:translateX(-50%) rotate(45deg);border-radius:3px 0 0 0}
+html body .main-nav .dropdown a{position:relative;padding:.62rem .9rem;border-radius:11px;font-weight:600;font-size:.92rem;color:#032B57;transition:background .2s,color .2s,padding-left .2s,transform .2s}
+html body .main-nav .dropdown a::after{display:none}
+html body .main-nav .dropdown a::before{content:"";position:absolute;left:.35rem;top:50%;width:3px;height:0;border-radius:3px;background:linear-gradient(#F7971E,#ED4E96);transform:translateY(-50%);transition:height .2s}
+html body .main-nav .dropdown a:hover,html body .main-nav .dropdown a:focus-visible{background:linear-gradient(90deg,#FFF3D1,#FFFFFF);color:#032B57;padding-left:1.3rem}
+html body .main-nav .dropdown a:hover::before,html body .main-nav .dropdown a:focus-visible::before{height:60%}
+.nav-item:hover .dropdown a,.nav-item:focus-within .dropdown a{animation:ddItem .3s both}
+.nav-item .dropdown a:nth-child(1){animation-delay:.02s}.nav-item .dropdown a:nth-child(2){animation-delay:.05s}.nav-item .dropdown a:nth-child(3){animation-delay:.08s}.nav-item .dropdown a:nth-child(4){animation-delay:.11s}.nav-item .dropdown a:nth-child(5){animation-delay:.14s}.nav-item .dropdown a:nth-child(6){animation-delay:.17s}.nav-item .dropdown a:nth-child(7){animation-delay:.2s}.nav-item .dropdown a:nth-child(8){animation-delay:.23s}.nav-item .dropdown a:nth-child(9){animation-delay:.26s}
+@keyframes ddItem{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+html body .main-nav>a:hover,html body .main-nav .nav-item:hover>a{color:#00448B}
+}
+@media (max-width:860px){html body .main-nav .dropdown{background:rgba(3,43,87,.04);border-radius:12px;box-shadow:none}html body .main-nav .dropdown a{border-radius:10px;font-weight:600}html body .main-nav .dropdown a:active{background:#FFF3D1}}
+/* small, calm motion everywhere */
+html{scroll-behavior:smooth}
+a,button,.btn{transition-property:color,background-color,border-color,box-shadow,transform,opacity;transition-duration:.2s}
+.btn:active{transform:translateY(0) scale(.98)}
+:focus-visible{outline:3px solid rgba(245,179,1,.75);outline-offset:2px;border-radius:6px}
+.blog-card img,.service-card img,.info-card img{transition:transform .5s cubic-bezier(.2,.7,.2,1)}
+.blog-card:hover img,.service-card:hover img{transform:scale(1.04)}
+.faq-list details{transition:box-shadow .25s,background .25s}
+.faq-list details[open]{box-shadow:0 14px 30px -16px rgba(3,43,87,.35)}
+.footer-col a{transition:color .2s,transform .2s}.footer-col a:hover{transform:translateX(3px)}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+<style id="img-dims">:where(img[width][height]){height:auto}</style>
 </head>
 <body>
 
@@ -878,7 +909,7 @@ img { max-width:100%; height:auto; }
 <footer class="footer">
   <div class="footer-top">
     <div class="footer-brand">
-      <img src="/assets/logo.webp" alt="Nibaha Haq logo" loading="lazy">
+      <img decoding="async" width="259" height="260" src="/assets/logo.webp" alt="Nibaha Haq logo" loading="lazy">
       <div><strong>Nibaha Haq | Academic Support Services</strong><p>Structured VULMS support, Midterm files, Finalterm files, degree-wise pages and Final Year Project guidance for Virtual University students.</p></div>
     </div>
     <nav class="footer-col" aria-label="Quick links"><h3>Quick Links</h3><a href="/">Home</a><a href="/about">About</a><a href="/services/">Services</a><a href="/degrees/">Degrees</a><a href="/contact">Contact</a></nav>
