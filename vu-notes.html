@@ -1047,12 +1047,14 @@ safe("prefix-btns", () => {
     const btn = e.target.closest(".pf-btn");
     if (!btn) return;
     activePrefix = btn.dataset.p;
+    shown = 24;
     pf.querySelectorAll(".pf-btn").forEach(b => b.classList.toggle("on", b.dataset.p === activePrefix));
     renderGrid();
   });
 });
 
 /* ── render grid ── */
+let shown = 24;
 function renderGrid() {
   const grid = document.getElementById("storeGrid");
   const noStore = document.getElementById("noStore");
@@ -1066,7 +1068,7 @@ function renderGrid() {
   });
   if (countEl) countEl.textContent = filtered.length + " files available";
   noStore.style.display = filtered.length ? "none" : "block";
-  grid.innerHTML = filtered.map(c => `
+  grid.innerHTML = filtered.slice(0, shown).map(c => `
     <article class="file-card" role="listitem">
       <div class="file-card-top">
         <span class="code">${c.code}</span>
@@ -1084,12 +1086,23 @@ function renderGrid() {
         </button>
       </div>
     </article>`).join("");
+  let more = document.getElementById("storeMore");
+  if (!more) {
+    more = document.createElement("div");
+    more.id = "storeMore";
+    more.style.cssText = "text-align:center;padding:0 1rem 3rem";
+    more.innerHTML = '<button type="button" class="btn primary" id="storeMoreBtn"></button>';
+    grid.parentNode.insertBefore(more, grid.nextSibling);
+    document.getElementById("storeMoreBtn").addEventListener("click", function () { shown += 24; renderGrid(); });
+  }
+  more.style.display = filtered.length > shown ? "block" : "none";
+  document.getElementById("storeMoreBtn").textContent = "Show more (" + (filtered.length - shown) + " left)";
 }
 
 /* ── search ── */
 safe("search", () => {
   const inp = document.getElementById("storeSearch");
-  if (inp) inp.addEventListener("input", () => { query = inp.value; renderGrid(); });
+  if (inp) inp.addEventListener("input", () => { query = inp.value; shown = 24; renderGrid(); });
 });
 
 /* ── buy button ── */

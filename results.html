@@ -610,6 +610,14 @@ a,button,.btn{transition-property:color,background-color,border-color,box-shadow
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 </style>
 <style id="img-dims">:where(img[width][height]){height:auto}</style>
+<style id="tabs-css">
+[hidden]{display:none!important}
+.proof-tabs{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center;max-width:1200px;margin:0 auto;padding:1.4rem clamp(1.1rem,5vw,4rem) 0}
+.proof-tabs button{font:inherit;font-weight:700;font-size:.9rem;padding:.55rem 1.05rem;border-radius:999px;border:1px solid var(--line,#dbe4f0);background:var(--white,#fff);color:var(--ink,#032B57);cursor:pointer;min-height:44px;transition:background .2s,color .2s,transform .2s}
+.proof-tabs button:hover{transform:translateY(-2px)}
+.proof-tabs button[aria-selected="true"]{background:var(--ink,#032B57);color:#fff;border-color:var(--ink,#032B57)}
+.proof-tabs-label{width:100%;text-align:center;font-family:var(--mono,monospace);font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;color:#946200;margin:0}
+</style>
 </head>
 <body>
 
@@ -1554,5 +1562,7 @@ safe("screenshot-lightbox", () => {
 </script>
 
 <script src="/assets/chat-widget.js?v=2" defer></script>
+<script type="application/json" id="tabs-config">{"label":"Approved reports and CGPA results","items":[["section[aria-labelledby=\"fyp-heading\"]","HRM620 report"],["section[aria-labelledby=\"mgit662-heading\"]","MGIT662 report"],["section[aria-labelledby=\"mgit661-heading\"]","MGIT661 report"],["section[aria-labelledby=\"fin619-heading\"]","FIN619 project"],["section[aria-labelledby=\"cgpa-heading\"]","CGPA 2025"],["section[aria-labelledby=\"cgpa-2026-heading\"]","Spring 2026 finals"]]}</script>
+<script src="/assets/tabs.js?v=1" defer></script>
 </body>
 </html>
