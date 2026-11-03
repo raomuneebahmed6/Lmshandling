@@ -3,6 +3,14 @@
 Options -Indexes
 ServerSignature Off
 
+# Never serve dotfiles (.git, .env, .htaccess) or backup, database and config style files
+<FilesMatch "(^\.|\.(md|csv|sql|sqlite|db|log|bak|old|orig|swp|zip|tar|gz|yml|yaml|lock|sh|ini|env|key|pem)$)">
+  Require all denied
+</FilesMatch>
+<IfModule mod_headers.c>
+  Header always unset X-Powered-By
+</IfModule>
+
 # Force HTTPS
 RewriteEngine On
 RewriteCond %{HTTPS} off
