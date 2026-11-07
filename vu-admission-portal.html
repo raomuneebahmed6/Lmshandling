@@ -714,6 +714,30 @@ a,button,.btn{transition-property:color,background-color,border-color,box-shadow
 <style id="img-dims">:where(img[width][height]){height:auto}</style>
 <style id="tap-targets">@media (max-width:860px){.footer-col a{padding:.32rem 0}}</style>
 <link rel="stylesheet" href="/assets/post-layout.css?v=1">
+<link rel="stylesheet" href="/assets/page-layout.css?v=4">
+<style id="adm-style">
+.deg-stat b.sm{font-size:1.05rem;line-height:1.35;padding-top:0}
+.deg-hero .highlight-box{background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.22);border-left:4px solid #FFD86B;border-radius:0 14px 14px 0;margin-top:1.1rem;padding:.8rem 1rem}
+.deg-hero .highlight-box p{color:#E7EDF6;font-size:.88rem;line-height:1.6;margin:0}
+.deg-hero .highlight-box strong{color:#FFD86B}
+.deg-hero .post-meta-row{margin-top:1rem}
+.deg-hero .post-meta-row .chip{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff}
+/* article: steps, checklists and takeaways as cards */
+#apply-online + ol{list-style:none;counter-reset:st;margin:0 0 1.4rem;padding:0;display:grid;gap:.7rem}
+#apply-online + ol li{counter-increment:st;position:relative;background:var(--white);border:1px solid var(--line);border-radius:16px;padding:.9rem 1.1rem .9rem 4rem;margin:0;transition:border-color .2s,transform .2s}
+#apply-online + ol li:hover{border-color:var(--gold);transform:translateX(4px)}
+#apply-online + ol li::before{content:counter(st);position:absolute;left:1rem;top:.75rem;display:grid;place-items:center;width:2.2rem;height:2.2rem;border-radius:50%;background:linear-gradient(135deg,#F5B301,#F7971E);color:#032B57;font-weight:800}
+#programs + p + ul,#eligibility-fee + p + ul{list-style:none;margin:0 0 1.2rem;padding:0;display:grid;gap:.6rem}
+#programs + p + ul li,#eligibility-fee + p + ul li{background:var(--white);border:1px solid var(--line);border-left:4px solid var(--gold);border-radius:12px;padding:.75rem 1rem;margin:0}
+#documents + p + ul{list-style:none;margin:0 0 1.2rem;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+#documents + p + ul li{position:relative;background:var(--white);border:1px solid var(--line);border-radius:12px;padding:.7rem .9rem .7rem 3rem;margin:0}
+#documents + p + ul li::before{content:"✓";position:absolute;left:.8rem;top:.65rem;display:grid;place-items:center;width:1.5rem;height:1.5rem;border-radius:50%;background:var(--gold-soft);color:#946200;font-weight:800;font-size:.85rem}
+#key-takeaways + ul{list-style:none;margin:0 0 1.4rem;padding:1.3rem 1.4rem;background:linear-gradient(135deg,#032B57,#0a4a8f);border-radius:20px;display:grid;gap:.7rem}
+#key-takeaways + ul li{position:relative;color:#E7EDF6;margin:0;font-size:.97rem;padding-left:2.3rem}
+#key-takeaways + ul li::before{content:"✓";position:absolute;left:0;top:.1rem;display:grid;place-items:center;width:1.5rem;height:1.5rem;border-radius:50%;background:#FFD86B;color:#032B57;font-weight:800;font-size:.85rem}
+@media (max-width:640px){#documents + p + ul{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:640px){.deg-hero .lead{font-size:.96rem;line-height:1.55}.deg-hero h1.h1-long{font-size:1.75rem}.deg-hero .highlight-box p{font-size:.82rem;line-height:1.5}.deg-hero .post-meta-row .chip{font-size:.78rem;padding:.3rem .6rem}}
+</style>
 </head>
 <body>
 
@@ -785,38 +809,26 @@ a,button,.btn{transition-property:color,background-color,border-color,box-shadow
 <article>
 <section class="page-hero section">
   <div class="hero-bg"><div class="blob b1" data-parallax="0.2"></div><div class="blob b2" data-parallax="-0.14"></div></div>
-  <div class="ss-hero-grid">
-    <div class="reveal in">
+  <div class="deg-hero">
+    <div>
       <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><span>VU Admission Portal</span></nav>
-      <h1>VU Admission Portal: Apply Online Step by Step</h1>
+      <p class="section-label">Admission Guide</p>
+      <h1 class="h1-long">VU Admission Portal: Apply Online Step by Step</h1>
       <p class="lead">Everything you need to apply for Virtual University admission on VU's own official portal: which program to pick, eligibility and fee, the exact application steps, required documents, and a direct link to vu.edu.pk/apply so you don't have to go hunting for it.</p>
       <div class="highlight-box" role="note"><p><strong>Quick answer:</strong> VU admission is submitted entirely online at VU's official admission portal, vu.edu.pk/apply. Create an applicant account, fill in the form, upload your documents, pay the admission fee, and submit before the deadline for that semester. Eligibility and required documents vary slightly by program (BS, ADP, MCS, MBA, MS/MPhil). VU never processes admission through WhatsApp or email; the portal is the only official channel.</p></div>
-      <div class="post-meta-row reveal" data-delay="1">
+      <div class="hero-actions" style="margin-top:1.3rem"><a class="btn primary" target="_blank" rel="noopener" href="https://www.vu.edu.pk/apply/">Go to VU Admission Portal &rarr;</a><a class="btn soft" data-whatsapp="Hello Nibaha Haq, I want help with my VU admission application: " target="_blank" rel="noopener" href="https://wa.me/923295209868?text=Hello%20Nibaha%20Haq%2C%20I%20want%20help%20with%20my%20VU%20admission%20application%3A%20">Ask on WhatsApp</a></div>
+      <div class="post-meta-row">
         <span class="chip">✍️ Nibaha Haq</span>
         <span class="chip">📅 2026</span>
         <span class="chip">⏱ 6 min read</span>
         <span class="chip">🎓 BS · ADP · MCS · MBA</span>
       </div>
     </div>
-    <div class="hero-banner-card ss-card reveal" data-delay="1">
-      <h2>🎓 Admission Portal at a Glance</h2>
-      <div class="ss-row">
-        <span class="ss-row-icon">🌐</span>
-        <div><div class="ss-row-label">Official Portal</div><div class="ss-row-value">vu.edu.pk/apply</div></div>
-      </div>
-      <div class="ss-row">
-        <span class="ss-row-icon">🎓</span>
-        <div><div class="ss-row-label">Programs</div><div class="ss-row-value">BS, ADP, MCS, MBA, MS/MPhil</div></div>
-      </div>
-      <div class="ss-row">
-        <span class="ss-row-icon">📄</span>
-        <div><div class="ss-row-label">You'll Need</div><div class="ss-row-value">CNIC, photo, certificates, fee receipt</div></div>
-      </div>
-      <div class="ss-row">
-        <span class="ss-row-icon">✅</span>
-        <div><div class="ss-row-label">After Admission</div><div class="ss-row-value">VUID &amp; VULMS login issued</div></div>
-      </div>
-      <a class="btn gold ss-card-btn" target="_blank" rel="noopener" href="https://www.vu.edu.pk/apply/">Go to VU Admission Portal &rarr;</a>
+    <div class="deg-stats" aria-label="Admission at a glance">
+      <div class="deg-stat"><b class="txt sm">vu.edu.pk/apply</b><span>Official Portal</span></div>
+      <div class="deg-stat"><b class="txt sm">BS, ADP, MCS, MBA, MS/MPhil</b><span>Programs</span></div>
+      <div class="deg-stat"><b class="txt sm">CNIC, photo, certificates, fee receipt</b><span>You'll Need</span></div>
+      <div class="deg-stat"><b class="txt sm">VUID &amp; VULMS login issued</b><span>After Admission</span></div>
     </div>
   </div>
 </section>
