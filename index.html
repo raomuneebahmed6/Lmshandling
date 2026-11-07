@@ -744,6 +744,38 @@ main>.section>.section-head>p:not(.section-label){grid-column:2;margin:0 0 .6rem
 }
 @media (min-width:861px){.contact-card .contact-links{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}}
 </style>
+<style id="home-hero2">
+/* Home hero: one bold navy stage, white headline, glass cards */
+html body .hero{display:block;min-height:auto;padding-top:9.1rem;padding-bottom:1.6rem}
+html body .hero .hero-bg{display:none}
+.hero-stage{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(0,.88fr);gap:2.4rem;align-items:center;background:linear-gradient(135deg,#032B57 0%,#0a4a8f 58%,#1a5fb0 100%);border-radius:34px;padding:clamp(1.4rem,3vw,2.3rem) clamp(1.4rem,3.4vw,2.8rem);position:relative;overflow:hidden;box-shadow:0 34px 70px -30px rgba(3,43,87,.6)}
+.hero-stage::before{content:"";position:absolute;right:-110px;top:-130px;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(245,179,1,.32),transparent 68%)}
+.hero-stage::after{content:"";position:absolute;left:-90px;bottom:-140px;width:360px;height:360px;border-radius:50%;background:radial-gradient(circle,rgba(123,47,247,.30),transparent 70%)}
+.hero-stage>*{position:relative;z-index:1}
+.hero .kicker{color:#FFD86B}
+.hero .hero-title{color:#fff;font-size:clamp(2rem,4vw,3.05rem);line-height:1.1}
+.hero .hero-title .hl{color:#FFD86B}
+.hero .hero-title .hl::after{display:none}
+.hero .hero-text{color:#D8E5F6;font-size:1rem;margin:.6rem 0 .9rem}
+.hero .hero-quick-services{gap:.6rem;margin-bottom:1.1rem}
+.hero .hero-quick-services a{padding:.65rem .85rem}
+.hero .hero-quick-services a{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2)}
+.hero .hero-quick-services a strong{color:#fff}
+.hero .hero-quick-services a span{color:#CFE0F5}
+.hero .hero-quick-services a b{color:#FFD86B}
+.hero .hero-quick-services a:hover{background:rgba(255,255,255,.17);border-color:#FFD86B;box-shadow:none}
+.hero .btn.primary{background:linear-gradient(135deg,#F5B301,#F7971E);color:#032B57}
+.hero .btn.soft{background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.45);color:#fff}
+.hero .btn.soft:hover{background:#fff;color:#032B57}
+.hero .hero-banner-card{background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.22);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);box-shadow:none}
+.hero .hero-banner-card:hover{transform:translateY(-6px);box-shadow:none}
+.hero .hero-banner-card p{color:#D8E5F6}
+.hero .banner-stats>div{background:rgba(255,255,255,.10);border-radius:14px;padding:.7rem .5rem;text-align:center}
+.hero .banner-stats strong{color:#FFD86B}
+.hero .banner-stats span{color:#DDE6F2}
+@media (max-width:1024px){.hero-stage{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:860px){html body .hero{padding-top:8.2rem}.hero-stage{border-radius:26px;padding:1.4rem 1.2rem}.hero .hero-title{font-size:clamp(1.9rem,8vw,2.5rem)}}
+</style>
 </head>
 <body>
 
@@ -822,6 +854,7 @@ main>.section>.section-head>p:not(.section-label){grid-column:2;margin:0 0 .6rem
     <div class="float-icon f2" data-parallax="-0.1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M12 6.5C10.4 5 8 4.5 5 4.5v13c3 0 5.4.5 7 2 1.6-1.5 4-2 7-2v-13c-3 0-5.4.5-7 2Zm0 0v13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
     <div class="float-icon f3" data-parallax="0.18" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="m14.5 5 4.5 4.5L8.5 20H4v-4.5L14.5 5Zm2.5-2.5 4.5 4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
   </div>
+  <div class="hero-stage">
   <div class="hero-copy">
     <p class="kicker reveal in">Nibaha Haq · Virtual University Support</p>
     <h1 class="hero-title reveal in">VULMS Handling, <span class="hl">4&nbsp;CGPA Files</span> &amp; Final Year Projects</h1>
@@ -848,6 +881,7 @@ main>.section>.section-head>p:not(.section-label){grid-column:2;margin:0 0 .6rem
       <div><strong data-count="200">0</strong><span>Accounts</span></div>
       <div><strong data-count="606">0</strong><span>Codes</span></div>
     </div>
+  </div>
   </div>
   <div class="scroll-hint" aria-hidden="true">Scroll</div>
 </section>
