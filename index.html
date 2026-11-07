@@ -843,6 +843,25 @@ html body #services .svc-bento .service-card:nth-child(1){padding:1.3rem 1.3rem!
 .contact-card .contact-links a{padding:.6rem .85rem}
 }
 </style>
+<style id="home-mobile2">
+/* phones: store preview as a swipe row, compact contact block */
+@media (max-width:860px){
+#store-preview .store-preview-grid{display:flex!important;overflow-x:auto;scroll-snap-type:x mandatory;gap:.7rem;padding:.1rem .1rem .7rem;margin-top:1rem;-webkit-overflow-scrolling:touch}
+#store-preview .store-preview-grid>.sp-card{flex:0 0 64%;scroll-snap-align:start;padding:0!important}
+#store-preview .sp-card:hover{transform:none}
+#contact .contact-card{padding:1.2rem 1.1rem;gap:1.1rem}
+#contact .contact-links{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:.9rem}
+#contact .contact-links a:nth-child(-n+3){grid-column:1/-1}
+#contact .contact-links a{padding:.55rem .8rem}
+#contact .contact-links a:nth-child(n+4) strong{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+#contact .contact-links a:nth-child(n+4) span{font-size:.8rem;color:var(--ink);font-weight:700;letter-spacing:.04em}
+#contact .query-form{gap:.6rem}
+#contact .query-form .form-row{grid-template-columns:1fr 1fr!important;gap:.6rem}
+#contact .query-form input,#contact .query-form select,#contact .query-form textarea{padding:.55rem .7rem}
+#contact .query-form textarea{height:4.2rem;min-height:0;resize:vertical}
+#contact .form-note{font-size:.78rem}
+}
+</style>
 </head>
 <body>
 
