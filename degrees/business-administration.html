@@ -617,6 +617,63 @@ a,button,.btn{transition-property:color,background-color,border-color,box-shadow
 </style>
 <style id="img-dims">:where(img[width][height]){height:auto}</style>
 <style id="tap-targets">@media (max-width:860px){.footer-col a{padding:.32rem 0}}</style>
+<style id="deg-layout">
+.deg-hero{display:grid;grid-template-columns:1.15fr .85fr;gap:2rem;align-items:center;background:linear-gradient(135deg,#032B57 0%,#0a4a8f 62%,#1a5fb0 100%);color:#fff;border-radius:30px;padding:clamp(1.6rem,4vw,3rem);position:relative;overflow:hidden;box-shadow:0 30px 60px -28px rgba(3,43,87,.55)}
+.deg-hero::before{content:"";position:absolute;right:-90px;top:-110px;width:340px;height:340px;border-radius:50%;background:radial-gradient(circle,rgba(245,179,1,.30),transparent 68%)}
+.deg-hero::after{content:"";position:absolute;left:-80px;bottom:-120px;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(123,47,247,.28),transparent 70%)}
+.deg-hero>*{position:relative;z-index:1}
+.deg-hero .breadcrumbs{color:#A9C4E6;margin-bottom:.9rem}
+.deg-hero .breadcrumbs a{color:#FFD86B}
+.deg-hero .section-label{color:#FFD86B}
+.deg-hero h1{color:#fff;font-size:clamp(2.3rem,5.2vw,3.9rem);line-height:1.06;margin:.3rem 0 .8rem}
+.deg-hero .lead{color:#D8E5F6;max-width:52ch}
+.deg-hero .chip{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff}
+.deg-hero .btn.primary{background:linear-gradient(135deg,#F5B301,#F7971E);color:#032B57;border-color:transparent}
+.deg-hero .btn.soft{background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.45)}
+.deg-hero .btn.soft:hover{background:#fff;color:#032B57}
+.deg-stats{display:grid;grid-template-columns:1fr 1fr;gap:.85rem}
+.deg-stat{background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.20);border-radius:20px;padding:1.05rem 1.15rem;backdrop-filter:blur(4px);transition:transform .25s,background .25s}
+.deg-stat:hover{transform:translateY(-4px);background:rgba(255,255,255,.16)}
+.deg-stat b{display:block;font-size:2.1rem;line-height:1.1;color:#FFD86B;font-weight:800}
+.deg-stat b.txt{font-size:1.45rem;padding-top:.35rem}
+.deg-stat span{display:block;font-size:.86rem;color:#DDE6F2;margin-top:.2rem}
+.deg-overview{display:grid;grid-template-columns:1.1fr .9fr;gap:1.2rem;align-items:start}
+.deg-stack{display:grid;gap:1.2rem}
+.deg-card{background:var(--white);border:1px solid var(--line);border-radius:22px;padding:1.6rem 1.7rem;transition:box-shadow .25s,border-color .25s}
+.deg-card:hover{box-shadow:var(--shadow);border-color:var(--gold)}
+.deg-card h2{font-size:clamp(1.25rem,2.2vw,1.6rem);margin:.2rem 0 .7rem}
+.deg-card p{color:var(--text);line-height:1.7;font-size:.97rem;margin:0 0 .8rem}
+.deg-card p:last-child{margin-bottom:0}
+.deg-card .section-label{margin:0}
+.deg-head-row{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:2rem;align-items:end;margin-bottom:1.6rem}
+.deg-head-row .section-head{margin-bottom:0;max-width:none}
+.deg-note{border:1px dashed var(--line);border-radius:16px;background:var(--white);padding:1.05rem 1.2rem}
+.deg-note h3{font-size:1rem;margin:0 0 .35rem}
+.deg-note p{margin:0;font-size:.9rem;line-height:1.55}
+.deg-bottom{display:grid;grid-template-columns:minmax(0,1fr) 370px;gap:2rem;align-items:start}
+.deg-bottom .faq-list{max-width:none}
+.deg-aside{position:sticky;top:7rem;display:grid;gap:1rem}
+.deg-cta{background:linear-gradient(135deg,#032B57,#0a4a8f);color:#fff;border-radius:22px;padding:1.5rem 1.5rem}
+.deg-cta h3{color:#fff;font-size:1.2rem;margin:0 0 .4rem}
+.deg-cta p{color:#CFE0F5;font-size:.92rem;margin:0 0 1rem}
+.deg-cta .btn{width:100%;justify-content:center}
+.deg-links{list-style:none;margin:0;padding:0;display:grid;gap:.5rem}
+.deg-links a{display:flex;justify-content:space-between;gap:.6rem;font-weight:600;font-size:.92rem;color:var(--ink);padding:.45rem 0;border-bottom:1px solid var(--line);transition:color .2s,padding-left .2s}
+.deg-links a::after{content:"→";color:var(--gold)}
+.deg-links a:hover{color:var(--teal);padding-left:4px}
+.deg-chips{display:flex;flex-wrap:wrap;gap:.45rem}
+.deg-chips a{font-size:.84rem;font-weight:600;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:.38rem .8rem;transition:background .2s,color .2s,transform .2s}
+.deg-chips a:hover{background:var(--ink);color:#fff;transform:translateY(-2px)}
+.deg-aside h3.deg-h{font-size:.82rem;text-transform:uppercase;letter-spacing:.1em;color:var(--teal);margin:0 0 .7rem;font-family:var(--mono)}
+@media (max-width:1024px){
+  .deg-hero,.deg-overview,.deg-head-row,.deg-bottom{grid-template-columns:minmax(0,1fr)}
+  .deg-aside{position:static}
+}
+@media (max-width:600px){.deg-stats{gap:.6rem}.deg-stat b{font-size:1.6rem}.deg-card{padding:1.3rem 1.2rem}}
+.deg-cards{display:grid;grid-template-columns:repeat(var(--n,2),minmax(0,1fr));gap:1.2rem;align-items:stretch}
+.deg-cards>.deg-card{margin:0}
+@media (max-width:1024px){.deg-cards{grid-template-columns:minmax(0,1fr)}}
+</style>
 </head>
 <body>
 
@@ -688,19 +745,26 @@ a,button,.btn{transition-property:color,background-color,border-color,box-shadow
 <main>
 <section class="page-hero section" aria-label="Business Administration introduction">
   <div class="hero-bg"><div class="blob b1" data-parallax="0.2"></div><div class="blob b2" data-parallax="-0.14"></div></div>
-  <div class="reveal in">
-    <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><a href="/degrees/">Degrees</a><span>/</span><a href="/degrees/faculty-management">Faculty of Management</a><span>/</span><span>Business Administration</span></nav>
-    <p class="section-label">Faculty of Management</p>
-    <h1>Business Administration</h1>
-    <p class="lead">Course codes for Business Administration at Virtual University: tap any code to order its Midterm file, Finalterm file, or LMS handling on WhatsApp.</p>
-    <div class="hero-chips reveal" data-delay="1">
-      <span class="chip"><b>151</b> Related Codes</span>
-      <span class="chip">📘 Mid + Final Files</span>
-      <span class="chip">🧭 LMS Handling</span>
+  <div class="deg-hero">
+    <div>
+      <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><a href="/degrees/">Degrees</a><span>/</span><a href="/degrees/faculty-management">Faculty of Management</a><span>/</span><span>Business Administration</span></nav>
+      <p class="section-label">Faculty of Management</p>
+      <h1>Business Administration</h1>
+      <p class="lead">Course codes for Business Administration at Virtual University: tap any code to order its Midterm file, Finalterm file, or LMS handling on WhatsApp.</p>
+      <div class="hero-chips" style="margin-top:1rem">
+        <span class="chip">📘 Mid + Final Files</span>
+        <span class="chip">🧭 LMS Handling</span>
+      </div>
+      <div class="hero-actions" style="margin-top:1.4rem">
+        <a class="btn primary" data-whatsapp="Hello Nibaha Haq, I need files for Business Administration." target="_blank" rel="noopener" href="https://wa.me/923295209868?text=Hello%20Nibaha%20Haq%2C%20I%20need%20files%20for%20Business%20Administration.">Order Files</a>
+        <a class="btn soft" href="/services/final-year-project">FYP Support</a>
+      </div>
     </div>
-    <div class="hero-actions reveal" data-delay="2" style="margin-top:1.5rem">
-      <a class="btn primary" data-whatsapp="Hello Nibaha Haq, I need files for Business Administration." target="_blank" rel="noopener" href="https://wa.me/923295209868?text=Hello%20Nibaha%20Haq%2C%20I%20need%20files%20for%20Business%20Administration.">Order Files</a>
-      <a class="btn soft" href="/services/final-year-project">FYP Support</a>
+    <div class="deg-stats" aria-label="Business Administration at a glance">
+      <div class="deg-stat"><b>151</b><span>related course codes</span></div>
+      <div class="deg-stat"><b>606</b><span>codes covered in total</span></div>
+      <div class="deg-stat"><b class="txt">Mid + Final</b><span>exam files per code</span></div>
+      <div class="deg-stat"><b class="txt">GDB, Quiz</b><span>assignment and attendance handled</span></div>
     </div>
   </div>
 </section>
@@ -720,58 +784,58 @@ a,button,.btn{transition-property:color,background-color,border-color,box-shadow
   <button class="btn soft toggle-codes" id="toggleCodes" aria-expanded="false">Show all codes ↓</button>
 </section>
 
-<section class="section" aria-labelledby="about-heading">
-  <div class="section-head reveal">
-    <p class="section-label">About This Program</p>
-    <h2 id="about-heading">Business Administration at Virtual University</h2>
-    <p>BBA / Business Administration at Virtual University covers management, marketing, finance, HR and organizational behavior, with 151 related course codes making it the largest program on the platform and one of VU's most enrolled degrees.</p>
-    <p style="margin-top:.8rem">The wide subject spread means students juggle multiple case-study-based assignments and GDBs each semester, which is why structured LMS handling and code-wise Midterm and Finalterm files are especially useful for BBA students.</p>
-    <p style="margin-top:.8rem">Already have a bachelor's and considering a master's instead? See our <a href="/blog/vu-mba-admission-2026" style="color:var(--teal);font-weight:600;text-decoration:underline">VU MBA Admission 2026</a> guide for eligibility, specializations and how to apply.</p>
+<section class="section" aria-label="Program overview">
+  <div class="deg-cards" style="--n:2">
+    <article class="deg-card reveal">
+        <p class="section-label">About This Program</p>
+        <h2 id="about-heading">Business Administration at Virtual University</h2>
+        <p>BBA / Business Administration at Virtual University covers management, marketing, finance, HR and organizational behavior, with 151 related course codes making it the largest program on the platform and one of VU's most enrolled degrees.</p>
+        <p style="margin-top:.8rem">The wide subject spread means students juggle multiple case-study-based assignments and GDBs each semester, which is why structured LMS handling and code-wise Midterm and Finalterm files are especially useful for BBA students.</p>
+        <p style="margin-top:.8rem">Already have a bachelor's and considering a master's instead? See our <a href="/blog/vu-mba-admission-2026" style="color:var(--teal);font-weight:600;text-decoration:underline">VU MBA Admission 2026</a> guide for eligibility, specializations and how to apply.</p>
+      </article>
+    <article class="deg-card reveal" data-delay="1">
+        <p class="section-label">Career Scope</p>
+        <h2 id="career-heading">Career scope after Business Administration in Pakistan</h2>
+        <p>A BBA opens one of the widest ranges of entry-level roles: marketing, HR, sales, operations and management-trainee positions across banks, telecom, FMCG and general corporate-sector companies in Pakistan.</p>
+        <p style="margin-top:.8rem">Many graduates continue to an MBA for a specific specialization in Marketing, Finance or HR, while others move directly into corporate roles or use the core management and finance training to start a small business of their own.</p>
+      </article>
   </div>
 </section>
 
-<section class="section" aria-labelledby="career-heading">
-  <div class="section-head reveal">
-    <p class="section-label">Career Scope</p>
-    <h2 id="career-heading">Career scope after Business Administration in Pakistan</h2>
-    <p>A BBA opens one of the widest ranges of entry-level roles: marketing, HR, sales, operations and management-trainee positions across banks, telecom, FMCG and general corporate-sector companies in Pakistan.</p>
-    <p style="margin-top:.8rem">Many graduates continue to an MBA for a specific specialization in Marketing, Finance or HR, while others move directly into corporate roles or use the core management and finance training to start a small business of their own.</p>
-  </div>
-</section>
-
-<section class="section" aria-labelledby="related-heading">
-  <div class="section-head reveal">
-    <p class="section-label">Faculty of Management</p>
-    <h2 id="related-heading">Other programs in this faculty.</h2>
-    <p><a href="/degrees/accounting-finance" style="color:var(--teal);font-weight:600;text-decoration:underline">Accounting &amp; Finance</a> &middot; <a href="/degrees/commerce" style="color:var(--teal);font-weight:600;text-decoration:underline">Commerce</a> &middot; <a href="/degrees/public-administration" style="color:var(--teal);font-weight:600;text-decoration:underline">Public Administration</a></p>
-  </div>
-</section>
-
-<section class="section" aria-labelledby="faq-heading">
-  <div class="section-head reveal">
-    <p class="section-label">FAQ</p>
-    <h2 id="faq-heading">Common questions about this program.</h2>
-  </div>
-  <div class="faq-list reveal">
+<section class="section" aria-label="Questions and help">
+  <div class="deg-bottom">
+    <div>
+      <div class="section-head reveal" style="margin-bottom:1.4rem">
+        <p class="section-label">FAQ</p>
+        <h2 id="faq-heading">Common questions about this program.</h2>
+      </div>
+      <div class="faq-list reveal">
       <details><summary>Why does Business Administration have so many related course codes?</summary><p>BBA shares electives with Commerce, Public Administration and other Management faculty programs, and covers specializations like marketing, HR and finance, which adds up to 151 related codes.</p></details>
       <details><summary>Which BBA subjects are most commonly ordered?</summary><p>Principles of Marketing, Human Resource Management, Financial and Managerial Accounting are among the most requested for Midterm and Finalterm files.</p></details>
       <details><summary>Do you provide GDB help for Business Administration?</summary><p>Yes, GDBs, quizzes, assignments and attendance are handled for every BBA-related course code throughout the semester.</p></details>
       <details><summary>Is FYP support available for BBA students?</summary><p>Yes, from business research proposals to complete documentation and viva preparation.</p></details>
   </div>
-</section>
-
-<section class="section" aria-label="Services">
-  <div class="grid-4">
-    <article class="service-card reveal"><h3>LMS Handling</h3><p>Quiz, assignment, GDB and attendance handled all semester.</p><a class="read-more" href="/services/lms-services">Read more<span class="sr-only"> about LMS Handling</span></a></article>
-    <article class="service-card reveal" data-delay="1"><h3>Midterm Files</h3><p>Code-wise objective + subjective midterm preparation.</p><a class="read-more" href="/services/midterm-files">Read more<span class="sr-only"> about Midterm Exam Files</span></a></article>
-    <article class="service-card reveal" data-delay="2"><h3>Finalterm Files</h3><p>4 CGPA finalterm files for focused revision.</p><a class="read-more" href="/services/finalterm-files">Read more<span class="sr-only"> about Finalterm Exam Files</span></a></article>
-    <article class="service-card reveal" data-delay="3"><h3>Final Year Project</h3><p>Proposal to viva: complete FYP documentation support.</p><a class="read-more" href="/services/final-year-project">Read more<span class="sr-only"> about Final Year Projects</span></a></article>
-  </div>
-</section>
-<section class="section" aria-label="Get started">
-  <div class="cta-band reveal">
-    <div><h2>Ready to start this semester right?</h2><p>Send your program, semester and subject codes, and get organized support in minutes.</p></div>
-    <a class="btn gold" data-whatsapp="Hello Nibaha Haq, I am a Business Administration student and need VU academic support." target="_blank" rel="noopener" href="https://wa.me/923295209868?text=Hello%20Nibaha%20Haq%2C%20I%20am%20a%20Business%20Administration%20student%20and%20need%20VU%20academic%20support.">Message on WhatsApp</a>
+    </div>
+    <aside class="deg-aside" aria-label="Help and related">
+      <div class="deg-cta reveal">
+        <h3>Ready to start this semester right?</h3>
+        <p>Send your program, semester and subject codes, and get organized support in minutes.</p>
+        <a class="btn gold" data-whatsapp="Hello Nibaha Haq, I am a Business Administration student and need VU academic support." target="_blank" rel="noopener" href="https://wa.me/923295209868?text=Hello%20Nibaha%20Haq%2C%20I%20am%20a%20Business%20Administration%20student%20and%20need%20VU%20academic%20support.">Message on WhatsApp</a>
+      </div>
+      <div class="deg-card reveal">
+        <h3 class="deg-h">How we can help</h3>
+        <ul class="deg-links">
+          <li><a href="/services/lms-services">LMS Handling</a></li>
+          <li><a href="/services/midterm-files">Midterm Files</a></li>
+          <li><a href="/services/finalterm-files">Finalterm Files</a></li>
+          <li><a href="/services/final-year-project">Final Year Project</a></li>
+        </ul>
+      </div>
+      <div class="deg-card reveal">
+        <h3 class="deg-h">Other programs in this faculty</h3>
+        <div class="deg-chips"><a href="/degrees/accounting-finance">Accounting &amp; Finance</a><a href="/degrees/commerce">Commerce</a><a href="/degrees/public-administration">Public Administration</a></div>
+      </div>
+    </aside>
   </div>
 </section>
 </main>
