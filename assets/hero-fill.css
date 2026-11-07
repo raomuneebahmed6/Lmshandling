@@ -1,0 +1,25 @@
+/* Hero panels on wide screens: both columns share the same height, so the right card
+   fills the space instead of floating in the middle with empty bands above and below. */
+@media (min-width:1025px){
+  .deg-hero{align-items:stretch}
+  .deg-hero>div:first-child{display:flex;flex-direction:column;justify-content:center}
+  .deg-stats{align-content:stretch;grid-auto-rows:1fr}
+  .deg-stat{display:flex;flex-direction:column;justify-content:center}
+  .deg-stat b{font-size:clamp(2rem,3vw,2.6rem)}
+  .hero-cover-card{display:flex;flex-direction:column;justify-content:space-between}
+  .hero-cover-card ul{flex:1;align-content:space-evenly;padding:.4rem 0}
+  .hero-cover-card .hcc-title{margin-bottom:.4rem}
+}
+@media (min-width:1025px){
+  .hero-cover-card ul{display:flex;flex-direction:column;gap:0;padding:0;align-content:normal}
+  .hero-cover-card li{flex:1;display:flex;align-items:center;padding:.5rem 0 .5rem 2.4rem;border-top:1px solid rgba(255,255,255,.14);font-size:1.02rem}
+  .hero-cover-card li::before{top:50%;transform:translateY(-50%);width:1.5rem;height:1.5rem;font-size:.82rem}
+}
+/* two-column rows: columns share one height (photo and cards fill, no empty strips) */
+@media (min-width:1025px){
+  .pg-split{align-items:stretch}
+  .pg-split>.pg-photo{height:100%;min-height:0}
+  .pg-split>.pg-photo img{height:100%;aspect-ratio:auto;object-position:center 30%}
+  .pg-split>.pg-stack{align-content:stretch}
+  .pg-split>.pg-stack>.deg-card:only-child{height:100%}
+}
