@@ -825,6 +825,24 @@ html body #services .svc-bento .service-card:nth-child(4){grid-column:2/4}
 @media (max-width:1024px){#about.feature-split{grid-template-columns:minmax(0,1fr)}#about .about-badge.b1{left:.6rem}#about .about-badge.b2{right:.6rem}}
 @media (max-width:700px){#about .photo-frame{display:none}}
 </style>
+<style id="home-mobile">
+/* phones: services as a swipe row, tighter hero tiles and contact links */
+@media (max-width:860px){
+html body #services .svc-bento{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:.8rem;padding:.2rem .1rem .8rem;-webkit-overflow-scrolling:touch}
+html body #services .svc-bento .service-card{flex:0 0 84%;scroll-snap-align:start;min-height:0;padding:1.2rem 1.2rem!important}
+html body #services .svc-bento .service-card:nth-child(1){padding:1.3rem 1.3rem!important}
+#services .svc-bento .service-card .icon{display:grid}
+#services .svc-no{font-size:1.5rem}
+}
+@media (max-width:600px){
+.hero .hero-quick-services{gap:.5rem}
+.hero .hero-quick-services a{padding:.55rem .65rem;column-gap:.5rem}
+.hero .hero-quick-services a strong{font-size:.86rem;line-height:1.25}
+.hero .hero-quick-services a span{font-size:.75rem;line-height:1.3}
+.sp-pill{font-size:.75rem}
+.contact-card .contact-links a{padding:.6rem .85rem}
+}
+</style>
 </head>
 <body>
 
