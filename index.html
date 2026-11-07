@@ -734,6 +734,16 @@ a,button,.btn{transition-property:color,background-color,border-color,box-shadow
 @media (max-width:860px){.nr-grid{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:82%;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:.4rem}.nr-card{scroll-snap-align:start}}
 </style>
 <style id="tap-targets">@media (max-width:860px){.footer-col a{padding:.32rem 0}}</style>
+<style id="home-layout">
+/* section headings: title on the left, intro on the right, so wide screens use both sides */
+@media (min-width:1025px){
+main>.section>.section-head{max-width:none;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);column-gap:3rem;align-items:end}
+main>.section>.section-head>.section-label{grid-column:1/-1}
+main>.section>.section-head>h2{grid-column:1;grid-row:2/span 4}
+main>.section>.section-head>p:not(.section-label){grid-column:2;margin:0 0 .6rem}
+}
+@media (min-width:861px){.contact-card .contact-links{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}}
+</style>
 </head>
 <body>
 

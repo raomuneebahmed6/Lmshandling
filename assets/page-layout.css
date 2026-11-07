@@ -1,0 +1,75 @@
+.deg-hero{display:grid;grid-template-columns:1.15fr .85fr;gap:2rem;align-items:center;background:linear-gradient(135deg,#032B57 0%,#0a4a8f 62%,#1a5fb0 100%);color:#fff;border-radius:30px;padding:clamp(1.6rem,4vw,3rem);position:relative;overflow:hidden;box-shadow:0 30px 60px -28px rgba(3,43,87,.55)}
+.deg-hero::before{content:"";position:absolute;right:-90px;top:-110px;width:340px;height:340px;border-radius:50%;background:radial-gradient(circle,rgba(245,179,1,.30),transparent 68%)}
+.deg-hero::after{content:"";position:absolute;left:-80px;bottom:-120px;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(123,47,247,.28),transparent 70%)}
+.deg-hero>*{position:relative;z-index:1}
+.deg-hero .breadcrumbs{color:#A9C4E6;margin-bottom:.9rem}
+.deg-hero .breadcrumbs a{color:#FFD86B}
+.deg-hero .section-label{color:#FFD86B}
+.deg-hero h1{color:#fff;font-size:clamp(2.3rem,5.2vw,3.9rem);line-height:1.06;margin:.3rem 0 .8rem}
+.deg-hero .lead{color:#D8E5F6;max-width:52ch}
+.deg-hero .chip{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff}
+.deg-hero .btn.primary{background:linear-gradient(135deg,#F5B301,#F7971E);color:#032B57;border-color:transparent}
+.deg-hero .btn.soft{background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.45)}
+.deg-hero .btn.soft:hover{background:#fff;color:#032B57}
+.deg-stats{display:grid;grid-template-columns:1fr 1fr;gap:.85rem}
+.deg-stat{background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.20);border-radius:20px;padding:1.05rem 1.15rem;backdrop-filter:blur(4px);transition:transform .25s,background .25s}
+.deg-stat:hover{transform:translateY(-4px);background:rgba(255,255,255,.16)}
+.deg-stat b{display:block;font-size:2.1rem;line-height:1.1;color:#FFD86B;font-weight:800}
+.deg-stat b.txt{font-size:1.45rem;padding-top:.35rem}
+.deg-stat span{display:block;font-size:.86rem;color:#DDE6F2;margin-top:.2rem}
+.deg-overview{display:grid;grid-template-columns:1.1fr .9fr;gap:1.2rem;align-items:start}
+.deg-stack{display:grid;gap:1.2rem}
+.deg-card{background:var(--white);border:1px solid var(--line);border-radius:22px;padding:1.6rem 1.7rem;transition:box-shadow .25s,border-color .25s}
+.deg-card:hover{box-shadow:var(--shadow);border-color:var(--gold)}
+.deg-card h2{font-size:clamp(1.25rem,2.2vw,1.6rem);margin:.2rem 0 .7rem}
+.deg-card p{color:var(--text);line-height:1.7;font-size:.97rem;margin:0 0 .8rem}
+.deg-card p:last-child{margin-bottom:0}
+.deg-card .section-label{margin:0}
+.deg-head-row{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:2rem;align-items:end;margin-bottom:1.6rem}
+.deg-head-row .section-head{margin-bottom:0;max-width:none}
+.deg-note{border:1px dashed var(--line);border-radius:16px;background:var(--white);padding:1.05rem 1.2rem}
+.deg-note h3{font-size:1rem;margin:0 0 .35rem}
+.deg-note p{margin:0;font-size:.9rem;line-height:1.55}
+.deg-bottom{display:grid;grid-template-columns:minmax(0,1fr) 370px;gap:2rem;align-items:start}
+.deg-bottom .faq-list{max-width:none}
+.deg-aside{position:sticky;top:7rem;display:grid;gap:1rem}
+.deg-cta{background:linear-gradient(135deg,#032B57,#0a4a8f);color:#fff;border-radius:22px;padding:1.5rem 1.5rem}
+.deg-cta h3{color:#fff;font-size:1.2rem;margin:0 0 .4rem}
+.deg-cta p{color:#CFE0F5;font-size:.92rem;margin:0 0 1rem}
+.deg-cta .btn{width:100%;justify-content:center}
+.deg-links{list-style:none;margin:0;padding:0;display:grid;gap:.5rem}
+.deg-links a{display:flex;justify-content:space-between;gap:.6rem;font-weight:600;font-size:.92rem;color:var(--ink);padding:.45rem 0;border-bottom:1px solid var(--line);transition:color .2s,padding-left .2s}
+.deg-links a::after{content:"→";color:var(--gold)}
+.deg-links a:hover{color:var(--teal);padding-left:4px}
+.deg-chips{display:flex;flex-wrap:wrap;gap:.45rem}
+.deg-chips a{font-size:.84rem;font-weight:600;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:.38rem .8rem;transition:background .2s,color .2s,transform .2s}
+.deg-chips a:hover{background:var(--ink);color:#fff;transform:translateY(-2px)}
+.deg-aside h3.deg-h{font-size:.82rem;text-transform:uppercase;letter-spacing:.1em;color:var(--teal);margin:0 0 .7rem;font-family:var(--mono)}
+@media (max-width:1024px){
+  .deg-hero,.deg-overview,.deg-head-row,.deg-bottom{grid-template-columns:minmax(0,1fr)}
+  .deg-aside{position:static}
+}
+@media (max-width:600px){.deg-stats{gap:.6rem}.deg-stat b{font-size:1.6rem}.deg-card{padding:1.3rem 1.2rem}}
+.deg-cards{display:grid;grid-template-columns:repeat(var(--n,2),minmax(0,1fr));gap:1.2rem;align-items:stretch}
+.deg-cards>.deg-card{margin:0}
+@media (max-width:1024px){.deg-cards{grid-template-columns:minmax(0,1fr)}}
+/* shared by Services, About, Contact and Home */
+.pg-split{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:1.4rem;align-items:start}
+.pg-stack{display:grid;gap:1.2rem}
+.pg-photo{position:relative;border-radius:26px;overflow:hidden;border:1px solid rgba(255,255,255,.28);box-shadow:0 24px 50px -20px rgba(0,0,0,.45);background:#fff}
+.pg-photo img{width:100%;height:auto;aspect-ratio:4/4.2;object-fit:cover;object-position:center 40%}
+.pg-photo figcaption{position:absolute;left:.9rem;right:.9rem;bottom:.9rem;background:rgba(3,43,87,.88);color:#fff;border-radius:16px;padding:.7rem 1rem;font-size:.86rem;line-height:1.4;backdrop-filter:blur(4px)}
+.pg-photo figcaption b{display:block;color:#FFD86B;font-size:1rem}
+.pg-steps{list-style:none;margin:0;padding:0;display:grid;gap:.9rem;counter-reset:s}
+.pg-steps li{display:grid;grid-template-columns:2.2rem 1fr;gap:.8rem;align-items:start;counter-increment:s}
+.pg-steps li::before{content:counter(s);display:grid;place-items:center;width:2.2rem;height:2.2rem;border-radius:50%;background:var(--gold-soft);color:#946200;font-weight:800}
+.pg-steps strong{display:block;color:var(--ink);font-size:.98rem}
+.pg-steps span{display:block;color:var(--text);font-size:.9rem;line-height:1.55}
+.pg-mini{display:flex;gap:.9rem;align-items:flex-start}
+.pg-mini .icon{flex:0 0 auto}
+.pg-mini h3{font-size:1.02rem;margin:0 0 .25rem}
+.pg-mini p{margin:0;font-size:.92rem;line-height:1.6}
+@media (max-width:1024px){.pg-split{grid-template-columns:minmax(0,1fr)}}
+
+.deg-hero h1.h1-long{font-size:clamp(1.9rem,3.8vw,2.9rem);line-height:1.12}
+@media (min-width:861px){.contact-card .contact-links{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}}

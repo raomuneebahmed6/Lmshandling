@@ -498,6 +498,7 @@ a,button,.btn{transition-property:color,background-color,border-color,box-shadow
 </style>
 <style id="img-dims">:where(img[width][height]){height:auto}</style>
 <style id="tap-targets">@media (max-width:860px){.footer-col a{padding:.32rem 0}}</style>
+<link rel="stylesheet" href="/assets/page-layout.css?v=1">
 </head>
 <body>
 
@@ -567,57 +568,57 @@ a,button,.btn{transition-property:color,background-color,border-color,box-shadow
 </header>
 
 <main>
-
 <section class="page-hero section" aria-label="Services introduction">
   <div class="hero-bg"><div class="blob b1" data-parallax="0.2"></div><div class="blob b2" data-parallax="-0.14"></div></div>
-  <div class="reveal in">
-    <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><span>Services</span></nav>
-    <p class="section-label">Services</p>
-    <h1>VU Services: LMS Handling, Exam Files &amp; FYP Support</h1>
-    <p class="lead">Choose from LMS Handling, Midterm Exam Files, Finalterm Exam Files, and Final Year Reports / Projects, all organized code-wise for your degree.</p>
-    <div class="hero-chips reveal" data-delay="1">
-      <span class="chip"><b>606</b> Course Codes</span>
-      <span class="chip"><b>4</b> Core Services</span>
-      <span class="chip"><b>1</b> WhatsApp Away</span>
+  <div class="deg-hero">
+    <div>
+      <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><span>Services</span></nav>
+      <p class="section-label">Services</p>
+      <h1 class="h1-long">VU Services: LMS Handling, Exam Files &amp; FYP Support</h1>
+      <p class="lead">Choose from LMS Handling, Midterm Exam Files, Finalterm Exam Files, and Final Year Reports / Projects, all organized code-wise for your degree.</p>
+      <div class="hero-actions" style="margin-top:1.4rem"><a class="btn primary" data-whatsapp="Hello Nibaha Haq, I am on your Services page and need help choosing the right service." target="_blank" rel="noopener" href="https://wa.me/923295209868?text=Hello%20Nibaha%20Haq%2C%20I%20am%20on%20your%20Services%20page%20and%20need%20help%20choosing%20the%20right%20service.">Ask on WhatsApp</a><a class="btn soft" href="/vu-notes">Browse VU Notes</a></div>
+    </div>
+    <div class="deg-stats" aria-label="Services at a glance">
+      <div class="deg-stat"><b>606</b><span>course codes covered</span></div>
+      <div class="deg-stat"><b>4</b><span>core services</span></div>
+      <div class="deg-stat"><b class="txt">Mid + Final</b><span>exam files per code</span></div>
+      <div class="deg-stat"><b class="txt">1 message</b><span>away from guidance</span></div>
     </div>
   </div>
 </section>
 
 <section class="section" aria-labelledby="services-list-heading">
-  <div class="section-head reveal">
-    <p class="section-label">What We Offer</p>
-    <h2 id="services-list-heading">Four services, one organized semester.</h2>
-  </div>
-  <div class="grid-4">
-    <article class="service-card reveal"><div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><rect x="4" y="3.5" width="16" height="17" rx="2.5" stroke="currentColor" stroke-width="1.8"/><path d="M8 8.5h8M8 12h8M8 15.5h5" stroke="#F5B301" stroke-width="1.8" stroke-linecap="round"/></svg></div><h3>LMS Handling</h3><p>Quiz, assignment, GDB and lecture attendance guidance, every VULMS deadline tracked for you.</p><a class="read-more" href="/services/lms-services">Read more<span class="sr-only"> about LMS Handling</span></a></article>
-    <article class="service-card reveal" data-delay="1"><div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M12 6.5C10.4 5 8 4.5 5 4.5v13c3 0 5.4.5 7 2 1.6-1.5 4-2 7-2v-13c-3 0-5.4.5-7 2Zm0 0v13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M7.5 9.5c1.5 0 2.5.3 3 .7M7.5 13c1.5 0 2.5.3 3 .7" stroke="#F5B301" stroke-width="1.6" stroke-linecap="round"/></svg></div><h3>Midterm Exam Files</h3><p>Code-wise objective and subjective preparation files for midterm exams.</p><a class="read-more" href="/services/midterm-files">Read more<span class="sr-only"> about Midterm Exam Files</span></a></article>
-    <article class="service-card reveal" data-delay="2"><div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><rect x="3.5" y="14" width="17" height="4.5" rx="1.2" stroke="currentColor" stroke-width="1.8"/><rect x="5.5" y="9.5" width="13" height="4.5" rx="1.2" stroke="#F5B301" stroke-width="1.8"/><rect x="7.5" y="5" width="9" height="4.5" rx="1.2" stroke="currentColor" stroke-width="1.8"/></svg></div><h3>Finalterm Exam Files</h3><p>Finalterm objective and subjective files for focused, 4 CGPA exam preparation.</p><a class="read-more" href="/services/finalterm-files">Read more<span class="sr-only"> about Finalterm Exam Files</span></a></article>
-    <article class="service-card reveal" data-delay="3"><div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M12 4 2.5 8.5 12 13l9.5-4.5L12 4Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M6 10.8V15c0 1.3 2.7 2.6 6 2.6s6-1.3 6-2.6v-4.2" stroke="#F5B301" stroke-width="1.8" stroke-linecap="round"/><path d="M21.5 8.5V14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div><h3>Final Year Reports / Projects</h3><p>Proposal, report, PPTs, viva preparation, and complete documentation support.</p><a class="read-more" href="/services/final-year-project">Read more<span class="sr-only"> about Final Year Projects</span></a></article>
-  </div>
-</section>
-
-<section class="section" aria-labelledby="how-heading">
-  <div class="section-head reveal">
-    <p class="section-label">How It Works</p>
-    <h2 id="how-heading">From message to marks in three steps.</h2>
-  </div>
-  <div class="grid-3">
-    <article class="service-card reveal"><div class="icon" aria-hidden="true"><b style="font-size:1.2rem;color:#00448B">1</b></div><h3>Choose your service</h3><p>Pick LMS Handling, Midterm files, Finalterm files, or Final Year Project support.</p></article>
-    <article class="service-card reveal" data-delay="1"><div class="icon" aria-hidden="true"><b style="font-size:1.2rem;color:#00448B">2</b></div><h3>Share your code on WhatsApp</h3><p>Send your program, semester and subject code (e.g. CS201) at 0329 5209868.</p></article>
-    <article class="service-card reveal" data-delay="2"><div class="icon" aria-hidden="true"><b style="font-size:1.2rem;color:#00448B">3</b></div><h3>Get organized support</h3><p>Receive your files or LMS plan with clear guidance, prices and delivery time.</p></article>
-  </div>
-</section>
-
-<section class="section" aria-label="Get started">
-  <div class="cta-band reveal">
+  <div class="deg-bottom">
     <div>
-      <h2>Not sure which service you need?</h2>
-      <p>Tell us your situation on WhatsApp, and we will guide you to the right option.</p>
+      <div class="section-head reveal" style="margin-bottom:1.4rem;max-width:none">
+        <p class="section-label">What We Offer</p>
+        <h2 id="services-list-heading">Four services, one organized semester.</h2>
+      </div>
+      <div class="grid-2">
+        <article class="service-card reveal"><div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><rect x="4" y="3.5" width="16" height="17" rx="2.5" stroke="currentColor" stroke-width="1.8"/><path d="M8 8.5h8M8 12h8M8 15.5h5" stroke="#F5B301" stroke-width="1.8" stroke-linecap="round"/></svg></div><h3>LMS Handling</h3><p>Quiz, assignment, GDB and lecture attendance guidance, every VULMS deadline tracked for you.</p><a class="read-more" href="/services/lms-services">Read more<span class="sr-only"> about LMS Handling</span></a></article>
+        <article class="service-card reveal" data-delay="1"><div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M12 6.5C10.4 5 8 4.5 5 4.5v13c3 0 5.4.5 7 2 1.6-1.5 4-2 7-2v-13c-3 0-5.4.5-7 2Zm0 0v13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M7.5 9.5c1.5 0 2.5.3 3 .7M7.5 13c1.5 0 2.5.3 3 .7" stroke="#F5B301" stroke-width="1.6" stroke-linecap="round"/></svg></div><h3>Midterm Exam Files</h3><p>Code-wise objective and subjective preparation files for midterm exams.</p><a class="read-more" href="/services/midterm-files">Read more<span class="sr-only"> about Midterm Exam Files</span></a></article>
+        <article class="service-card reveal" data-delay="2"><div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><rect x="3.5" y="14" width="17" height="4.5" rx="1.2" stroke="currentColor" stroke-width="1.8"/><rect x="5.5" y="9.5" width="13" height="4.5" rx="1.2" stroke="#F5B301" stroke-width="1.8"/><rect x="7.5" y="5" width="9" height="4.5" rx="1.2" stroke="currentColor" stroke-width="1.8"/></svg></div><h3>Finalterm Exam Files</h3><p>Finalterm objective and subjective files for focused, 4 CGPA exam preparation.</p><a class="read-more" href="/services/finalterm-files">Read more<span class="sr-only"> about Finalterm Exam Files</span></a></article>
+        <article class="service-card reveal" data-delay="3"><div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M12 4 2.5 8.5 12 13l9.5-4.5L12 4Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M6 10.8V15c0 1.3 2.7 2.6 6 2.6s6-1.3 6-2.6v-4.2" stroke="#F5B301" stroke-width="1.8" stroke-linecap="round"/><path d="M21.5 8.5V14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div><h3>Final Year Reports / Projects</h3><p>Proposal, report, PPTs, viva preparation, and complete documentation support.</p><a class="read-more" href="/services/final-year-project">Read more<span class="sr-only"> about Final Year Projects</span></a></article>
+      </div>
     </div>
-    <a class="btn gold" data-whatsapp="Hello Nibaha Haq, I am on your Services page and need help choosing the right service." target="_blank" rel="noopener" href="https://wa.me/923295209868?text=Hello%20Nibaha%20Haq%2C%20I%20am%20on%20your%20Services%20page%20and%20need%20help%20choosing%20the%20right%20service.">Ask on WhatsApp</a>
+    <aside class="deg-aside" aria-label="How it works">
+      <div class="deg-card reveal">
+        <p class="section-label">How It Works</p>
+        <h2 id="how-heading" style="font-size:1.35rem">From message to marks in three steps.</h2>
+        <ol class="pg-steps" style="margin-top:1rem">
+          <li><div><strong>Choose your service</strong><span>Pick LMS Handling, Midterm files, Finalterm files, or Final Year Project support.</span></div></li>
+          <li><div><strong>Share your code on WhatsApp</strong><span>Send your program, semester and subject code (e.g. CS201) at 0329 5209868.</span></div></li>
+          <li><div><strong>Get organized support</strong><span>Receive your files or LMS plan with clear guidance, prices and delivery time.</span></div></li>
+        </ol>
+      </div>
+      <div class="deg-cta reveal">
+        <h3>Not sure which service you need?</h3>
+        <p>Tell us your situation on WhatsApp, and we will guide you to the right option.</p>
+        <a class="btn gold" data-whatsapp="Hello Nibaha Haq, I am on your Services page and need help choosing the right service." target="_blank" rel="noopener" href="https://wa.me/923295209868?text=Hello%20Nibaha%20Haq%2C%20I%20am%20on%20your%20Services%20page%20and%20need%20help%20choosing%20the%20right%20service.">Message on WhatsApp</a>
+      </div>
+    </aside>
   </div>
 </section>
-
 </main>
 
 <!-- ================= FOOTER ================= -->

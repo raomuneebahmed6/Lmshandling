@@ -497,6 +497,7 @@ a,button,.btn{transition-property:color,background-color,border-color,box-shadow
 </style>
 <style id="img-dims">:where(img[width][height]){height:auto}</style>
 <style id="tap-targets">@media (max-width:860px){.footer-col a{padding:.32rem 0}}</style>
+<link rel="stylesheet" href="/assets/page-layout.css?v=1">
 </head>
 <body>
 
@@ -566,66 +567,70 @@ a,button,.btn{transition-property:color,background-color,border-color,box-shadow
 </header>
 
 <main>
-
-<!-- ================= PAGE HERO ================= -->
 <section class="page-hero section" aria-label="About introduction">
   <div class="hero-bg"><div class="blob b1" data-parallax="0.2"></div><div class="blob b2" data-parallax="-0.14"></div></div>
-  <div class="reveal in">
-    <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><span>About</span></nav>
-    <p class="section-label">About Nibaha Haq</p>
-    <h1>Virtual University academic support with clear guidance and organized planning.</h1>
-    <p class="lead">Nibaha Haq helps students manage VULMS tasks, exam preparation files, final year projects, reports, presentations, and viva preparation with a student-friendly support process.</p>
-    <div class="hero-chips reveal" data-delay="1">
-      <span class="chip"><b>3+</b> Years of Experience</span>
-      <span class="chip"><b>200+</b> Accounts Handled</span>
-      <span class="chip"><b>606</b> Course Codes</span>
+  <div class="deg-hero">
+    <div>
+      <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><span>About</span></nav>
+      <p class="section-label">About Nibaha Haq</p>
+      <h1 class="h1-long">Virtual University academic support with clear guidance and organized planning.</h1>
+      <p class="lead">Nibaha Haq helps students manage VULMS tasks, exam preparation files, final year projects, reports, presentations, and viva preparation with a student-friendly support process.</p>
+      
+    </div>
+    <div class="deg-stats" aria-label="About at a glance">
+      <div class="deg-stat"><b>3+</b><span>years of experience</span></div>
+      <div class="deg-stat"><b>200+</b><span>accounts handled</span></div>
+      <div class="deg-stat"><b>606</b><span>course codes</span></div>
+      <div class="deg-stat"><b class="txt">BSCS + MS AI</b><span>VU graduate, now at NUML</span></div>
     </div>
   </div>
 </section>
 
-<!-- ================= STORY SPLIT ================= -->
-<section class="section feature-split" aria-labelledby="support-heading">
-  <div class="reveal"><div class="photo-frame"><img decoding="async" src="/assets/founder-photo.webp" alt="Nibaha Haq, founder of Nibaha Haq Academic Support Services" width="898" height="900" fetchpriority="high"></div></div>
-  <div class="reveal" data-delay="1">
-    <p class="section-label">Student Support</p>
-    <h2 id="support-heading">Helping students stay consistent, confident, and ready.</h2>
-    <p style="margin-top:.8rem;color:var(--muted)">Many Virtual University students manage studies along with jobs, businesses, home routines, or family responsibilities. Nibaha Haq provides organized guidance so students can understand what to do, which file to choose, and how to prepare their academic work step by step.</p>
-    <div class="grid-2">
-      <article class="info-card"><div class="icon" aria-hidden="true">01</div><h3>LMS Guidance</h3><p>Quiz, assignment, GDB and lecture attendance support for busy students.</p></article>
-      <article class="info-card"><div class="icon" aria-hidden="true">02</div><h3>Exam Files</h3><p>Code-wise Midterm and Finalterm files with objective and subjective preparation.</p></article>
+<section class="section" aria-labelledby="support-heading">
+  <div class="pg-split">
+    <div class="pg-stack">
+      <article class="deg-card reveal">
+        <p class="section-label">Student Support</p>
+        <h2 id="support-heading">Helping students stay consistent, confident, and ready.</h2>
+        <p>Many Virtual University students manage studies along with jobs, businesses, home routines, or family responsibilities. Nibaha Haq provides organized guidance so students can understand what to do, which file to choose, and how to prepare their academic work step by step.</p>
+        <div class="about-highlight"><h3>Responsible and consistent support</h3><p>With 3+ years of experience and 200+ accounts handled, the service is built around clarity, consistency, and better academic organization.</p></div>
+      </article>
+      <div class="grid-2">
+        <article class="info-card"><div class="icon" aria-hidden="true">01</div><h3>LMS Guidance</h3><p>Quiz, assignment, GDB and lecture attendance support for busy students.</p></article>
+        <article class="info-card"><div class="icon" aria-hidden="true">02</div><h3>Exam Files</h3><p>Code-wise Midterm and Finalterm files with objective and subjective preparation.</p></article>
+      </div>
     </div>
-    <div class="about-highlight"><h3>Responsible and consistent support</h3><p>With 3+ years of experience and 200+ accounts handled, the service is built around clarity, consistency, and better academic organization.</p></div>
+    <figure class="pg-photo reveal" data-delay="1">
+      <img decoding="async" src="/assets/founder-photo.webp" alt="Nibaha Haq, founder of Nibaha Haq Academic Support Services" width="898" height="900" fetchpriority="high">
+      <figcaption><b>Nibaha Haq</b>BSCS, Virtual University of Pakistan. MS Artificial Intelligence student at NUML Islamabad.</figcaption>
+    </figure>
   </div>
 </section>
 
-<!-- ================= EDUCATION ================= -->
 <section class="section" aria-labelledby="education-heading">
-  <div class="section-head reveal">
-    <p class="section-label">Education</p>
-    <h2 id="education-heading">A Virtual University graduate supporting VU students.</h2>
-    <p>Nibaha Haq studied at Beaconhouse School System and then Queen Mary College before completing her Bachelor of Science in Computer Science (BSCS) at Virtual University of Pakistan. She has personally gone through the same VULMS portal, exam process, and course selection that VU students bring to her today.</p>
-  </div>
-  <div class="grid-2" style="max-width:760px">
-    <article class="info-card reveal"><div class="icon" aria-hidden="true">BS</div><h3>BSCS, Virtual University of Pakistan</h3><p>Completed her Bachelor of Science in Computer Science at VU, the same university whose students she now supports.</p></article>
-    <article class="info-card reveal" data-delay="1"><div class="icon" aria-hidden="true">MS</div><h3>MS Artificial Intelligence, NUML Islamabad</h3><p>Currently pursuing a Master's degree in Artificial Intelligence at the National University of Modern Languages (NUML), Islamabad.</p></article>
-  </div>
-</section>
-
-<!-- ================= VALUES ================= -->
-<section class="section" aria-labelledby="values-heading">
-  <div class="section-head reveal">
-    <p class="section-label">How We Work</p>
-    <h2 id="values-heading">Three promises behind every semester.</h2>
-    <p>Whether it is one quiz or a complete final year project, the same standards apply to every student.</p>
-  </div>
-  <div class="grid-3">
-    <article class="service-card reveal"><div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.8"/><path d="M8.5 12.2 11 14.7l4.7-5" stroke="#F5B301" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></div><h3>Clarity</h3><p>You always know what is being done, when it is due, and what comes next: no confusion, no guessing.</p></article>
-    <article class="service-card reveal" data-delay="1"><div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M4 17V7m5.3 10V4.8M14.7 17v-7m5.3 7V9.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M2.5 20h19" stroke="#F5B301" stroke-width="1.8" stroke-linecap="round"/></svg></div><h3>Consistency</h3><p>Deadlines are tracked across the whole semester so every quiz, GDB and assignment is handled on time.</p></article>
-    <article class="service-card reveal" data-delay="2"><div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M12 20s-7-4.2-7-9.3C5 8 7 6 9.3 6c1.2 0 2.1.5 2.7 1.3C12.6 6.5 13.5 6 14.7 6 17 6 19 8 19 10.7c0 5.1-7 9.3-7 9.3Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8.5 11h2l1-1.7 1.5 3 1-1.3h1.5" stroke="#F5B301" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div><h3>Care</h3><p>Built for students with jobs, homes and families, this support respects your time and your effort.</p></article>
+  <div class="pg-split">
+    <article class="deg-card reveal">
+      <p class="section-label">Education</p>
+      <h2 id="education-heading">A Virtual University graduate supporting VU students.</h2>
+      <p>Nibaha Haq studied at Beaconhouse School System and then Queen Mary College before completing her Bachelor of Science in Computer Science (BSCS) at Virtual University of Pakistan. She has personally gone through the same VULMS portal, exam process, and course selection that VU students bring to her today.</p>
+      <div class="grid-2" style="margin-top:1rem">
+        <article class="info-card reveal"><div class="icon" aria-hidden="true">BS</div><h3>BSCS, Virtual University of Pakistan</h3><p>Completed her Bachelor of Science in Computer Science at VU, the same university whose students she now supports.</p></article>
+        <article class="info-card reveal" data-delay="1"><div class="icon" aria-hidden="true">MS</div><h3>MS Artificial Intelligence, NUML Islamabad</h3><p>Currently pursuing a Master's degree in Artificial Intelligence at the National University of Modern Languages (NUML), Islamabad.</p></article>
+      </div>
+    </article>
+    <div class="pg-stack" aria-labelledby="values-heading">
+      <div class="section-head reveal" style="margin-bottom:0;max-width:none">
+        <p class="section-label">How We Work</p>
+        <h2 id="values-heading">Three promises behind every semester.</h2>
+        <p>Whether it is one quiz or a complete final year project, the same standards apply to every student.</p>
+      </div>
+      <article class="deg-card pg-mini reveal"><div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.8"/><path d="M8.5 12.2 11 14.7l4.7-5" stroke="#F5B301" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><h3>Clarity</h3><p>You always know what is being done, when it is due, and what comes next: no confusion, no guessing.</p></div></article>
+      <article class="deg-card pg-mini reveal"><div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M4 17V7m5.3 10V4.8M14.7 17v-7m5.3 7V9.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M2.5 20h19" stroke="#F5B301" stroke-width="1.8" stroke-linecap="round"/></svg></div><div><h3>Consistency</h3><p>Deadlines are tracked across the whole semester so every quiz, GDB and assignment is handled on time.</p></div></article>
+      <article class="deg-card pg-mini reveal"><div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M12 20s-7-4.2-7-9.3C5 8 7 6 9.3 6c1.2 0 2.1.5 2.7 1.3C12.6 6.5 13.5 6 14.7 6 17 6 19 8 19 10.7c0 5.1-7 9.3-7 9.3Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8.5 11h2l1-1.7 1.5 3 1-1.3h1.5" stroke="#F5B301" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><h3>Care</h3><p>Built for students with jobs, homes and families, this support respects your time and your effort.</p></div></article>
+    </div>
   </div>
 </section>
 
-<!-- ================= CTA ================= -->
 <section class="section" aria-label="Get started">
   <div class="cta-band reveal">
     <div>
@@ -635,7 +640,6 @@ a,button,.btn{transition-property:color,background-color,border-color,box-shadow
     <a class="btn gold" data-whatsapp="Hello Nibaha Haq, I read your About page and I need VU academic support." target="_blank" rel="noopener" href="https://wa.me/923295209868?text=Hello%20Nibaha%20Haq%2C%20I%20read%20your%20About%20page%20and%20I%20need%20VU%20academic%20support.">Message on WhatsApp</a>
   </div>
 </section>
-
 </main>
 
 <!-- ================= FOOTER ================= -->

@@ -497,6 +497,8 @@ a,button,.btn{transition-property:color,background-color,border-color,box-shadow
 </style>
 <style id="img-dims">:where(img[width][height]){height:auto}</style>
 <style id="tap-targets">@media (max-width:860px){.footer-col a{padding:.32rem 0}}</style>
+<link rel="stylesheet" href="/assets/page-layout.css?v=1">
+<style id="contact-faq">.faq-three{grid-template-columns:repeat(3,minmax(0,1fr));max-width:none;align-items:start}@media (max-width:860px){.faq-three{grid-template-columns:minmax(0,1fr)}}</style>
 </head>
 <body>
 
@@ -566,17 +568,21 @@ a,button,.btn{transition-property:color,background-color,border-color,box-shadow
 </header>
 
 <main>
-
 <section class="page-hero section" aria-label="Contact introduction">
   <div class="hero-bg"><div class="blob b1" data-parallax="0.2"></div><div class="blob b2" data-parallax="-0.14"></div></div>
-  <div class="reveal in">
-    <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><span>Contact</span></nav>
-    <p class="section-label">Contact Us</p>
-    <h1>Contact Nibaha Haq for VU academic support.</h1>
-    <p class="lead">Send your course code, semester, degree and required service to get quick guidance for LMS handling, Midterm files, Finalterm files or Final Year Project support.</p>
-    <div class="hero-chips reveal" data-delay="1">
-      <span class="chip">💬 Fastest reply on WhatsApp</span>
-      <span class="chip">📋 Mention your subject code</span>
+  <div class="deg-hero">
+    <div>
+      <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><span>Contact</span></nav>
+      <p class="section-label">Contact Us</p>
+      <h1 class="h1-long">Contact Nibaha Haq for VU academic support.</h1>
+      <p class="lead">Send your course code, semester, degree and required service to get quick guidance for LMS handling, Midterm files, Finalterm files or Final Year Project support.</p>
+      <div class="hero-actions" style="margin-top:1.4rem"><a class="btn primary" data-whatsapp="Hello Nibaha Haq, I need academic support." target="_blank" rel="noopener" href="https://wa.me/923295209868?text=Hello%20Nibaha%20Haq%2C%20I%20need%20academic%20support.">Message on WhatsApp</a><a class="btn soft" href="mailto:nibahahaqvu1@gmail.com">Send an email</a></div>
+    </div>
+    <div class="deg-stats" aria-label="Contact at a glance">
+      <div class="deg-stat"><b class="txt">WhatsApp</b><span>fastest way to reach us</span></div>
+      <div class="deg-stat"><b class="txt">0329 5209868</b><span>WhatsApp number</span></div>
+      <div class="deg-stat"><b class="txt">Subject code</b><span>mention it in your first message</span></div>
+      <div class="deg-stat"><b class="txt">Mid + Final</b><span>exam files per code</span></div>
     </div>
   </div>
 </section>
@@ -616,17 +622,13 @@ a,button,.btn{transition-property:color,background-color,border-color,box-shadow
 </section>
 
 <section class="section" aria-labelledby="cfaq-heading">
-  <div class="section-head reveal">
-    <p class="section-label">Before You Message</p>
-    <h2 id="cfaq-heading">Quick answers.</h2>
-  </div>
-  <div class="faq-list reveal">
+  <div class="section-head reveal" style="margin-bottom:1.2rem;max-width:none"><p class="section-label">Before You Message</p><h2 id="cfaq-heading">Quick answers.</h2></div>
+  <div class="faq-list faq-three reveal">
     <details><summary>What should I include in my first message?</summary><p>Your program (e.g. BSCS), semester, subject code (e.g. CS201), and which service you need: this gets you the fastest, most accurate reply.</p></details>
     <details><summary>How fast is the reply on WhatsApp?</summary><p>WhatsApp messages are answered as quickly as possible during the day. During exam season, replies with your subject code mentioned are prioritized.</p></details>
     <details><summary>Can I ask about multiple subjects at once?</summary><p>Yes, list all your subject codes in one message and you will get combined guidance for the full semester.</p></details>
   </div>
 </section>
-
 </main>
 
 <!-- ================= FOOTER ================= -->
