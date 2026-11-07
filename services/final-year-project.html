@@ -649,6 +649,41 @@ a,button,.btn{transition-property:color,background-color,border-color,box-shadow
 <style id="img-dims">:where(img[width][height]){height:auto}</style>
 <style id="tap-targets">@media (max-width:860px){.footer-col a{padding:.32rem 0}}</style>
 <link rel="stylesheet" href="/assets/page-layout.css?v=2">
+<style id="fyp-layout">
+/* five stages side by side instead of one long vertical timeline */
+.fyp-journey{padding:clamp(1.8rem,4vw,2.8rem) clamp(1.2rem,4vw,3rem)}
+.fyp-journey .section-head{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);column-gap:3rem;align-items:end;max-width:none;margin-bottom:0}
+.fyp-journey .section-head>.section-label{grid-column:1/-1}
+.fyp-journey .section-head>h2{grid-column:1;grid-row:2/span 3}
+.fyp-journey .section-head>p:not(.section-label){grid-column:2;margin:0 0 .5rem}
+.fyp-journey .timeline{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:.9rem;margin-top:1.6rem;padding-left:0;counter-reset:st}
+.fyp-journey .timeline::before,.fyp-journey .timeline-fill{display:none}
+.fyp-journey .step{opacity:1;transform:none;padding:1.1rem 1rem 1.2rem;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:18px;counter-increment:st;transition:transform .25s,background .25s,border-color .25s}
+.fyp-journey .step:hover{transform:translateY(-4px);background:rgba(255,255,255,.12);border-color:var(--gold)}
+.fyp-journey .step::before,.fyp-journey .step.active::before{content:counter(st);position:static;display:grid;place-items:center;width:2rem;height:2rem;border-radius:50%;background:var(--gold);color:var(--ink);font-weight:800;font-size:.95rem;margin-bottom:.7rem;border:0;box-shadow:none}
+.fyp-journey .step h3{font-size:1.02rem;line-height:1.3}
+.fyp-journey .step p{font-size:.86rem;max-width:none}
+.fyp-journey .stats-grid{margin-top:1.1rem;gap:.9rem}
+.fyp-journey .stat-card{padding:1rem 1rem;display:grid;grid-template-columns:auto 1fr;column-gap:.9rem;text-align:left;align-items:center}
+.fyp-journey .stat-card strong{grid-row:1/3;margin:0;font-size:1.7rem}
+.fyp-journey .stat-card h3{margin:0;font-size:.95rem}
+.fyp-journey .stat-card p{margin:0;font-size:.8rem}
+.fyp-programs{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:2rem;align-items:center;padding:1.6rem 1.8rem}
+.fyp-programs h2{font-size:clamp(1.25rem,2.2vw,1.6rem);margin:.2rem 0 .6rem}
+.fyp-programs p{margin:0;color:var(--text);font-size:.95rem;line-height:1.6}
+.fyp-programs .subject-chips{display:flex;flex-wrap:wrap;gap:.5rem}
+.fyp-programs .subject-chips .chip{font-size:.84rem;padding:.4rem .8rem}
+@media (max-width:1100px){.fyp-journey .timeline{grid-template-columns:repeat(3,minmax(0,1fr))}.fyp-journey .stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:1024px){.fyp-journey .section-head,.fyp-programs{grid-template-columns:minmax(0,1fr)}.fyp-journey .section-head>h2,.fyp-journey .section-head>p:not(.section-label){grid-column:1;grid-row:auto}}
+@media (max-width:760px){
+.fyp-journey .timeline{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:78%;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:.5rem}
+.fyp-journey .step{scroll-snap-align:start}
+.fyp-journey .stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.fyp-journey .stat-card{grid-template-columns:1fr;text-align:center}
+.fyp-journey .stat-card strong{grid-row:auto;margin-bottom:.2rem}
+.fyp-programs{padding:1.3rem 1.2rem}
+}
+</style>
 </head>
 <body>
 
@@ -737,8 +772,8 @@ a,button,.btn{transition-property:color,background-color,border-color,box-shadow
   </div>
 </section>
 
-<section class="journey" aria-labelledby="fyp-steps-heading">
-  <div class="section-head reveal"><p class="section-label">Step by Step</p><h2 id="fyp-steps-heading">Your project, handled stage by stage.</h2><p>Keep scrolling: this is the complete FYP journey with Nibaha Haq, with flexible revisions and guidance till approval.</p></div>
+<section class="journey fyp-journey" id="fyp-stages" aria-labelledby="fyp-steps-heading">
+  <div class="section-head reveal"><p class="section-label">Step by Step</p><h2 id="fyp-steps-heading">Your project, handled stage by stage.</h2><p>This is the complete FYP journey with Nibaha Haq, with flexible revisions and guidance till approval.</p></div>
   <div class="timeline" id="timeline">
     <div class="timeline-fill" id="timelineFill"></div>
     <div class="step"><span class="tag">Stage 1</span><h3>Proposal / Synopsis</h3><p>Topic selection and a properly structured proposal or synopsis, prepared for approval.</p></div>
@@ -752,6 +787,19 @@ a,button,.btn{transition-property:color,background-color,border-color,box-shadow
     <article class="stat-card reveal" data-delay="1"><strong>0</strong><h3>Rejections in 3 Years</h3><p>No rejection of reports till now, a 3-year record.</p></article>
     <article class="stat-card reveal" data-delay="2"><strong>CS519</strong><h3>CS Project Support</h3><p>Complete support for CS519 projects.</p></article>
     <article class="stat-card reveal" data-delay="3"><strong>CS619</strong><h3>Final Project Support</h3><p>Complete support for CS619 final projects.</p></article>
+  </div>
+</section>
+
+<section class="section" id="fyp-programs" aria-labelledby="fyp-sub-heading">
+  <div class="deg-card fyp-programs reveal">
+    <div>
+      <p class="section-label">Programs Covered</p>
+      <h2 id="fyp-sub-heading">Final Year Project and Internship subjects.</h2>
+      <p>All kinds of academic reports and documents available for these programs:</p>
+    </div>
+    <div class="subject-chips">
+    <span class="chip">Psychology (PSY)</span><span class="chip">English / ELT</span><span class="chip">Education</span><span class="chip">Mass Communication (MCM)</span><span class="chip">Economics (ECO)</span><span class="chip">Finance / Banking / Accounting</span><span class="chip">HRM</span><span class="chip">IT / MGIT / CS</span><span class="chip">Management (MGT)</span><span class="chip">Marketing (MKT)</span><span class="chip">Public Administration (PAD)</span><span class="chip">Commerce (COM)</span><span class="chip">Sociology (SOC)</span><span class="chip">Mathematics (MTH)</span>
+  </div>
   </div>
 </section>
 
@@ -773,9 +821,7 @@ a,button,.btn{transition-property:color,background-color,border-color,box-shadow
         <h3>Your FYP, approved. Start today.</h3>
         <p>Send your program, semester and subject code for a quick reply on WhatsApp.</p>
         <a class="btn gold" data-whatsapp="Hello Nibaha Haq, I need Final Year Project support. My program and semester: " target="_blank" rel="noopener" href="https://wa.me/923295209868?text=Hello%20Nibaha%20Haq%2C%20I%20need%20Final%20Year%20Project%20support.%20My%20program%20and%20semester%3A%20">Start My Project</a>
-      </div><div class="deg-card reveal"><h3 class="deg-h">Final Year Project and Internship subjects.</h3><p style="font-size:.9rem;margin:0 0 .8rem">All kinds of academic reports and documents available for these programs:</p><div class="svc-chips">
-    <span class="chip">Psychology (PSY)</span><span class="chip">English / ELT</span><span class="chip">Education</span><span class="chip">Mass Communication (MCM)</span><span class="chip">Economics (ECO)</span><span class="chip">Finance / Banking / Accounting</span><span class="chip">HRM</span><span class="chip">IT / MGIT / CS</span><span class="chip">Management (MGT)</span><span class="chip">Marketing (MKT)</span><span class="chip">Public Administration (PAD)</span><span class="chip">Commerce (COM)</span><span class="chip">Sociology (SOC)</span><span class="chip">Mathematics (MTH)</span>
-  </div></div>
+      </div>
       <div class="deg-card reveal">
         <h3 class="deg-h">More from Nibaha Haq</h3>
         <ul class="deg-links"><li><a href="/services/lms-services">LMS Handling</a></li><li><a href="/services/midterm-files">Midterm Files</a></li><li><a href="/services/finalterm-files">Finalterm Files</a></li><li><a href="/vu-notes">VU Notes</a></li><li><a href="/degrees/">Degrees</a></li></ul>
