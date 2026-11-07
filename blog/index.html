@@ -636,6 +636,7 @@ a,button,.btn{transition-property:color,background-color,border-color,box-shadow
 .blog-more{text-align:center;margin:1.6rem 0 .4rem}
 </style>
 <style id="tap-targets">@media (max-width:860px){.footer-col a{padding:.32rem 0}}</style>
+<link rel="stylesheet" href="/assets/page-layout.css?v=3">
 </head>
 <body>
 
@@ -705,15 +706,16 @@ a,button,.btn{transition-property:color,background-color,border-color,box-shadow
 </header>
 
 <main>
-<section class="page-hero section">
+
+<section class="page-hero section" aria-label="Blog introduction">
   <div class="hero-bg"><div class="blob b1" data-parallax="0.2"></div><div class="blob b2" data-parallax="-0.14"></div></div>
-  <div class="reveal in">
-    <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><span>Blog</span></nav>
-    <p class="section-label">Nibaha Haq Blog</p>
-    <h1>VU Academic Tips, Exam Guides &amp; FYP Help</h1>
-    <p class="lead">Practical, no-fluff guides for Virtual University students, covering midterm and finalterm exam preparation, VULMS handling, and Final Year Project advice, written from real experience supporting 200+ VU students.</p>
-    <div class="hero-chips reveal" data-delay="1"><span class="chip">📘 Exam Preparation</span><span class="chip">🧭 LMS Handling</span><span class="chip">🎓 FYP Guides</span></div>
-    <nav class="category-links reveal" data-delay="1" aria-label="Browse by category">
+  <div class="deg-hero">
+    <div>
+      <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><span>Blog</span></nav>
+      <p class="section-label">Nibaha Haq Blog</p>
+      <h1 class="h1-long">VU Academic Tips, Exam Guides &amp; FYP Help</h1>
+      <p class="lead">Practical, no-fluff guides for Virtual University students, covering midterm and finalterm exam preparation, VULMS handling, and Final Year Project advice, written from real experience supporting 200+ VU students.</p>
+      <nav class="category-links reveal" aria-label="Browse by category">
       <span class="category-links-label">Browse by category</span>
       <a class="category-chip" href="/blog/category/lms-handling">LMS Handling</a>
       <a class="category-chip" href="/blog/category/exam-preparation">Exam Preparation</a>
@@ -722,6 +724,13 @@ a,button,.btn{transition-property:color,background-color,border-color,box-shadow
       <a class="category-chip" href="/blog/category/final-year-project">Final Year Project</a>
       <a class="category-chip" href="/blog/category/registration">Registration</a>
     </nav>
+    </div>
+    <div class="deg-stats" aria-label="Blog at a glance">
+      <div class="deg-stat"><b>66</b><span>free VU guides</span></div>
+      <div class="deg-stat"><b>6</b><span>categories</span></div>
+      <div class="deg-stat"><b>200+</b><span>VU students supported</span></div>
+      <div class="deg-stat"><b class="txt">Mid + Final</b><span>exam guides included</span></div>
+    </div>
   </div>
 </section>
 
@@ -1397,6 +1406,7 @@ a,button,.btn{transition-property:color,background-color,border-color,box-shadow
     <a class="btn gold" data-whatsapp="Hello Nibaha Haq, I read your blog and I need academic support." target="_blank" rel="noopener" href="https://wa.me/923295209868?text=Hello%20Nibaha%20Haq%2C%20I%20read%20your%20blog%20and%20I%20need%20academic%20support.">Message on WhatsApp</a>
   </div>
 </section>
+
 </main>
 
 <!-- ================= FOOTER ================= -->

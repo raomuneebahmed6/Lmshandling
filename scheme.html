@@ -583,6 +583,7 @@ a,button,.btn{transition-property:color,background-color,border-color,box-shadow
 </style>
 <style id="img-dims">:where(img[width][height]){height:auto}</style>
 <style id="tap-targets">@media (max-width:860px){.footer-col a{padding:.32rem 0}}</style>
+<link rel="stylesheet" href="/assets/page-layout.css?v=3">
 </head>
 <body>
 
@@ -652,11 +653,23 @@ a,button,.btn{transition-property:color,background-color,border-color,box-shadow
 </header>
 
 <main>
-<section class="scheme-hero" aria-label="Study scheme">
-  <div class="blob b1"></div><div class="blob b2"></div>
-  <p class="section-label" style="position:relative;z-index:1">Nibaha Haq · VU Study Scheme</p>
-  <h1>VU Study Scheme: BSCS, BSSE &amp; Semester-wise Course Codes</h1>
-  <p>Select your program below, including the VU BSSE study scheme (Software Engineering) and VU BSCS study scheme (Computer Science), to see every code semester by semester, then tap "Get File" to order directly on WhatsApp.</p>
+
+<section class="pg-hero-wrap" aria-label="Study scheme">
+  <div class="deg-hero">
+    <div>
+      <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><span>Study Scheme</span></nav>
+      <p class="section-label">Nibaha Haq · VU Study Scheme</p>
+      <h1 class="h1-long">VU Study Scheme: BSCS, BSSE &amp; Semester-wise Course Codes</h1>
+      <p class="lead">Select your program below, including the VU BSSE study scheme (Software Engineering) and VU BSCS study scheme (Computer Science), to see every code semester by semester, then tap "Get File" to order directly on WhatsApp.</p>
+      <div class="hero-actions" style="margin-top:1.4rem"><a class="btn primary" href="#progGrid">Choose my program</a><a class="btn soft" href="/vu-notes">Browse VU Notes</a></div>
+    </div>
+    <div class="deg-stats" aria-label="Scheme at a glance">
+      <div class="deg-stat"><b>16</b><span>degree programs</span></div>
+      <div class="deg-stat"><b>8</b><span>semesters in BS degrees</span></div>
+      <div class="deg-stat"><b>130+</b><span>credit hours in BS degrees</span></div>
+      <div class="deg-stat"><b class="txt">Get File</b><span>order on WhatsApp</span></div>
+    </div>
+  </div>
 </section>
 
 <div class="prog-wrap">
@@ -664,7 +677,7 @@ a,button,.btn{transition-property:color,background-color,border-color,box-shadow
     <p class="section-label">Choose Your Program</p>
     <h2>Select your VU degree to view the semester plan.</h2>
   </div>
-  <div class="prog-grid"><button class="prog-btn" data-prog="BSCS" onclick="selectProg('BSCS')">
+  <div class="prog-grid" id="progGrid"><button class="prog-btn" data-prog="BSCS" onclick="selectProg('BSCS')">
   <span class="pb-short">BSCS</span>
   <span class="pb-name">BS Computer Science</span>
   <span class="pb-dur">4 Years · 8 Semesters · 130+ Credit Hours</span>
@@ -6620,6 +6633,7 @@ a,button,.btn{transition-property:color,background-color,border-color,box-shadow
   <button class="basket-btn" onclick="orderBasket()"><svg viewBox="0 0 32 32"><path d="M16.02 3C8.85 3 3.02 8.78 3.02 15.9c0 2.36.64 4.58 1.77 6.48L3 29l6.78-1.76a13.1 13.1 0 0 0 6.24 1.58C23.19 28.82 29 23.03 29 15.9C29 8.78 23.19 3 16.02 3Z"/></svg>Order on WhatsApp</button>
   <button class="clear-btn" onclick="clearBasket()">✕ Clear</button>
 </div>
+
 </main>
 
 <!-- ================= FOOTER ================= -->

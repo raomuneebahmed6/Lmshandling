@@ -420,6 +420,8 @@ a,button,.btn{transition-property:color,background-color,border-color,box-shadow
 </style>
 <style id="img-dims">:where(img[width][height]){height:auto}</style>
 <style id="tap-targets">@media (max-width:860px){.footer-col a{padding:.32rem 0}}</style>
+<link rel="stylesheet" href="/assets/page-layout.css?v=3">
+<style id="cgpa-aside">.deg-aside .scale-table{width:100%;font-size:.9rem}.deg-aside .scale-table th,.deg-aside .scale-table td{padding:.4rem .6rem}.deg-hero .notice{background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.22);color:#E7EDF6;border-radius:14px;padding:.8rem 1rem;font-size:.85rem;margin-top:1rem}.deg-hero .notice strong{color:#FFD86B}</style>
 </head>
 <body>
 
@@ -489,15 +491,23 @@ a,button,.btn{transition-property:color,background-color,border-color,box-shadow
 </header>
 
 <main>
-<section class="page-hero section">
-  <div class="blob b1"></div><div class="blob b2"></div>
-  <div class="reveal in">
-    <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><span>CGPA Calculator</span></nav>
-    <p class="section-label">Free Tool by Nibaha Haq</p>
-    <h1>VU CGPA Calculator: Estimate Your Semester GPA and CGPA</h1>
-    <p class="lead">Calculate your VU semester GPA from your course grades, or work out your new cumulative CGPA after this semester. Built on the standard 4.0 GPA scale to help you plan your Virtual University academic journey.</p>
-    <div class="notice reveal" data-delay="1"><strong>Important:</strong> This calculator uses the standard 4.0 GPA scale for estimation purposes only. Your official CGPA is calculated by Virtual University based on its own relative grading policy, which weighs your result against class performance and is not publicly documented. Your official CGPA appears on your VULMS transcript. Use this tool to plan, not as your official record.</div>
-    <div class="hero-chips reveal" data-delay="2" style="margin-top:1.3rem"><span class="chip"><b>4.0</b> Scale</span><span class="chip"><b>Free</b> &amp; Instant</span><span class="chip"><b>No</b> Sign-up Needed</span></div>
+
+<section class="page-hero section" aria-label="CGPA calculator introduction">
+  <div class="hero-bg"><div class="blob b1"></div><div class="blob b2"></div></div>
+  <div class="deg-hero">
+    <div>
+      <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><span>CGPA Calculator</span></nav>
+      <p class="section-label">Free Tool by Nibaha Haq</p>
+      <h1 class="h1-long">VU CGPA Calculator: Estimate Your Semester GPA and CGPA</h1>
+      <p class="lead">Calculate your VU semester GPA from your course grades, or work out your new cumulative CGPA after this semester. Built on the standard 4.0 GPA scale to help you plan your Virtual University academic journey.</p>
+      <div class="notice"><strong>Important:</strong> This calculator uses the standard 4.0 GPA scale for estimation purposes only. Your official CGPA is calculated by Virtual University based on its own relative grading policy, which weighs your result against class performance and is not publicly documented. Your official CGPA appears on your VULMS transcript. Use this tool to plan, not as your official record.</div>
+    </div>
+    <div class="deg-stats" aria-label="Calculator at a glance">
+      <div class="deg-stat"><b>4.0</b><span>GPA scale</span></div>
+      <div class="deg-stat"><b>Free</b><span>and instant</span></div>
+      <div class="deg-stat"><b>No</b><span>sign-up needed</span></div>
+      <div class="deg-stat"><b class="txt">GPA + CGPA</b><span>two calculators</span></div>
+    </div>
   </div>
 </section>
 
@@ -567,10 +577,21 @@ a,button,.btn{transition-property:color,background-color,border-color,box-shadow
   </div>
 </section>
 
-<section class="section" aria-labelledby="scale-heading">
-  <div class="section-head reveal"><p class="section-label">Reference</p><h2 id="scale-heading">Standard 4.0 GPA scale used in this calculator</h2><p>This is the widely used letter-grade-to-GPA scale, credit-hour weighted, used by this tool for estimation. It is not VU's official grading formula.</p></div>
-  <div class="calc-card reveal scale-wrap">
-    <table class="scale-table">
+
+
+<section class="section" aria-label="Questions and help">
+  <div class="deg-bottom">
+    <div>
+      <div class="section-head reveal" style="margin-bottom:1.4rem;max-width:none"><p class="section-label">FAQ</p><h2>CGPA calculator: frequently asked questions.</h2></div>
+      <div class="faq-list reveal">
+    <details><summary>How is VU CGPA calculated?</summary><p>Virtual University calculates your official CGPA using its own relative grading system, which weighs your result against class performance for each course and semester. This process is not publicly documented in detail and can vary. This calculator instead uses the standard, widely used 4.0 GPA scale, credit-hour weighted, to give you a helpful estimate for personal planning.</p></details>
+    <details><summary>Is this calculator official or exact?</summary><p>No. This tool is not affiliated with Virtual University and does not reproduce VU's exact grading formula. It is an estimation tool for personal planning only. Your official CGPA is calculated by VU and appears on your VULMS transcript, which should always be treated as the authoritative record.</p></details>
+    <details><summary>What GPA do I need to avoid academic probation?</summary><p>Universities generally expect students to maintain a minimum CGPA to remain in good academic standing, and falling below that threshold for consecutive semesters can lead to a warning or probation. Exact thresholds and policies are set by VU and can vary by program, so always confirm the current policy on your VULMS portal or with your academic advisor rather than relying on a general figure.</p></details>
+    <details><summary>How can I improve my CGPA?</summary><p>Focus on consistent quiz, assignment and GDB scores since they add up over the semester, prepare early for midterm and finalterm exams with organized notes, and use this calculator each semester to see how upcoming grades will move your cumulative average. Structured exam preparation files and LMS support can also help you stay on track.</p></details>
+  </div>
+    </div>
+    <aside class="deg-aside" aria-label="Help and related">
+      <div class="deg-card reveal"><p class="section-label" style="margin:0">Reference</p><h2 style="font-size:1.2rem;margin:.2rem 0 .6rem" id="scale-heading">Standard 4.0 GPA scale used in this calculator</h2><p style="font-size:.88rem;line-height:1.55;margin:0 0 .8rem">This is the widely used letter-grade-to-GPA scale, credit-hour weighted, used by this tool for estimation. It is not VU's official grading formula.</p><table class="scale-table">
       <thead><tr><th>Letter Grade</th><th>Grade Points</th></tr></thead>
       <tbody>
         <tr><td>A</td><td>4.0</td></tr>
@@ -584,24 +605,17 @@ a,button,.btn{transition-property:color,background-color,border-color,box-shadow
         <tr><td>D</td><td>1.0</td></tr>
         <tr><td>F</td><td>0.0</td></tr>
       </tbody>
-    </table>
+    </table></div><div class="deg-cta reveal">
+        <h3>Want a stronger GPA next semester?</h3>
+        <p>Get organized Midterm and Finalterm exam files, plus full LMS handling support, from Nibaha Haq.</p>
+        <a class="btn gold" data-whatsapp="Hello Nibaha Haq, I want help improving my CGPA: " target="_blank" rel="noopener" href="https://wa.me/923295209868?text=Hello%20Nibaha%20Haq%2C%20I%20want%20help%20improving%20my%20CGPA%3A%20">Get Exam Prep Help</a>
+      </div>
+    </aside>
   </div>
 </section>
 
-<section class="section" aria-label="CGPA calculator FAQ">
-  <div class="section-head reveal"><p class="section-label">FAQ</p><h2>CGPA calculator: frequently asked questions.</h2></div>
-  <div class="faq-list reveal">
-    <details><summary>How is VU CGPA calculated?</summary><p>Virtual University calculates your official CGPA using its own relative grading system, which weighs your result against class performance for each course and semester. This process is not publicly documented in detail and can vary. This calculator instead uses the standard, widely used 4.0 GPA scale, credit-hour weighted, to give you a helpful estimate for personal planning.</p></details>
-    <details><summary>Is this calculator official or exact?</summary><p>No. This tool is not affiliated with Virtual University and does not reproduce VU's exact grading formula. It is an estimation tool for personal planning only. Your official CGPA is calculated by VU and appears on your VULMS transcript, which should always be treated as the authoritative record.</p></details>
-    <details><summary>What GPA do I need to avoid academic probation?</summary><p>Universities generally expect students to maintain a minimum CGPA to remain in good academic standing, and falling below that threshold for consecutive semesters can lead to a warning or probation. Exact thresholds and policies are set by VU and can vary by program, so always confirm the current policy on your VULMS portal or with your academic advisor rather than relying on a general figure.</p></details>
-    <details><summary>How can I improve my CGPA?</summary><p>Focus on consistent quiz, assignment and GDB scores since they add up over the semester, prepare early for midterm and finalterm exams with organized notes, and use this calculator each semester to see how upcoming grades will move your cumulative average. Structured exam preparation files and LMS support can also help you stay on track.</p></details>
-  </div>
-</section>
 
-<section class="section" aria-label="Get exam preparation help">
-  <div class="cta-band reveal"><div><h2>Want a stronger GPA next semester?</h2><p>Get organized Midterm and Finalterm exam files, plus full LMS handling support, from Nibaha Haq.</p></div>
-  <a class="btn gold" data-whatsapp="Hello Nibaha Haq, I want help improving my CGPA: " target="_blank" rel="noopener" href="https://wa.me/923295209868?text=Hello%20Nibaha%20Haq%2C%20I%20want%20help%20improving%20my%20CGPA%3A%20">Get Exam Prep Help</a></div>
-</section>
+
 </main>
 
 <!-- ================= FOOTER ================= -->
