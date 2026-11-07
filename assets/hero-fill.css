@@ -29,3 +29,14 @@
   .deg-stat b.sm+span,.deg-stat span{font-size:.92rem}
   .deg-stat{padding:1.3rem 1.4rem}
 }
+/* stat tiles: big faint number at the top, text at the bottom, so tall tiles look designed instead of empty */
+@media (min-width:1025px){
+  .deg-stats{counter-reset:tile}
+  .deg-stat{position:relative;overflow:hidden;justify-content:flex-end;padding-top:3.4rem;counter-increment:tile}
+  .deg-stat::before{content:"0" counter(tile);position:absolute;left:1.4rem;top:.9rem;font-size:3.6rem;font-weight:800;line-height:1;color:rgba(255,255,255,.14);letter-spacing:-.02em}
+  .deg-stat::after{content:"";position:absolute;right:-36px;top:-36px;width:140px;height:140px;border-radius:50%;background:radial-gradient(circle,rgba(255,216,107,.20),transparent 70%);pointer-events:none}
+}
+/* faculty degree cards: as many columns as there are degrees (2 to 5), 3 columns for 6 */
+.fac-grid{display:grid;grid-template-columns:repeat(var(--n,3),minmax(0,1fr));gap:1.1rem}
+@media (max-width:1024px){.fac-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:600px){.fac-grid{grid-template-columns:minmax(0,1fr)}}
