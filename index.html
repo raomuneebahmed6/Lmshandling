@@ -862,6 +862,15 @@ html body #services .svc-bento .service-card:nth-child(1){padding:1.3rem 1.3rem!
 #contact .form-note{font-size:.78rem}
 }
 </style>
+<style id="home-faq-mobile">
+@media (max-width:860px){
+#faq .faq-list{gap:.5rem}
+#faq .faq-col{display:grid;gap:.5rem}
+#faq details{padding:.55rem .8rem}
+#faq summary{font-size:.92rem;line-height:1.35}
+#faq details p{font-size:.88rem;line-height:1.55}
+}
+</style>
 </head>
 <body>
 
@@ -1766,5 +1775,6 @@ safe("footer-year", () => {
   show(0);
 })();
 </script>
+<script src="/assets/faq-more.js?v=1" defer></script>
 </body>
 </html>

@@ -672,6 +672,22 @@ a,button,.btn{transition-property:color,background-color,border-color,box-shadow
 </style>
 <style id="tap-targets">@media (max-width:860px){.footer-col a{padding:.32rem 0}}</style>
 <link rel="stylesheet" href="/assets/page-layout.css?v=2">
+<style id="mg-style">
+#midterm-guide .mg-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+#midterm-guide .mg-card{border-top:4px solid var(--gold);border-radius:20px}
+#midterm-guide .mg-card h3{color:var(--ink);font-size:1.12rem}
+#midterm-guide .mg-card p{font-size:.92rem;line-height:1.65}
+#midterm-guide .mg-bottom{margin-top:1.4rem;align-items:stretch}
+#midterm-guide .mg-h3{font-size:1.25rem;margin:.2rem 0 1rem;color:var(--ink)}
+#midterm-guide .mg-checks{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:.7rem 1.2rem}
+#midterm-guide .mg-checks li{display:flex;gap:.6rem;align-items:flex-start}
+#midterm-guide .mg-checks li::before{content:"✓";flex:0 0 auto;display:grid;place-items:center;width:1.5rem;height:1.5rem;border-radius:50%;background:var(--gold-soft);color:#946200;font-weight:800;font-size:.85rem}
+#midterm-guide .mg-checks span{font-size:.95rem;color:var(--text);line-height:1.5}
+#midterm-guide .deg-cta{display:flex;flex-direction:column;justify-content:center}
+#midterm-guide .deg-cta a.inline-link{color:#FFD86B;font-weight:700;text-decoration:underline}
+@media (max-width:1024px){#midterm-guide .mg-grid{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:640px){#midterm-guide .mg-checks{grid-template-columns:minmax(0,1fr)}}
+</style>
 </head>
 <body>
 
@@ -774,22 +790,31 @@ a,button,.btn{transition-property:color,background-color,border-color,box-shadow
 </section>
 
 <section class="section" id="midterm-guide" aria-labelledby="midterm-guide-heading">
-  <div class="section-head reveal"><p class="section-label">Midterm Examination Guide</p><h2 id="midterm-guide-heading">Sample midterm guide: CS620, STA301 and MTH501.</h2>
+  <div class="section-head reveal" style="max-width:none"><p class="section-label">Midterm Examination Guide</p><h2 id="midterm-guide-heading">Sample midterm guide: CS620, STA301 and MTH501.</h2>
     <p>Each subject follows an Objective plus Subjective exam pattern. These are the main topics our notes cover for each course.</p></div>
-  <div class="grid-4" style="grid-template-columns:repeat(3,minmax(0,1fr))">
-    <article class="service-card reveal"><h3>CS620: Modelling and Simulation</h3><p><strong>Exam pattern:</strong> Objective + Subjective.</p><p><strong>Topics covered:</strong> Introduction to Modelling and Simulation, System Concepts, Types of Models, Discrete and Continuous Systems, Discrete Event Simulation, Simulation Study, Model Development, Data Collection, Model Verification and Validation, Queuing Models and Statistical Analysis.</p></article>
-    <article class="service-card reveal" data-delay="1"><h3>STA301: Statistics and Probability</h3><p><strong>Exam pattern:</strong> Objective + Subjective.</p><p><strong>Topics covered:</strong> Introduction to Statistics, Data Presentation, Frequency Distribution, Measures of Central Tendency, Measures of Dispersion, Probability, Conditional Probability, Random Variables, Probability Distributions, Regression, Correlation and Statistical Calculations.</p></article>
-    <article class="service-card reveal" data-delay="2"><h3>MTH501: Linear Algebra</h3><p><strong>Exam pattern:</strong> Objective + Subjective.</p><p><strong>Topics covered:</strong> Matrices, Systems of Linear Equations, Row Reduction, Matrix Algebra, Inverse of Matrices, Determinants, Vector Spaces, Linear Independence, Linear Transformations, Basis and Dimension.</p></article>
+  <div class="grid-4 mg-grid">
+    <article class="service-card mg-card reveal"><h3>CS620: Modelling and Simulation</h3><p><strong>Exam pattern:</strong> Objective + Subjective.</p><p><strong>Topics covered:</strong> Introduction to Modelling and Simulation, System Concepts, Types of Models, Discrete and Continuous Systems, Discrete Event Simulation, Simulation Study, Model Development, Data Collection, Model Verification and Validation, Queuing Models and Statistical Analysis.</p></article>
+    <article class="service-card mg-card reveal" data-delay="1"><h3>STA301: Statistics and Probability</h3><p><strong>Exam pattern:</strong> Objective + Subjective.</p><p><strong>Topics covered:</strong> Introduction to Statistics, Data Presentation, Frequency Distribution, Measures of Central Tendency, Measures of Dispersion, Probability, Conditional Probability, Random Variables, Probability Distributions, Regression, Correlation and Statistical Calculations.</p></article>
+    <article class="service-card mg-card reveal" data-delay="2"><h3>MTH501: Linear Algebra</h3><p><strong>Exam pattern:</strong> Objective + Subjective.</p><p><strong>Topics covered:</strong> Matrices, Systems of Linear Equations, Row Reduction, Matrix Algebra, Inverse of Matrices, Determinants, Vector Spaces, Linear Independence, Linear Transformations, Basis and Dimension.</p></article>
   </div>
-  <div class="section-head reveal" style="margin-top:1.6rem"><h3>Nibaha Haq 4.0 GPA notes include</h3></div>
-  <ul class="list" style="max-width:760px">
-    <li><span>Objective notes with important MCQs</span></li>
-    <li><span>Subjective notes with short and long questions and answers</span></li>
-    <li><span>Topic-wise study material</span></li>
-    <li><span>Numerical practice, where applicable</span></li>
-    <li><span>Midterm and Finalterm preparation notes</span></li>
-  </ul>
-  <p class="muted" style="margin-top:1rem">The topic lists show what our notes cover. Your exact midterm lecture range is set by VU for your semester, so confirm it on VULMS. Contact us on WhatsApp at <a class="inline-link" data-whatsapp="Hello Nibaha Haq, I need the midterm notes for CS620, STA301 or MTH501." target="_blank" rel="noopener" href="https://wa.me/923295209868?text=Hello%20Nibaha%20Haq%2C%20I%20need%20the%20midterm%20notes%20for%20CS620%2C%20STA301%20or%20MTH501.">03295209868</a> or visit lmshandling.com.</p>
+  <div class="pg-split mg-bottom">
+    <article class="deg-card reveal">
+      <p class="section-label">What you get</p>
+      <h3 class="mg-h3">Nibaha Haq 4.0 GPA notes include</h3>
+      <ul class="mg-checks">
+        <li><span>Objective notes with important MCQs</span></li>
+        <li><span>Subjective notes with short and long questions and answers</span></li>
+        <li><span>Topic-wise study material</span></li>
+        <li><span>Numerical practice, where applicable</span></li>
+        <li><span>Midterm and Finalterm preparation notes</span></li>
+      </ul>
+    </article>
+    <aside class="deg-cta reveal" data-delay="1">
+      <h3>Get these notes</h3>
+      <p>The topic lists show what our notes cover. Your exact midterm lecture range is set by VU for your semester, so confirm it on VULMS. Contact us on WhatsApp at <a class="inline-link" data-whatsapp="Hello Nibaha Haq, I need the midterm notes for CS620, STA301 or MTH501." target="_blank" rel="noopener" href="https://wa.me/923295209868?text=Hello%20Nibaha%20Haq%2C%20I%20need%20the%20midterm%20notes%20for%20CS620%2C%20STA301%20or%20MTH501.">03295209868</a> or visit lmshandling.com.</p>
+      <a class="btn gold" data-whatsapp="Hello Nibaha Haq, I need the midterm notes for CS620, STA301 or MTH501." target="_blank" rel="noopener" href="https://wa.me/923295209868?text=Hello%20Nibaha%20Haq%2C%20I%20need%20the%20midterm%20notes%20for%20CS620%2C%20STA301%20or%20MTH501.">Message on WhatsApp</a>
+    </aside>
+  </div>
 </section>
 
 <section class="nr-wrap" id="notes-results" aria-labelledby="notes-results-heading">
