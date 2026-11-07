@@ -23,3 +23,9 @@
   .pg-split>.pg-stack{align-content:stretch}
   .pg-split>.pg-stack>.deg-card:only-child{height:100%}
 }
+/* long-text tiles: larger type so tall tiles never look empty */
+@media (min-width:1025px){
+  .deg-stat b.sm{font-size:clamp(1.15rem,1.85vw,1.6rem);line-height:1.3}
+  .deg-stat b.sm+span,.deg-stat span{font-size:.92rem}
+  .deg-stat{padding:1.3rem 1.4rem}
+}

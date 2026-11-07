@@ -11,14 +11,18 @@ ServerSignature Off
   Header always unset X-Powered-By
 </IfModule>
 
-# Force HTTPS
 RewriteEngine On
+
+# www to non-www and HTTPS in a single hop (canonical domain is https://lmshandling.com)
+RewriteCond %{HTTP_HOST} ^www\.lmshandling\.com$ [NC]
+RewriteRule ^(.*)$ https://lmshandling.com/$1 [L,R=301]
+
 RewriteCond %{HTTPS} off
 RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
-# Redirect www to non-www (canonical domain is lmshandling.com)
-RewriteCond %{HTTP_HOST} ^www\.lmshandling\.com$ [NC]
-RewriteRule ^(.*)$ https://lmshandling.com/$1 [L,R=301]
+# Folder index pages live at the folder URL, so /index and /blog/index redirect there
+RewriteRule ^index(\.html)?$ / [R=301,L]
+RewriteRule ^(.+)/index(\.html)?$ /$1/ [R=301,L]
 
 # Redirect renamed PDF Store page to its new VU Notes URL
 RewriteRule ^store/?$ /vu-notes [R=301,L,NC]
