@@ -619,6 +619,8 @@ a,button,.btn{transition-property:color,background-color,border-color,box-shadow
 .proof-tabs-label{width:100%;text-align:center;font-family:var(--mono,monospace);font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;color:#946200;margin:0}
 </style>
 <style id="tap-targets">@media (max-width:860px){.footer-col a{padding:.32rem 0}}</style>
+<link rel="stylesheet" href="/assets/page-layout.css?v=4">
+<style id="results-strip">.pg-hero-wrap .org-strip{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:.8rem 1.6rem;background:var(--white);border:1px solid var(--line);border-radius:18px;padding:.9rem 1.2rem;margin:1.1rem 0 0}.pg-hero-wrap .org-strip img{height:38px;width:auto;max-width:130px;object-fit:contain}.pg-hero-wrap .org-strip-label{order:-1;width:100%;text-align:center;font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}</style>
 </head>
 <body>
 
@@ -690,21 +692,23 @@ a,button,.btn{transition-property:color,background-color,border-color,box-shadow
 <main>
 
 <!-- ── PAGE HERO ── -->
-<section class="results-hero section" aria-label="Results hero">
-  <div class="blob b1"></div><div class="blob b2"></div>
-  <nav class="breadcrumbs" aria-label="Breadcrumb" style="justify-content:center;margin-bottom:1rem">
-    <a href="/">Home</a><span>/</span><span>Results</span>
-  </nav>
-  <p class="section-label" style="position:relative;z-index:1">Nibaha Haq · Student Results</p>
-  <h1>Real results. Real approvals. Real CGPA.</h1>
-  <p>From HRM620 OAR Report approved to CGPA 4.00/4, every achievement on this page belongs to a real VU student guided by Nibaha Haq.</p>
-  <div class="hero-chips reveal" data-delay="1" style="justify-content:center">
-    <span class="chip">✅ FYP Approved</span>
-    <span class="chip"><b>4.00/4</b> CGPA Achieved</span>
-    <span class="chip"><b>0</b> Rejections in 3 years</span>
-    <span class="chip">Spring 2025 + Fall 2025 + Spring 2026</span>
+<section class="pg-hero-wrap" aria-label="Results hero">
+  <div class="deg-hero">
+    <div>
+      <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><span>Results</span></nav>
+      <p class="section-label">Nibaha Haq · Student Results</p>
+      <h1 class="h1-long">Real results. Real approvals. Real CGPA.</h1>
+      <p class="lead">From HRM620 OAR Report approved to CGPA 4.00/4, every achievement on this page belongs to a real VU student guided by Nibaha Haq.</p>
+      <div class="hero-actions" style="margin-top:1.3rem"><a class="btn primary" href="#fyp-heading">See approved reports</a><a class="btn soft" data-whatsapp="Hello Nibaha Haq, I want my own result like the ones on your Results page." target="_blank" rel="noopener" href="https://wa.me/923295209868?text=Hello%20Nibaha%20Haq%2C%20I%20want%20my%20own%20result%20like%20the%20ones%20on%20your%20Results%20page.">Ask on WhatsApp</a></div>
+    </div>
+    <div class="deg-stats" aria-label="Results at a glance">
+      <div class="deg-stat"><b>4.00/4</b><span>CGPA achieved</span></div>
+      <div class="deg-stat"><b>0</b><span>rejections in 3 years</span></div>
+      <div class="deg-stat"><b class="txt">FYP Approved</b><span>real reports with real organizations</span></div>
+      <div class="deg-stat"><b class="txt">3 semesters</b><span>Spring 2025, Fall 2025, Spring 2026</span></div>
+    </div>
   </div>
-  <div class="org-strip reveal" data-delay="2">
+  <div class="org-strip">
     <img loading="lazy" decoding="async" width="399" height="276" src="results-img/logos/ubl-bank-logo.webp" alt="UBL, United Bank Limited">
     <img loading="lazy" decoding="async" width="709" height="236" src="results-img/logos/chenab-limited-logo.webp" alt="Chenab Limited">
     <img loading="lazy" decoding="async" width="709" height="412" src="results-img/logos/nestle-logo.webp" alt="Nestlé">
