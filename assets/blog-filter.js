@@ -34,6 +34,7 @@
     var moreEl = document.querySelector(".blog-more");
     if (filtering) grid.classList.remove("collapsed"); else if (moreEl) grid.classList.add("collapsed");
     cards.forEach(function (c) {
+      c.classList.add("in");
       var ok = (cat === "all" || c.getAttribute("data-cat") === cat) && words.every(function (w) { return c.getAttribute("data-text").indexOf(w) > -1; });
       c.classList.toggle("bf-hide", !ok);
       if (ok) shown++;
@@ -68,4 +69,21 @@
     if (sp.get("q")) { q = sp.get("q").slice(0, 80); input.value = q; }
   } catch (e) {}
   apply(false);
+  // a link such as /blog/?cat=lms-handling should land on the results, not on the hero
+  if (cat !== "all" || q) {
+    bar.style.scrollMarginTop = "110px";
+    var tries = 0, userScrolled = false;
+    window.addEventListener("wheel", function () { userScrolled = true; }, { once: true, passive: true });
+    window.addEventListener("touchmove", function () { userScrolled = true; }, { once: true, passive: true });
+    // the page loader keeps the body from scrolling for a moment, so wait for it, then jump once
+    var go = function () {
+      if (userScrolled) return;
+      var locked = getComputedStyle(document.body).overflowY === "hidden" && document.readyState !== "complete";
+      if (locked && tries++ < 24) return setTimeout(go, 250);
+      var y = bar.getBoundingClientRect().top + (window.pageYOffset || 0) - 110;
+      window.scrollTo({ top: Math.max(0, y), behavior: "instant" });
+      if (tries++ < 4) setTimeout(go, 500);
+    };
+    setTimeout(go, 100);
+  }
 })();
