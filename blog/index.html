@@ -646,6 +646,29 @@ a,button,.btn{transition-property:color,background-color,border-color,box-shadow
         y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
     })(window, document, "clarity", "script", "za3txclxzp");
 </script>
+<style id="blog-filter-css">
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.blog-filter{margin:0 0 1.4rem;display:grid;gap:.85rem}
+.bf-search{display:flex;align-items:center;gap:.6rem;background:var(--white,#fff);border:1.5px solid var(--line,#dbe5f1);border-radius:16px;padding:.2rem .5rem .2rem 1rem;box-shadow:0 10px 26px -18px rgba(3,43,87,.35);transition:border-color .2s,box-shadow .2s}
+.bf-search:focus-within{border-color:var(--gold,#F5B301);box-shadow:0 0 0 4px rgba(245,179,1,.2)}
+.bf-search svg{color:var(--muted,#5b6b82);flex:0 0 auto}
+.bf-search input{flex:1;min-width:0;border:0;outline:0;background:transparent;font:inherit;font-size:1rem;padding:.8rem 0;color:var(--ink,#032B57)}
+.bf-search input::-webkit-search-cancel-button{display:none}
+.bf-clear{border:0;background:rgba(0,68,139,.08);color:var(--ink,#032B57);font:inherit;font-weight:600;font-size:.82rem;border-radius:999px;padding:.45rem .85rem;cursor:pointer}
+.bf-clear:hover{background:var(--gold,#F5B301)}
+.bf-pills{display:flex;flex-wrap:wrap;gap:.5rem}
+.bf-pills button{display:inline-flex;align-items:center;gap:.45rem;border:1px solid var(--line,#dbe5f1);background:var(--white,#fff);color:var(--ink,#032B57);font:inherit;font-weight:600;font-size:.88rem;border-radius:999px;padding:.5rem .95rem;min-height:40px;cursor:pointer;transition:.2s}
+.bf-pills button i{font-style:normal;font-size:.74rem;font-weight:700;background:rgba(0,68,139,.09);border-radius:999px;padding:.05rem .5rem}
+.bf-pills button:hover{border-color:var(--gold,#F5B301);transform:translateY(-1px)}
+.bf-pills button.on{background:linear-gradient(135deg,#032B57,#1a5fb0);border-color:transparent;color:#fff}
+.bf-pills button.on i{background:rgba(255,255,255,.2);color:#fff}
+.bf-status{margin:0;font-size:.86rem;font-weight:600;color:var(--muted,#5b6b82);min-height:1.2em}
+#blogGrid .blog-card.bf-hide{display:none}
+.bf-empty{text-align:center;padding:2.2rem 1rem;background:var(--white,#fff);border:1px dashed var(--line,#dbe5f1);border-radius:18px;margin-top:1rem}
+.bf-empty[hidden]{display:none}
+.bf-empty h3{margin:0 0 .4rem}
+@media (max-width:600px){.bf-pills{flex-wrap:nowrap;overflow-x:auto;margin:0 -16px;padding:0 16px .35rem;scrollbar-width:none}.bf-pills::-webkit-scrollbar{display:none}.bf-pills button{flex:0 0 auto}}
+</style>
 </head>
 <body>
 
@@ -697,10 +720,20 @@ a,button,.btn{transition-property:color,background-color,border-color,box-shadow
     <div class="nav-item"><a href="/vu-notes">Study Help ▾</a>
       <div class="dropdown">
         <a href="/vu-notes">VU Notes</a>
-        <a href="/blog/">Blog &amp; Guides</a>
         <a href="/vu-admission-portal">Admission</a>
         <a href="/cgpa-calculator">CGPA Calculator</a>
         <a href="/scheme">Study Scheme</a>
+      </div>
+    </div>
+    <div class="nav-item"><a href="/blog/">Blog &amp; Guides ▾</a>
+      <div class="dropdown">
+        <a href="/blog/">All Guides</a>
+        <a href="/blog/category/exam-preparation">Exam Preparation</a>
+        <a href="/blog/category/lms-handling">LMS Handling</a>
+        <a href="/blog/category/course-code-guides">Course Code Guides</a>
+        <a href="/blog/category/admissions">Admissions</a>
+        <a href="/blog/category/registration">Registration</a>
+        <a href="/blog/category/final-year-project">Final Year Project</a>
       </div>
     </div>
     <div class="nav-item"><a href="/results">Results ▾</a>
@@ -735,7 +768,7 @@ a,button,.btn{transition-property:color,background-color,border-color,box-shadow
     </nav>
     </div>
     <div class="deg-stats" aria-label="Blog at a glance">
-      <div class="deg-stat"><b>66</b><span>free VU guides</span></div>
+      <div class="deg-stat"><b>71</b><span>free VU guides</span></div>
       <div class="deg-stat"><b>6</b><span>categories</span></div>
       <div class="deg-stat"><b>200+</b><span>VU students supported</span></div>
       <div class="deg-stat"><b class="txt">Mid + Final</b><span>exam guides included</span></div>
@@ -745,6 +778,23 @@ a,button,.btn{transition-property:color,background-color,border-color,box-shadow
 
 <section class="section" aria-labelledby="posts-heading">
   <div class="section-head reveal"><p class="section-label">Latest Guide</p><h2 id="posts-heading">Start here.</h2></div>
+  <div class="blog-filter reveal" id="blogFilter" role="search" aria-label="Search and filter guides">
+    <label class="bf-search"><span class="sr-only">Search guides</span>
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input type="search" placeholder="Search guides, e.g. result or CS101" autocomplete="off" maxlength="80">
+      <button type="button" class="bf-clear" aria-label="Clear search and filters">Clear</button>
+    </label>
+    <div class="bf-pills" role="group" aria-label="Filter by category">
+      <button type="button" class="on" data-cat="all" data-name="All" aria-pressed="true">All <i></i></button>
+      <button type="button" data-cat="exam-preparation" data-name="Exam Preparation" aria-pressed="false">Exam Preparation <i></i></button>
+      <button type="button" data-cat="lms-handling" data-name="LMS Handling" aria-pressed="false">LMS Handling <i></i></button>
+      <button type="button" data-cat="course-code-guides" data-name="Course Code Guides" aria-pressed="false">Course Code Guides <i></i></button>
+      <button type="button" data-cat="admissions" data-name="Admissions" aria-pressed="false">Admissions <i></i></button>
+      <button type="button" data-cat="registration" data-name="Registration" aria-pressed="false">Registration <i></i></button>
+      <button type="button" data-cat="final-year-project" data-name="Final Year Project" aria-pressed="false">Final Year Project <i></i></button>
+    </div>
+    <p class="bf-status" aria-live="polite"></p>
+  </div>
   <div class="blog-grid collapsed" id="blogGrid">
     <article class="blog-card reveal">
       <a href="/blog/what-is-vulms" class="blog-card-img-link" tabindex="-1" aria-hidden="true"><img decoding="async" src="/assets/blog-images/what-is-vulms.webp?v=3" alt="What is VULMS? A Simple Guide to Virtual University's Learning Management System" width="1200" height="630" loading="lazy" class="blog-card-img"></a>
@@ -1457,6 +1507,10 @@ a,button,.btn{transition-property:color,background-color,border-color,box-shadow
       </a>
     </article>
   </div>
+  <div class="bf-empty" id="blogEmpty" hidden>
+    <h3>No guide matches that yet.</h3>
+    <p>Try a shorter word like "result" or "CS101", or <button type="button" class="btn soft" id="blogReset">show all guides</button>. You can also <a class="inline-link" href="/contact">message Nibaha Haq</a> and ask for the guide you need.</p>
+  </div>
 </section>
 
 <section class="section" aria-label="Get started">
@@ -1738,6 +1792,7 @@ safe("footer-year", () => {
 });
 </script>
 <script src="/assets/chat-widget.js?v=2" defer></script>
+<script src="/assets/blog-filter.js?v=1" defer></script>
 <script>
 (function(){
   var g=document.getElementById("blogGrid"); if(!g)return;
