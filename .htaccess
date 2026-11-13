@@ -13,19 +13,6 @@ ServerSignature Off
 
 RewriteEngine On
 
-# >>> MAINTENANCE MODE (temporary): remove this block to bring the site back <<<
-RewriteCond %{REQUEST_URI} !^/maintenance\.html$
-RewriteCond %{REQUEST_URI} !^/assets/logo\.webp$
-RewriteRule ^ - [E=MAINT:1,R=503,L]
-ErrorDocument 503 /maintenance.html
-<IfModule mod_headers.c>
-  Header always set Retry-After "3600" env=MAINT
-  Header always set Retry-After "3600" env=REDIRECT_MAINT
-  Header always set Cache-Control "no-store" env=MAINT
-  Header always set Cache-Control "no-store" env=REDIRECT_MAINT
-</IfModule>
-# >>> END MAINTENANCE MODE <<<
-
 # www to non-www and HTTPS in a single hop (canonical domain is https://lmshandling.com)
 RewriteCond %{HTTP_HOST} ^www\.lmshandling\.com$ [NC]
 RewriteRule ^(.*)$ https://lmshandling.com/$1 [L,R=301]
