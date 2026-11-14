@@ -157,9 +157,9 @@
   // Every visitor always starts a brand-new chat — no history is restored across
   // page loads or return visits.
   var TOP_CHIPS = [
-    { icon: "🎓", label: "Fall 2026 Admissions", query: "Do you help with VU Fall 2026 admissions?" },
-    { icon: "📘", label: "Failed a subject?", query: "Can I repeat a failed VU course in Summer Semester?" },
-    { icon: "⚠️", label: "Academic probation risk?", query: "Will one failed subject put me on academic probation?" },
+    { icon: "📘", label: "What files do you offer?", query: "What do you provide?" },
+    { icon: "⚡", label: "How fast is delivery?", query: "How fast will I receive my file after ordering?" },
+    { icon: "💳", label: "How do I pay?", query: "How do I pay for a file?" },
     { icon: "💬", label: "Talk to a human", wa: true }
   ];
 
@@ -318,7 +318,7 @@
     }
 
     function greet() {
-      var greetHtml = "Hi! 👋 Ask me about VU admissions, Summer Semester, results, or a failed subject, or tap a question below. If I can't answer, I'll connect you straight to Nibaha on WhatsApp.";
+      var greetHtml = "Hi! 👋 Ask me about Midterm files, Finalterm files, notes or how to order, or tap a question below. If I can't answer, I'll connect you straight to Nibaha on WhatsApp.";
       addMessage(dom.body, "bot", greetHtml);
       renderChips();
     }
