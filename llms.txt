@@ -1,14 +1,14 @@
-# Nibaha Haq | Notes and Exam Preparation Files
+# Nibaha Haq | Preparation Notes
 
-> Notes and code-wise Midterm and Finalterm exam preparation files for 606+ course codes, with objective and subjective preparation, delivered on WhatsApp by Nibaha Haq.
+> Notes and code-wise Midterm and Finalterm preparation notes for 606+ course codes, with objective and subjective preparation, delivered on WhatsApp by Nibaha Haq.
 
 ## Pages
-- [Notes](https://lmshandling.com/notes): browse course codes and order notes and exam preparation files
-- [Exam Preparation Files](https://lmshandling.com/services/): Midterm and Finalterm exam preparation files by course code
-- [Midterm Files](https://lmshandling.com/services/midterm-files): code-wise objective and subjective midterm exam preparation files
-- [Finalterm Files](https://lmshandling.com/services/finalterm-files): code-wise objective and subjective finalterm exam preparation files
-- [Student Results](https://lmshandling.com/results): real CGPA results from students who prepared with the notes and files
-- [Reviews](https://lmshandling.com/reviews): real WhatsApp reviews of the midterm and finalterm files
+- [Notes](https://lmshandling.com/notes): browse course codes and order preparation notes
+- [Preparation Notes](https://lmshandling.com/services/): Midterm and Finalterm preparation notes by course code
+- [Midterm Notes](https://lmshandling.com/services/midterm-files): code-wise objective and subjective midterm preparation notes
+- [Finalterm Notes](https://lmshandling.com/services/finalterm-files): code-wise objective and subjective finalterm preparation notes
+- [Student Results](https://lmshandling.com/results): real CGPA results from students who prepared with the notes and notes
+- [Reviews](https://lmshandling.com/reviews): real WhatsApp reviews of the midterm and finalterm notes
 - [About](https://lmshandling.com/about): about Nibaha Haq
 - [Contact](https://lmshandling.com/contact): WhatsApp 0329 5209868 and email
 
