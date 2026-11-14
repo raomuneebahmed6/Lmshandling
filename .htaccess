@@ -101,4 +101,4 @@ RewriteCond %{HTTP_USER_AGENT} (SemrushBot|AhrefsBot|MJ12bot|DotBot|PetalBot|Byt
 RewriteRule .* - [F,L]
 
 # Custom error pages (optional)
-ErrorDocument 404 /
+ErrorDocument 404 /404.html
