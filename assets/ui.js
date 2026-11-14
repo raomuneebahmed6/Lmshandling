@@ -66,7 +66,7 @@
   /* ---------- image protection (a deterrent, not a lock) ----------
    * Blocks the right-click menu and dragging on content images, and records the attempt
    * (page, image, method; country/city/device are added server side) so the owner sees it
-   * in Blog Studio. Screenshots and developer tools can never be stopped by any website.
+   * Screenshots and developer tools can never be stopped by any website.
    * Search engines are unaffected: nothing here touches the HTML they read.
    */
   var lastLog = {};

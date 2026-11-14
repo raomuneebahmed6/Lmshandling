@@ -480,27 +480,27 @@ img { max-width:100%; height:auto; }
 .lb-caption{color:#DDE6F2;font-size:.85rem;margin-top:.9rem;text-align:center;max-width:70ch}
 .verified-pill{display:inline-flex;align-items:center;gap:.4rem;background:#E7F8EC;color:#15803D;border:1px solid #BBE8C8;font-size:.78rem;font-weight:700;padding:.35rem .85rem;border-radius:999px}
 
-/* ---------- FYP approval blocks (results page) ---------- */
-.fyp-section{background:var(--white);border:1px solid var(--line);border-radius:28px;padding:clamp(1.6rem,4vw,2.8rem);box-shadow:var(--shadow)}
-.fyp-badge{display:inline-flex;align-items:center;gap:.4rem;background:var(--gold-soft);color:#946200;font-weight:700;font-size:.78rem;padding:.4rem .9rem;border-radius:999px;margin-bottom:1rem}
-.fyp-inner h2{margin-bottom:.6rem}
-.fyp-inner>p{color:var(--muted);max-width:75ch;margin-bottom:1.8rem}
-.fyp-layout{display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:start}
-.fyp-screenshots{display:grid;grid-template-columns:1fr 1fr;gap:.9rem}
-.fyp-card{border-radius:16px;overflow:hidden;border:2px solid var(--line);position:relative;background:#000}
-.fyp-card img{width:100%;display:block;aspect-ratio:3/4;object-fit:cover}
-.fyp-card img.img-missing,.org-logo.img-missing,.org-strip img.img-missing{display:none}
-.fyp-card:has(img.img-missing)::after{content:"Screenshot coming soon";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:1rem;color:#8FA2BE;font-size:.8rem;background:var(--ink)}
-.fyp-label{background:var(--ink);color:#fff;font-size:.72rem;font-weight:600;padding:.4rem .6rem;text-align:center}
-.fyp-details{display:grid;gap:1rem}
-.fyp-highlight{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:1.1rem 1.3rem}
+/* ---------- result blocks (results page) ---------- */
+.res-section{background:var(--white);border:1px solid var(--line);border-radius:28px;padding:clamp(1.6rem,4vw,2.8rem);box-shadow:var(--shadow)}
+.res-badge{display:inline-flex;align-items:center;gap:.4rem;background:var(--gold-soft);color:#946200;font-weight:700;font-size:.78rem;padding:.4rem .9rem;border-radius:999px;margin-bottom:1rem}
+.res-inner h2{margin-bottom:.6rem}
+.res-inner>p{color:var(--muted);max-width:75ch;margin-bottom:1.8rem}
+.res-layout{display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:start}
+.res-screenshots{display:grid;grid-template-columns:1fr 1fr;gap:.9rem}
+.res-card{border-radius:16px;overflow:hidden;border:2px solid var(--line);position:relative;background:#000}
+.res-card img{width:100%;display:block;aspect-ratio:3/4;object-fit:cover}
+.res-card img.img-missing,.org-logo.img-missing,.org-strip img.img-missing{display:none}
+.res-card:has(img.img-missing)::after{content:"Screenshot coming soon";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:1rem;color:#8FA2BE;font-size:.8rem;background:var(--ink)}
+.res-label{background:var(--ink);color:#fff;font-size:.72rem;font-weight:600;padding:.4rem .6rem;text-align:center}
+.res-details{display:grid;gap:1rem}
+.res-highlight{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:1.1rem 1.3rem}
 .fh-tag{font-family:var(--mono);font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--teal);font-weight:700;margin-bottom:.4rem}
-.fyp-highlight h3{font-size:1.05rem;margin-bottom:.3rem}
-.fyp-highlight p{color:var(--muted);font-size:.9rem}
+.res-highlight h3{font-size:1.05rem;margin-bottom:.3rem}
+.res-highlight p{color:var(--muted);font-size:.9rem}
 .org-logo-row{margin-bottom:.6rem}
 .org-logo{height:28px;width:auto;object-fit:contain}
 .approved-pill{display:inline-flex;align-items:center;gap:.35rem;background:#E7F8EC;color:#15803D;border:1px solid #BBE8C8;font-size:.78rem;font-weight:700;padding:.35rem .85rem;border-radius:999px;margin-top:.6rem}
-.fyp-cta-row{display:flex;gap:.8rem;flex-wrap:wrap;margin-top:.4rem}
+.res-cta-row{display:flex;gap:.8rem;flex-wrap:wrap;margin-top:.4rem}
 
 /* ---------- CGPA results (results page) ---------- */
 .cgpa-section{margin-top:1rem}
@@ -551,7 +551,7 @@ img { max-width:100%; height:auto; }
   .nav-item.open .dropdown{display:grid}
   .nav-item:hover .dropdown,.nav-item:focus-within .dropdown,.nav-item.open .dropdown{transform:none;opacity:1;visibility:visible}
   .contact-card{grid-template-columns:1fr}
-  .fyp-layout,.cgpa-panel,.cgpa-2026-grid{grid-template-columns:1fr}
+  .res-layout,.cgpa-panel,.cgpa-2026-grid{grid-template-columns:1fr}
   .lb-prev{left:.4rem}
   .lb-next{right:.4rem}
 }
@@ -563,7 +563,7 @@ img { max-width:100%; height:auto; }
   .footer-top{grid-template-columns:1fr}
   .home-course-grid{grid-template-columns:repeat(auto-fill,minmax(88px,1fr))}
   .cta-band{flex-direction:column;align-items:flex-start;text-align:left}
-  .fyp-screenshots{grid-template-columns:1fr 1fr}
+  .res-screenshots{grid-template-columns:1fr 1fr}
   .shot-card{flex-basis:170px}
   .review-card{flex-basis:240px}
   .lb-close{top:-2.6rem}
@@ -600,8 +600,8 @@ html{scroll-behavior:smooth}
 a,button,.btn{transition-property:color,background-color,border-color,box-shadow,transform,opacity;transition-duration:.2s}
 .btn:active{transform:translateY(0) scale(.98)}
 :focus-visible{outline:3px solid rgba(245,179,1,.75);outline-offset:2px;border-radius:6px}
-.blog-card img,.service-card img,.info-card img{transition:transform .5s cubic-bezier(.2,.7,.2,1)}
-.blog-card:hover img,.service-card:hover img{transform:scale(1.04)}
+.entry-card img,.service-card img,.info-card img{transition:transform .5s cubic-bezier(.2,.7,.2,1)}
+.entry-card:hover img,.service-card:hover img{transform:scale(1.04)}
 .faq-list details{transition:box-shadow .25s,background .25s}
 .faq-list details[open]{box-shadow:0 14px 30px -16px rgba(3,43,87,.35)}
 .footer-col a{transition:color .2s,transform .2s}.footer-col a:hover{transform:translateX(3px)}
@@ -627,7 +627,7 @@ a,button,.btn{transition-property:color,background-color,border-color,box-shadow
         y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
     })(window, document, "clarity", "script", "za3txclxzp");
 </script>
-<link rel="stylesheet" href="/assets/cta.css?v=3">
+<link rel="stylesheet" href="/assets/cta.css?v=4">
 <style id="results-single">.cgpa-panel{grid-template-columns:1fr}.cgpa-cards-col{grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr))}.cgpa-cards-col>.sem-badge-row,.cgpa-cards-col>.achieve-formula{grid-column:1/-1}</style>
 </head>
 <body>
@@ -747,9 +747,9 @@ a,button,.btn{transition-property:color,background-color,border-color,box-shadow
 </section>
 
 <section class="section" aria-labelledby="cgpa-2026-heading">
-  <div class="fyp-section reveal">
-    <div class="fyp-inner">
-      <span class="fyp-badge">🎓 Newest Achievement</span>
+  <div class="res-section reveal">
+    <div class="res-inner">
+      <span class="res-badge">🎓 Newest Achievement</span>
       <h2 id="cgpa-2026-heading">Spring 2026 Finals: results from 4 CGPA notes.</h2>
       <p>The latest batch of results from students who prepared with code-wise 4 CGPA notes and exam preparation files.</p>
       <div class="cgpa-cards-col" style="margin-top:1rem">
@@ -792,7 +792,7 @@ a,button,.btn{transition-property:color,background-color,border-color,box-shadow
 
 <!-- ── CTA ── -->
 <section class="section" aria-label="Get started">
-  <div class="blog-cta reveal">
+  <div class="cta-panel reveal">
     <div>
       <span class="bc-eyebrow">Need a hand?</span>
       <h2>Want your result on this page next?</h2>
@@ -866,7 +866,7 @@ const reduceMotion = !!(window.matchMedia && window.matchMedia("(prefers-reduced
 
 /* ---------- graceful image fallback ---------- */
 safe("image-fallback", () => {
-  document.querySelectorAll(".fyp-card img, .org-logo, .org-strip img").forEach(img => {
+  document.querySelectorAll(".res-card img, .org-logo, .org-strip img").forEach(img => {
     const mark = () => img.classList.add("img-missing");
     if (img.complete && img.naturalWidth === 0) mark();
     else img.addEventListener("error", mark, { once:true });
@@ -1150,7 +1150,7 @@ safe("screenshot-lightbox", () => {
 </script>
 
 <script src="/assets/chat-widget.js?v=2" defer></script>
-<script type="application/json" id="tabs-config">{"label":"Approved reports and CGPA results","items":[["section[aria-labelledby=\"fyp-heading\"]","HRM620 report"],["section[aria-labelledby=\"mgit662-heading\"]","MGIT662 report"],["section[aria-labelledby=\"mgit661-heading\"]","MGIT661 report"],["section[aria-labelledby=\"fin619-heading\"]","FIN619 project"],["section[aria-labelledby=\"cgpa-heading\"]","CGPA 2025"],["section[aria-labelledby=\"cgpa-2026-heading\"]","Spring 2026 finals"]]}</script>
+<script type="application/json" id="tabs-config">{"label":"Approved reports and CGPA results","items":[["section[aria-labelledby=\"res-heading\"]","HRM620 report"],["section[aria-labelledby=\"mgit662-heading\"]","MGIT662 report"],["section[aria-labelledby=\"mgit661-heading\"]","MGIT661 report"],["section[aria-labelledby=\"fin619-heading\"]","FIN619 project"],["section[aria-labelledby=\"cgpa-heading\"]","CGPA 2025"],["section[aria-labelledby=\"cgpa-2026-heading\"]","Spring 2026 finals"]]}</script>
 <script src="/assets/tabs.js?v=1" defer></script>
 </body>
 </html>

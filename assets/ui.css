@@ -48,7 +48,7 @@ html body .site-header.scrolled{background:var(--glass-strong)}
 /* ---------- glass cards (selected surfaces only) ---------- */
 html body .hero-quick-services a,
 html body .service-card,
-html body .blog-card,
+html body .entry-card,
 html body .info-card,
 html body .calc-card,
 html body .faq-list details{
@@ -62,7 +62,7 @@ html body .service-card{
   -webkit-backdrop-filter:blur(10px) saturate(1.4);backdrop-filter:blur(10px) saturate(1.4);
 }
 html body .hero-quick-services a:hover,
-html body .blog-card:hover,
+html body .entry-card:hover,
 html body .service-card:hover{
   transform:translateY(-6px);background:var(--glass-strong);
   box-shadow:0 22px 46px -18px rgba(0,68,139,.40),inset 0 1px 0 #fff;
@@ -174,7 +174,7 @@ img,svg,video,iframe{max-width:100%}
 }
 
 /* ---------- image protection (deterrent): no dragging, no long-press save menu, no selection ---------- */
-main img,.blog-card img,.shot-card img,.lmh-slide img{
+main img,.entry-card img,.shot-card img,.lmh-slide img{
   -webkit-user-drag:none;user-drag:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;
 }
 
